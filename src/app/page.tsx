@@ -1,95 +1,62 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+
+import { Container, Flex, Heading, Input, Button, Spacer, Text } from "@chakra-ui/react";
+import { Tabs, TabList, Box, Tab, TabPanel } from "@chakra-ui/react";
+import {
+  List,
+  ListItem,
+  ListIcon,
+  OrderedList,
+  UnorderedList,
+} from '@chakra-ui/react'
 
 export default function Home() {
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    <>
+      <Flex width="100vw" height="7vh" background="#160303" p={1}>
+        <Tabs variant="soft-rounded" colorScheme="green" m={2} pr={4}>
+          <TabList>
+            <Tab>Home</Tab>
+            <Tab>Explore</Tab>
+          </TabList>
+        </Tabs>
+        <Spacer />
+        <Button colorScheme='blue' mr={5} mt={1}>Login</Button>
+      </Flex>
+      <Box display="flex" height="95vh" width="100vw">
+        <Box background="#F5F5E6" w="70vw">
+          <Container>
+            <Text textColor="black" mt={4}>
+              A wiki (/ˈwɪki/ WIK-ee) is an online hypertext publication
+              collaboratively edited and managed by its own audience, using a
+              web browser. A typical wiki contains multiple pages for the
+              subjects or scope of the project, and could be either open to the
+              public or limited to use within an organization ...
+            </Text>
+          </Container>
+        </Box>
+        <Box background="#E8F3F6" w="30vw">
+          <List spacing={3} ml={2} pb={3} mt={3}>
+            <ListItem color="black">
+              <ListIcon as="svg" color="green.500"/>
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit
+            </ListItem>
+            <ListItem color="black">
+              <ListIcon as="svg" color="green.500" />
+              Assumenda, quia temporibus eveniet a libero incidunt suscipit
+            </ListItem>
+            <ListItem color="black">
+              <ListIcon as="svg" color="green.500" />
+              Quidem, ipsam illum quis sed voluptatum quae eum fugit earum
+            </ListItem>
+            {/* You can also use custom icons from react-icons */}
+            <ListItem color="black">
+              <ListIcon as="svg" color="green.500" />
+              Quidem, ipsam illum quis sed voluptatum quae eum fugit earum
+            </ListItem>
+          </List>
+        </Box>
+      </Box>
+    </>
+  );
 }
