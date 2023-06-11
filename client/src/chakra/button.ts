@@ -2,9 +2,11 @@ import type { ComponentStyleConfig } from "@chakra-ui/theme";
 
 export const Button: ComponentStyleConfig = {
   baseStyle: {
-    borderRadius: "60px",
+    borderRadius: "50px",
     fontSize: "10pt",
-    fontWeight: 700,
+    fontWeight: 500,
+    paddingLeft: "15%",
+    paddingRight: "15%",
     _focus: {
       boxShadow: "none",
     },
@@ -18,36 +20,48 @@ export const Button: ComponentStyleConfig = {
       // height: "28px",
     },
     lg: {
-        fontSize:"12pt",
+      fontSize: "12pt",
     }
   },
   variants: {
     solid: {
       color: "white",
-      bg: "blue.500",
+      bg: "black",
       _hover: {
-        bg: "blue.400",
-      },
+        "bg": "black",
+      }
     },
-    outline: {
-      color: "blue.500",
-      border: "1px solid",
-      borderColor: "blue.500",
-    },
-    oauth: {
-      height: "34px",
-      border: "1px solid",
-      borderColor: "gray.300",
+    success: {
+      color: "white",
+      fontWeight: "bold",
+      bg: "green.400",
       _hover: {
-        bg: "gray.50",
+        "bg": "green.500",
+      }
+    },
+    danger: {
+      color: "white",
+      fontWeight: "bold",
+      bg: "red.500",
+      _hover: {
+        "bg": "red.600",
+      }
+    },
+    transparent: {
+      color: "black",
+      bg: "none",
+      _hover: {
+        bg: "none"
+      }
+    },
+    link: {
+      color: "black",
+      fontWeight: "normal",
+      bg: "gray.200",
+      _hover: {
+        bg: "gray.300",
+        textDecoration: "none"
       },
-    transparent:{
-        color: "white",
-        bg:"none",
-        _hover:{
-            bg:"gray.300"
-        }
     }
-    },
   },
 };

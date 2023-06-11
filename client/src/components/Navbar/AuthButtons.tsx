@@ -11,25 +11,27 @@ const AuthButtons= () => {
     <>
       <Button
         variant="transparent"
-        size="lg"
-        height="28px"
+        size="md"
+        bg="none"
+        color="black"
+        height="45px"
         display={{ base: "none", sm: "flex" }}
-        width={{ base: "70px", md: "110px" }}
+        width={{ base: "120", md: "110px" }}
         mr={2}
         // onClick={() => setAuthModalState({ open: true, view: "login" })}
       >
-        Log In
+        Sign In
       </Button>
       <Button
-        variant="transparent"
-        size="lg"
-        height="28px"
+        variant="success"
+        bg="green.400"
+        size="md"
+        height="45px"
         display={{ base: "none", sm: "flex" }}
-        width={{ base: "70px", md: "110px" }}
-        mr={2}
+        width={{ base: "120px", md: "110px" }}
         // onClick={() => setAuthModalState({ open: true, view: "signup" })}
       >
-        Sign Up
+        Get Started
       </Button>
     </>
   );
