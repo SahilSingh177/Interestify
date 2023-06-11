@@ -10,8 +10,8 @@ const Article: React.FC<Props> = () => {
         direction={{ base: 'column', sm: 'row' }}
         overflow='hidden'
         variant='outline'
-        marginTop="2px"
-        width="60%"
+        marginTop="3vh"
+        width="100%"
         // minHeight="auto"
         height="30vh"
       >
