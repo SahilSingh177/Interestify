@@ -1,35 +1,35 @@
 import { Button } from "@chakra-ui/react";
 import React, { useState } from "react";
-// import { useSetRecoilState } from "recoil";
-// import { authModalState } from "../../../atoms/authModalAtom";
-// import AuthModal from "../../Modal/AuthModal";
+import Link from 'next/link';
 
-const AuthButtons= () => {
-//   const setAuthModalState = useSetRecoilState(authModalState);
+const AuthButtons = () => {
 
   return (
     <>
       <Button
+        as={Link}
+        href="/signup"
         variant="transparent"
-        size="md"
+        size="lg"
+        fontWeight="bold"
         bg="none"
         color="black"
         height="45px"
         display={{ base: "none", sm: "flex" }}
         width={{ base: "120", md: "110px" }}
         mr={2}
-        // onClick={() => setAuthModalState({ open: true, view: "login" })}
       >
         Sign In
       </Button>
       <Button
+        as={Link}
+        href="/login"
         variant="success"
         bg="green.400"
-        size="md"
+        size="lg"
         height="45px"
         display={{ base: "none", sm: "flex" }}
         width={{ base: "120px", md: "110px" }}
-        // onClick={() => setAuthModalState({ open: true, view: "signup" })}
       >
         Get Started
       </Button>

@@ -62,6 +62,16 @@ export const Button: ComponentStyleConfig = {
         bg: "gray.300",
         textDecoration: "none"
       },
+    },
+    oauth:{
+      color:"black",
+      fontWeight:"bold",
+      bg:"white",
+      borderRadius:"10px",
+      _hover:{
+        bg:"gray.100",
+        textDecoration:"none"
+      }
     }
   },
 };
