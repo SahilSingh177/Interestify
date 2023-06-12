@@ -15,6 +15,20 @@ export const theme = extendTheme({
       body: {
         bg: "gray.100",
       },
+      '::-webkit-scrollbar-track': {
+        borderRadius: '10px',
+        backgroundColor: 'gray.200',
+        boxShadow:"inset 0 0 6px rgba(0,0,0,0.3)"
+      },
+      '::-webkit-scrollbar': {
+        width: '12px',
+        backgroundColor: 'gray.200',
+      },
+      '::-webkit-scrollbar-thumb': {
+        borderRadius:"10px",
+        backgroundColor: '#555',
+        boxShadow:"inset 0 0 6px rgba(0,0,0,.3)",
+      },
     }),
   },
   components: {

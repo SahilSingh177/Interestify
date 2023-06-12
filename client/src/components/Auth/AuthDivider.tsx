@@ -1,9 +1,8 @@
 import { Box, Divider, Text, Center } from '@chakra-ui/react'
 import React from 'react'
 
-type Props = {}
 
-const AuthDivider = (props: Props) => {
+const AuthDivider: React.FC = () => {
     return (
         <>
             <Box mx={2} padding="5vh 0" width="2vw">

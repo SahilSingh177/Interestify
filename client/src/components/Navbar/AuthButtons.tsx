@@ -1,6 +1,6 @@
-import { Button } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React from "react";
 import Link from 'next/link';
+import { Button } from "@chakra-ui/react";
 
 const AuthButtons = () => {
 
@@ -25,7 +25,6 @@ const AuthButtons = () => {
         as={Link}
         href="/login"
         variant="success"
-        bg="green.400"
         size="lg"
         height="45px"
         display={{ base: "none", sm: "flex" }}

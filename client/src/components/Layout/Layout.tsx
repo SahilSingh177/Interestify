@@ -9,9 +9,9 @@ type Props = {}
 const Layout = ({ children }: React.PropsWithChildren<Props>) => {
   return (
     <>
-        <Navbar/>
-        <Flex height="60px"></Flex>
-        {children}
+      <Navbar />
+      <Flex height="80px"></Flex>
+      {children}
     </>
   )
 }
