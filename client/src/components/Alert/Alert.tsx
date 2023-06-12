@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect, useRef } from 'react';
 import {
   Alert,
   AlertIcon,
@@ -15,20 +16,29 @@ type Props = {
 };
 
 const ShowAlert = ({ type, title, message }: Props) => {
+  const elementRef = useRef<HTMLDivElement>(null);
   const { isOpen: isVisible, onClose, onOpen } = useDisclosure({ defaultIsOpen: true });
+
+  useEffect(() => {
+    const element = elementRef.current;
+    if (element) {
+      const width = element.offsetWidth;
+      const leftMargin = `calc(calc(100vw - ${width}px) / 2)`;
+      element.style.left = leftMargin;
+    }
+  }, []);
 
   return (
     <>
       {isVisible && (
-        <Alert status={type} borderRadius="10px">
+        <Alert status={type} borderRadius="10px" 
+        position="fixed" top="calc(2vh + 80px)" width="-moz-fit-content" ref={elementRef}>
           <AlertIcon />
           <AlertTitle>{title}</AlertTitle>
           <AlertDescription>{message}</AlertDescription>
           <CloseButton
             alignSelf='flex-start'
             position='relative'
-            right={-1}
-            top={-1}
             onClick={onClose}
           />
         </Alert>

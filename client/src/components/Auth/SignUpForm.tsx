@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Flex, Input, FormLabel } from "@chakra-ui/react";
+import { Button, Flex, Input, FormLabel, Box } from "@chakra-ui/react";
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { auth } from '../../firebase/clientApp';
 import Redirect from "./Redirect";
@@ -12,8 +12,7 @@ const SignupForm = () => {
     password: "",
     confirmPassword: "",
   });
-  const [formError, setFormError] = useState("");
-
+  
   const [
     createUserWithEmailAndPassword,
     user,
@@ -23,10 +22,9 @@ const SignupForm = () => {
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (signupForm.password != signupForm.confirmPassword) setFormError("Passwords didn't match")
+    // if (signupForm.password != signupForm.confirmPassword) 
 
     createUserWithEmailAndPassword(signupForm.email, signupForm.password);
-
   };
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,16 +92,20 @@ const SignupForm = () => {
           Sign Up
         </Button>
         <Redirect view="signup"></Redirect>
-        {(error || formError) && (
-          formError ? <ShowAlert type="error" title={"Sorry!"} message={formError} /> :
-            <ShowAlert type="error" title={"Sorry!"} message="Internal Server Error" />
-        )}
-        {user &&
-          <ShowAlert type="success" title="Congratulations" message="Successfully logged in"></ShowAlert>
-        }
         {/* //Already here . Click to Signin
       //Implement with Recoil */}
       </form>
+
+      {error && (
+        <ShowAlert
+          type="error"
+          title="Sorry!"
+          message={"Internal Server Error"}
+        />
+      )}
+      {user &&
+        <ShowAlert type="success" title="Congratulations" message="Successfully logged in"></ShowAlert>
+      }
     </Flex>
   );
 };
