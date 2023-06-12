@@ -6,11 +6,11 @@ from neo4j.exceptions import Neo4jError
 from dotenv import load_dotenv
 from pathlib import Path
 
-load_dotenv()
+# load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-USER = os.getenv("DATABASE_USER")
-PASSWORD = os.getenv("DATABASE_PASSWORD")
+DATABASE_URL = "neo4j+s://38e75c45.databases.neo4j.io:7687"
+USER = "neo4j"
+PASSWORD = "NUsPvBV7gpZoF24ZR69mrrRRPvuRfSR3WV-CCEugV6k"
 print(USER)
 
 class App:
@@ -308,7 +308,7 @@ class App:
                 query=query, exception=exception))
             raise
 
-    def user_to_category(self, user_email, category_name):
+    def user_to_category(self, user_email, category_name, browsing_time):
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
                 print("User does not exist")
@@ -317,29 +317,32 @@ class App:
                 print("Category does not exist")
                 return False
             result = session.execute_write(
-                self._user_to_category, user_email, category_name)
+                self._user_to_category, user_email, category_name, browsing_time)
             for record in result:
                 print("Added User: {u} to Category: {c}"
                       .format(u=record['u'], c=record['c']))
             return True
 
     @staticmethod
-    def _user_to_category(tx, user_email, category_name):
+    def _user_to_category(tx, user_email, category_name, browsing_time):
         query = (
-            "MATCH (u:User), (c:Category) "
+            "MATCH (u:User)-[rel:BROWSED]->(c:Category) "
             "WHERE u.email = $user_email AND c.name = $category_name "
-            "CREATE (u)-[r:IN_CATEGORY]->(c) "
-            "RETURN u, c"
+            "DELETE rel "
+            "CREATE (u)-[r:BROWSED {duration: $browsing_time}]->(c) "
+            "RETURN c.name AS categoryName, $browsing_time AS browsingDuration"
         )
-        result = tx.run(query, user_email = user_email, category_name = category_name)
+        result = tx.run(query, user_email=user_email, category_name=category_name, browsing_time=browsing_time)
         try:
-            return [{"u": record["u"]["email"], "c": record["c"]["name"]}
+            return [{"categoryName": record["categoryName"], "browsingDuration": record["browsingDuration"]}
                     for record in result]
         # Capture any errors along with the query and data for traceability
         except Neo4jError as exception:
             logging.error("{query} raised an error: \n {exception}".format(
                 query=query, exception=exception))
             raise
+
+
 
     def user_to_blog(self, user_email, blog_link):
         with self.driver.session(database="neo4j") as session:
@@ -407,6 +410,33 @@ class App:
                 query=query, exception=exception))
             raise
 
+    def get_categories_ordered_by_browsing_duration(self, user_email):
+        with self.driver.session(database="neo4j") as session:
+            if not self.check_user_exists(user_email):
+                print(user_email)
+                print("User does not exist")
+                return False
+            result = session.execute_write(self._get_categories_ordered_by_browsing_duration, user_email)
+            print("success")
+            print(type(result))
+
+
+    @staticmethod
+    def _get_categories_ordered_by_browsing_duration(tx, user_email):
+        query = (
+            "MATCH (u:User {email: $user_email})-[r:BROWSED]->(c:Category) "
+            "RETURN c.name AS categoryName "
+            "ORDER BY r.browsingTime DESC"
+        )
+        result = tx.run(query, user_email=user_email)
+        try:
+            return result
+        except Neo4jError as exception:
+            logging.error("{query} raised an error: \n {exception}".format(
+                query=query, exception=exception))
+            raise
+
+
 if __name__ == "__main__":
     # Aura queries use an encrypted connection using the "neo4j+s" URI scheme
     uri = DATABASE_URL
@@ -415,17 +445,26 @@ if __name__ == "__main__":
     app = App(uri, user, password)
     # Creation of nodes
     app.create_user("Sample@gmail.com","Sample")
-    app.create_blog("Sampleblog","Samplelink","Sampleauthor")
-    app.create_category("Samplecategory")
-    app.add_author("Sampleauthor")
+    app.create_user("nikhil@gmail.com","Nikhil")
+    # app.create_blog("Sampleblog","Samplelink","Sampleauthor")
+    # app.create_category("Samplecategory")
+    app.create_category("bc")
+    app.create_category("mc")
+    app.create_category("ent")
+    app.create_category("dsnjdsnjdsnnkjds")
+    # app.add_author("Sampleauthor")
 
     # Creation of relationships (For new blogs)
-    app.blog_to_category("Samplelink","Samplecategory")
-    app.blog_to_author("Samplelink","Sampleauthor")
-    app.author_to_category("Sampleauthor","Samplecategory")
+    # app.blog_to_category("Samplelink","Samplecategory")
+    # app.blog_to_author("Samplelink","Sampleauthor")
+    # app.author_to_category("Sampleauthor","Samplecategory")
 
-    # Creation of relationships (Users)
-    app.user_to_category("Sample@gmail.com","Samplecategory")
-    app.user_to_blog("Sample@gmail.com","Samplelink")
-    app.user_to_author("Sample@gmail.com","Sampleauthor")
+    # # Creation of relationships (Users)
+    # app.user_to_blog("Sample@gmail.com","Samplelink")
+    # app.user_to_author("Sample@gmail.com","Sampleauthor")
+    app.user_to_category("nikhil@gmail.com","dsnjdsnjdsnnkjds",69)
+    app.user_to_category("nikhil@gmail.com","bc",2)
+    app.user_to_category("nikhil@gmail.com","ent",7)
+    app.user_to_category("nikhil@gmail.com","mc",5)
+    app.get_categories_ordered_by_browsing_duration("nikhil@gmail.com")
     app.close()

@@ -28,14 +28,16 @@ const Navbar: React.FC = () => {
 
   return (
     <Flex
-      bg={isHomePage && !isScrolledPastThreshold ? "#ffdf00" : "white"}
+      bg={isHomePage && !isScrolledPastThreshold ? "#ffdf00" : "#f1f5f9"}
       position="fixed"
       width="100vw"
+      maxWidth="100vw"
       height="80px"
       padding="10px 10vw"
       zIndex="200"
       justifyContent="space-between"
       alignItems="center"
+      overflowX="hidden"
     >
       <Link href="/">
         <Text fontWeight="extrabold" fontSize="40px">

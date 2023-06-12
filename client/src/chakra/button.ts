@@ -17,7 +17,6 @@ export const Button: ComponentStyleConfig = {
     },
     md: {
       fontSize: "10pt",
-      // height: "28px",
     },
     lg: {
       fontSize: "12pt",
@@ -63,14 +62,14 @@ export const Button: ComponentStyleConfig = {
         textDecoration: "none"
       },
     },
-    oauth:{
-      color:"black",
-      fontWeight:"bold",
-      bg:"white",
-      borderRadius:"10px",
-      _hover:{
-        bg:"gray.100",
-        textDecoration:"none"
+    oauth: {
+      color: "black",
+      fontWeight: "bold",
+      bg: "white",
+      borderRadius: "10px",
+      _hover: {
+        bg: "gray.100",
+        textDecoration: "none"
       }
     }
   },
