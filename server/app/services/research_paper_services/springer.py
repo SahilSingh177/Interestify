@@ -3,10 +3,11 @@ from bs4 import BeautifulSoup
 import time
 import concurrent.futures
 import threading
+# from ...database.database import 
 
 root_url = "https://link.springer.com"
 base_url = "https://link.springer.com/search/page/"
-articles_limit = 10
+articles_limit = 1
 executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
 
 def fetch_articles(page):
@@ -49,18 +50,7 @@ def fetch_articles(page):
     return download_pdf_links
 
 # Generate 10 articles
-generated_articles = []
 page = 1
-while len(generated_articles) < articles_limit:
-    futures = [executor.submit(fetch_articles, page + i) for i in range(4)]
-
-    for future in concurrent.futures.as_completed(futures):
-        article_links = future.result()
-        generated_articles.extend(article_links)
-
-    page += 4
-    if len(article_links) == 0:
-        break
 
 def fetch_new_articles():
     """
@@ -70,8 +60,8 @@ def fetch_new_articles():
         for page in range(1, 3):
             article_links = fetch_articles(page)
             for article in article_links:
-                if article not in generated_articles:
-                    generated_articles.append(article)
+                    #call to model to get categories
+                    #Save to db
                     print("New article found:", article)
 
         time.sleep(1800)  # Makes request every 30 minutes

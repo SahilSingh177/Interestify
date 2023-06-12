@@ -12,7 +12,6 @@ const LoginForm = () => {
     password: "",
     confirmPassword: "",
   });
-  const [formError, setFormError] = useState("");
 
   const [
     createUserWithEmailAndPassword,
@@ -35,7 +34,7 @@ const LoginForm = () => {
 
   return (
     <Flex width="49vw" padding="10vw">
-      <form onSubmit={onSubmit} >
+      <form onSubmit={onSubmit}>
         <FormLabel color="white">Email address</FormLabel>
         <Input
           required
@@ -63,12 +62,13 @@ const LoginForm = () => {
           border="blue.400"
         />
         <Button variant="success" width="100%" height="50px" mt={2} mb={2} type="submit" isLoading={loading}>
-          Sign Up
+          Log In
         </Button>
         <Redirect view="login"></Redirect>
-        {error && (
-          <ShowAlert type="error" title={"Alas!"} message="Couldn't Log In" />
-        )}
+        {error && ( <ShowAlert type="error" title={"Sorry!"} message={"Internal Server Error"} />)}
+        {user &&
+          <ShowAlert type="success" title="Congratulations" message="Successfully logged in"></ShowAlert>
+        }
       </form>
     </Flex>
   );

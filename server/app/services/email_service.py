@@ -7,15 +7,19 @@ import threading
 
 from backend.config.config import config
 # from backend.app.services.research_paper_service import fetch_papers
-from backend.app.utils.read_article import read_article, summarize_article, fetch_papers
+from ..main import getTopArticlesPerUser
+from ..utils.read_article import read_article
+from ..utils.summarize_article import summarize_article
 
 sg = SendGridAPIClient(api_key=config.SENDGRID_API_KEY)
 
 def send_email(recipient_email):
-    article_links = fetch_papers()
-    articles = read_article()
+    article_links = getTopArticlesPerUser(recipient_email)
+
+    article = read_article()
     summarized = summarize_article()
 
+    # for every article
     message = Mail(
         from_email=config.SENDER_EMAIL,
         to_emails=recipient_email,
@@ -29,19 +33,22 @@ def send_email(recipient_email):
     except Exception as e:
         print(str(e))
 
-def fetch_and_send_papers():
-    recipient_email = 'example@example.com'  # Replace with actual recipient email
+def fetch_and_send_papers(recipient_email):
+    # fetch top 5 papers
+    article_links = [] #top articles retireve from db
+    summaries = []
     send_email(recipient_email)
 
-def run_scheduler():
-    schedule.every().sunday.at('09:00').do(fetch_and_send_papers)
+def run_scheduler(recipient_email):
+    schedule.every().sunday.at('09:00').do(fetch_and_send_papers, recipient_email)
 
     while True:
         schedule.run_pending()
         time.sleep(1)
 
-def start_scheduler_thread():
-    scheduler_thread = threading.Thread(target=run_scheduler)
+def start_scheduler_thread(recipient_email):
+    scheduler_thread = threading.Thread(target=run_scheduler, args=(recipient_email,))
     scheduler_thread.start()
+
 
 # Call start_scheduler_thread once user agrees to subscribe to email services
