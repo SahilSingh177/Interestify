@@ -1,8 +1,6 @@
 import React from 'react'
 import Navbar from '../Navbar/Navbar'
-import Blogs from '../Blogs/Blogs'
-import Banner from '../Navbar/Banner'
-import { Flex } from '@chakra-ui/react'
+import { Flex, Divider } from '@chakra-ui/react'
 
 type Props = {}
 
@@ -11,6 +9,14 @@ const Layout = ({ children }: React.PropsWithChildren<Props>) => {
     <>
       <Navbar />
       <Flex height="80px"></Flex>
+      <Divider
+        orientation="horizontal"
+        size="5px"
+        bg="black"
+        borderColor="black"
+        position="fixed"
+        zIndex="200"
+      />
       {children}
     </>
   )

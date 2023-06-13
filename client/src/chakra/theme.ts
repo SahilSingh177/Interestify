@@ -26,7 +26,7 @@ export const theme = extendTheme({
       },
       '::-webkit-scrollbar-thumb': {
         borderRadius:"10px",
-        backgroundColor: '#555',
+        backgroundColor: '#FFFAF0',
         boxShadow:"inset 0 0 6px rgba(0,0,0,.3)",
       },
     }),

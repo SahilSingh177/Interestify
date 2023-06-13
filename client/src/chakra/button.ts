@@ -20,6 +20,9 @@ export const Button: ComponentStyleConfig = {
     },
     lg: {
       fontSize: "12pt",
+    },
+    xl:{
+      fontsize: "15pt"
     }
   },
   variants: {
@@ -28,6 +31,14 @@ export const Button: ComponentStyleConfig = {
       bg: "black",
       _hover: {
         "bg": "black",
+      }
+    },
+    continue: {
+      color: "white",
+      bg: "#1d4ed8",
+      borderRadius:"15px",
+      _hover: {
+        "bg": "#1e40af",
       }
     },
     success: {
@@ -71,6 +82,11 @@ export const Button: ComponentStyleConfig = {
         bg: "gray.100",
         textDecoration: "none"
       }
+    },
+    round : {
+      color:"none",
+      borderRadius:"50%",
+      width:"20px",
     }
   },
 };

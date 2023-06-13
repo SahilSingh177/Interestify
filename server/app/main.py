@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from sendgrid import SendGridAPIClient
-from ..config.config import config
+from .config.config import config
 
 from .services.research_paper_services.springer import fetch_articles, start_scraping_thread
 from .utils.read_article import read_article
