@@ -11,7 +11,6 @@ export default function App({ Component, pageProps }: AppProps) {
   return(
     <RecoilRoot>
     <ChakraProvider theme={theme}>
-      <CSSReset/>
       <Layout>
     <Component {...pageProps} />
       </Layout>

@@ -1,32 +1,59 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { Button, Flex, Input, Text, FormLabel } from "@chakra-ui/react";
-import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { auth } from '../../firebase/clientApp';
 import Redirect from "./Redirect";
 import ShowAlert from "../Alert/Alert";
+import { authState } from "@/atoms/userAtom";
+import { useSetRecoilState } from "recoil";
+import firebase from 'firebase/app';
+import { onAuthStateChanged } from "firebase/auth";
 
 const LoginForm = () => {
-  const [signupForm, setSignupForm] = useState({
-    username: "",
+  const setUserState = useSetRecoilState(authState);
+  const [loginForm, setLoginForm] = useState({
     email: "",
     password: "",
-    confirmPassword: "",
   });
 
   const [
-    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
     user,
     loading,
     error,
-  ] = useCreateUserWithEmailAndPassword(auth);
+  ] = useSignInWithEmailAndPassword(auth);
 
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    createUserWithEmailAndPassword(signupForm.email, signupForm.password);
+  const Router = useRouter();
+
+  const waitForCurrentUser = () => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserState((prevState) => ({
+          ...prevState,
+          isLoggedIn: true,
+          currentUser: user,
+        }));
+        console.log(user.displayName);
+      }
+    });
   };
 
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    signInWithEmailAndPassword(loginForm.email, loginForm.password);
+    if (error){
+       console.log(error);
+       return;
+    }
+    else waitForCurrentUser();
+    setLoginForm({email:"",password:""});
+    Router.push("/select-preferences");
+  };
+  
+
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSignupForm(prev => ({
+    setLoginForm(prev => ({
       ...prev,
       [event.target.name]: event.target.value,
     }))
@@ -65,12 +92,12 @@ const LoginForm = () => {
           Log In
         </Button>
         <Redirect view="login"></Redirect>
-        {error && ( <ShowAlert type="error" title={"Sorry!"} message={"Internal Server Error"} />)}
+        {error && (<ShowAlert type="error" title={"Sorry!"} message={"Internal Server Error"} />)}
         {user &&
           <ShowAlert type="success" title="Congratulations" message="Successfully logged in"></ShowAlert>
         }
       </form>
     </Flex>
-  );
+  )
 };
 export default LoginForm;

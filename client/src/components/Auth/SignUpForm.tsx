@@ -1,31 +1,64 @@
 import React, { useState } from "react";
 import { Button, Flex, Input, FormLabel, Box } from "@chakra-ui/react";
-import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { useCreateUserWithEmailAndPassword, useUpdateProfile } from 'react-firebase-hooks/auth';
 import { auth } from '../../firebase/clientApp';
 import Redirect from "./Redirect";
 import ShowAlert from "../Alert/Alert";
+import { useSetRecoilState } from "recoil";
+import { authState } from '../../atoms/userAtom'
+import { useRouter } from "next/router";
 
 const SignupForm = () => {
+  const Router = useRouter();
+  const setUserState = useSetRecoilState(authState);
   const [signupForm, setSignupForm] = useState({
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
-  
+
   const [
     createUserWithEmailAndPassword,
-    user,
+    userCredential,
     loading,
     error,
   ] = useCreateUserWithEmailAndPassword(auth);
 
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // if (signupForm.password != signupForm.confirmPassword) 
+  const [updateProfile, updating, ProfileError] = useUpdateProfile(auth);
+  const [success, setSuccess] = useState(false);
 
-    createUserWithEmailAndPassword(signupForm.email, signupForm.password);
+  const waitForCurrentUser = () => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserState((prevState) => ({
+          ...prevState,
+          isLoggedIn: true,
+          currentUser: user,
+        }));
+        console.log(user.displayName);
+      }
+    });
   };
+
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    // if (signupForm.password !== signupForm.confirmPassword) 
+    // handle password validation (e.g., check length, match, etc.)
+
+    await createUserWithEmailAndPassword(signupForm.email,signupForm.password)
+    await updateProfile({ displayName: signupForm.username })
+    if (error){
+       console.log(error);
+       return;
+    }
+    waitForCurrentUser();
+    setSuccess(true);
+    setSignupForm({username:"",email:"",password:"",confirmPassword:""});
+    Router.push("/select-preferences");
+  };
+
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSignupForm(prev => ({
@@ -103,10 +136,10 @@ const SignupForm = () => {
           message={"Internal Server Error"}
         />
       )}
-      {user &&
+      {success &&
         <ShowAlert type="success" title="Congratulations" message="Successfully logged in"></ShowAlert>
       }
     </Flex>
-  );
+  )
 };
 export default SignupForm;

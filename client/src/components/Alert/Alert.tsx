@@ -47,6 +47,5 @@ const ShowAlert = ({ type, title, message }: Props) => {
   );
 };
 
-//CLOSE Button not working
 
 export default ShowAlert;

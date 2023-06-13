@@ -1,14 +1,45 @@
 import React from "react";
 import Link from 'next/link';
-import { Button } from "@chakra-ui/react";
+import { Button, Box, Image, Menu, MenuButton, MenuList, MenuItem, IconButton, Icon } from "@chakra-ui/react";
+import { AddIcon, EditIcon, ExternalLinkIcon, HamburgerIcon, RepeatIcon } from '@chakra-ui/icons'
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { authState } from '../../atoms/userAtom'
+import { auth } from "@/firebase/clientApp";
+import { SignOutHook, useSignOut } from 'react-firebase-hooks/auth'
+// import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 
 const AuthButtons = () => {
+  const userState = useRecoilValue(authState);
+  const { isLoggedIn, currentUser } = userState;
+  const setUserState = useSetRecoilState(authState)
+
+  const [signOut, loading, error] = useSignOut(auth);
+  const displayName = currentUser ? currentUser.displayName : "Not applicable";
+  const displayPic = currentUser ? currentUser.photoUrl : "none";
+
+  const handleSignOut = async () => {
+    await signOut();
+    waitForCurrentUser();
+  };
+
+  const waitForCurrentUser = () => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserState((prevState) => ({
+          ...prevState,
+          isLoggedIn: false,
+          currentUser: null,
+        }));
+        console.log(user.displayName);
+      }
+    });
+  };
 
   return (
     <>
-      <Button
+      {!isLoggedIn && <Button
         as={Link}
-        href="/signup"
+        href="/login"
         variant="transparent"
         size="lg"
         fontWeight="bold"
@@ -20,10 +51,11 @@ const AuthButtons = () => {
         mr={2}
       >
         Sign In
-      </Button>
-      <Button
+      </Button>}
+
+      {!isLoggedIn && <Button
         as={Link}
-        href="/login"
+        href="/signup"
         variant="success"
         size="lg"
         height="45px"
@@ -31,7 +63,51 @@ const AuthButtons = () => {
         width={{ base: "120px", md: "110px" }}
       >
         Get Started
-      </Button>
+      </Button>}
+
+      {isLoggedIn && <Button
+        as={Link}
+        href="/"
+        variant=""
+        size="lg"
+        bg="red.500"
+        color="white"
+        height="45px"
+        display={{ base: "none", sm: "flex" }}
+        width={{ base: "120px", md: "110px" }}
+        onClick={handleSignOut}
+        isLoading={loading}
+        marginRight="3vw"
+      >
+        Log Out
+      </Button>}
+      {isLoggedIn &&
+        <Menu isLazy={true} strategy="fixed" >
+          <MenuButton
+            as={IconButton}
+            aria-label='Options'
+            icon={<HamburgerIcon />}
+            variant='outline'
+          />
+          <MenuList>
+            <MenuItem>
+              Profile
+            </MenuItem>
+            <MenuItem>
+              Activity
+            </MenuItem>
+            <MenuItem>
+              Bookmarks
+            </MenuItem>
+            <MenuItem>
+              History
+            </MenuItem>
+            <MenuItem onClick={handleSignOut} >
+              Log Out
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      }
     </>
   );
 };

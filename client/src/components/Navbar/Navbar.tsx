@@ -5,8 +5,11 @@ import { Box, Flex, Image, Text, Button, Divider, Stack } from "@chakra-ui/react
 import AuthButtons from "./AuthButtons";
 import Banner from "./Banner";
 import Link from 'next/link';
+import { authState } from "@/atoms/userAtom";
+import { useRecoilValue } from "recoil";
 
 const Navbar: React.FC = () => {
+  const isLoggedIn = useRecoilValue(authState).isLoggedIn;
   const router = useRouter();
   const [scrollPosition, setScrollPosition] = useState(0);
   const [isScrolledPastThreshold, setIsScrolledPastThreshold] = useState(false);
@@ -28,7 +31,7 @@ const Navbar: React.FC = () => {
 
   return (
     <Flex
-      bg={isHomePage && !isScrolledPastThreshold ? "#ffdf00" : "#f1f5f9"}
+      bg={isHomePage && !isLoggedIn && !isScrolledPastThreshold ? "#ffdf00" : "#f1f5f9"}
       position="fixed"
       width="100vw"
       maxWidth="100vw"
@@ -40,10 +43,10 @@ const Navbar: React.FC = () => {
       overflowX="hidden"
     >
       <Link href="/">
-        <Text fontWeight="extrabold" fontSize="40px">
-        Intrestify
+        <Text fontWeight="extrabold" fontSize="5xl">
+          Intrestify
         </Text>
-        
+
       </Link>
       <Flex>
         <AuthButtons />
