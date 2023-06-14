@@ -82,11 +82,6 @@ export const Button: ComponentStyleConfig = {
         bg: "gray.100",
         textDecoration: "none"
       }
-    },
-    round : {
-      color:"none",
-      borderRadius:"50%",
-      width:"20px",
     }
   },
 };

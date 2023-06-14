@@ -45,7 +45,7 @@ const Navbar: React.FC = () => {
     >
       <Link href="/">
         <Text fontWeight="extrabold" fontSize="5xl">
-          INTERESTIFY
+          Interestify
         </Text>
 
       </Link>
