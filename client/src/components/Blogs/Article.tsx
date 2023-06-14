@@ -1,28 +1,107 @@
-import React from 'react'
-import { Flex, Heading, Badge, Avatar, Box, Text, VStack, HStack, Link, Divider, Spacer  } from '@chakra-ui/react'
-import AuthorCard from '../Author/AuthorCard'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faThumbsUp } from '@fortawesome/free-regular-svg-icons'
-import { faComment, faBookmark } from '@fortawesome/free-solid-svg-icons'
+import React from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import {
+  Flex,
+  Heading,
+  Badge,
+  Text,
+  VStack,
+  HStack,
+  Divider,
+  Spacer,
+  CircularProgress,
+  CircularProgressLabel
+} from '@chakra-ui/react';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faComment as regularComment,
+  faBookmark as regularBookmark,
+  faThumbsUp as regularThumbsup
+} from '@fortawesome/free-regular-svg-icons';
+
+import {
+  faBookmark as solidBookMark,
+  faThumbsUp as solidThumbsUp
+} from '@fortawesome/free-solid-svg-icons';
+
+import AuthorCard from '../Author/AuthorCard';
+
 
 type Props = {}
 
 const Article: React.FC = (props: Props) => {
+  const [articleProgress, setArticleProgress] = useState<number>(0);
+
+  useEffect(() => {
+    const startTime = Date.now();
+
+    return () => {
+      const endTime = Date.now();
+      const duration = endTime - startTime;
+      console.log(`Time spent on page: ${duration} milliseconds`);
+    }
+  }, [])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+      const progress = (scrollTop / (documentHeight - windowHeight)) * 100;
+
+      setArticleProgress(progress);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+
+  const Router = useRouter();
+  const [isLiked, setIsLiked] = useState<Boolean>(false); //liked or not should be fetched from backend
+  const [isBookMarked, setIsBookMarked] = useState<Boolean>(false);
+
+  const bookmarkArticle = () => {
+    setIsBookMarked(!isBookMarked);
+    if (isBookMarked) {
+      const articleLink = Router.asPath;
+      console.log("Bookmarked: ")
+      console.log(articleLink);
+      //Backend request
+    }
+  }
+  const likeArticle = () => {
+    setIsLiked(!isLiked);
+    if (isLiked) {
+      const articleLink = Router.asPath;
+      console.log("Liked: ")
+      console.log(articleLink);
+      //Backend request
+    }
+  }
+
   return (
-    <VStack spacing={5} paddingLeft={5} alignItems="flex-start" width="55vw" maxWidth="100vw" minHeight={`calc(100vh - 80px)`}
-      marginLeft="5%" marginRight="5%" marginTop={`calc(80px + 5vh)`} bg="whiteAlpha.500">
+    <VStack spacing={5} alignItems="flex-start" width="55vw" maxWidth="100vw" minHeight={`calc(100vh - 80px)`}
+      marginLeft="5vw" marginRight="5vw" marginTop={`calc(80px + 5vh)`} bg="whiteAlpha.500" overflowX='hidden'>
+      <CircularProgress position="fixed" bottom='2vh' left='2vh' value={Math.floor(articleProgress)} color='green.400'>
+        <CircularProgressLabel>{Math.floor(articleProgress)}</CircularProgressLabel>
+      </CircularProgress>
       <Heading color="gray.700">I Used ChatGPT (Every Day) for 5 Months. Here Are Some Hidden Gems That Will Change Your Life</Heading>
       <Heading as='h3' size="md" fontWeight="semibold" color='gray.600'>Transform your life with these ChatGPT’s hidden gems.</Heading>
       <AuthorCard></AuthorCard>
       <Divider bg="gray.400" borderColor="gray.600" />
       <HStack spacing={5} paddingLeft={5} paddingRight={5} width="100%">
-        <FontAwesomeIcon icon={faThumbsUp} size='lg' cursor='pointer' />
-        <FontAwesomeIcon icon={faComment} size='lg' cursor='pointer' />
+        <FontAwesomeIcon icon={isLiked ? solidThumbsUp : regularThumbsup} size='lg' cursor='pointer' onClick={likeArticle} />
+        <FontAwesomeIcon icon={regularComment} size='lg' cursor='pointer' />
         <Spacer />
-        <FontAwesomeIcon icon={faBookmark} size='lg' cursor='pointer' />
+        <FontAwesomeIcon icon={isBookMarked ? solidBookMark : regularBookmark} size='lg' cursor='pointer' onClick={bookmarkArticle} />
       </HStack>
       <Divider bg="gray.400" borderColor="gray.600" />
-      <Text lineHeight={2} padding={5}>
+      <Text lineHeight={2} padding={5} overflowX='hidden'>
         The Tech side of startups can sometimes be very fluid and contain a lot of unknowns. What tech stack to use? Which components might be overkill for now but worth keeping an eye on in the future? How to balance the pace of business features development while keeping the quality bar high enough to have a maintainable codebase?
 
         Here I want to share our experience building https://cleanbee.syzygy-ai.com/ from the ground up — how we shaped our processes based on needs and how our processes evolved as we extended our tech stack with new components.
@@ -110,10 +189,10 @@ const Article: React.FC = (props: Props) => {
       </Flex>
       <Divider bg="gray.400" borderColor="gray.600" />
       <HStack spacing={5} paddingLeft={5} paddingRight={5} width="100%">
-        <FontAwesomeIcon icon={faThumbsUp} size='lg' cursor='pointer' />
-        <FontAwesomeIcon icon={faComment} size='lg' cursor='pointer' />
+      <FontAwesomeIcon icon={isLiked ? solidThumbsUp : regularThumbsup} size='lg' cursor='pointer' onClick={likeArticle} />
+        <FontAwesomeIcon icon={regularComment} size='lg' cursor='pointer' />
         <Spacer />
-        <FontAwesomeIcon icon={faBookmark} size='lg' cursor='pointer' />
+        <FontAwesomeIcon icon={isBookMarked ? solidBookMark : regularBookmark} size='lg' cursor='pointer' />
       </HStack>
       <Divider bg="gray.400" borderColor="gray.600" marginBottom={10} />
 

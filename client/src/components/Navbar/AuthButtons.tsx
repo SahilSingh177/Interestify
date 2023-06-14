@@ -5,13 +5,14 @@ import { AddIcon, EditIcon, ExternalLinkIcon, HamburgerIcon, RepeatIcon } from '
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { authState } from '../../atoms/userAtom'
 import { auth } from "@/firebase/clientApp";
-import { SignOutHook, useSignOut } from 'react-firebase-hooks/auth'
+import { SignOutHook, useAuthState, useSignOut } from 'react-firebase-hooks/auth'
 // import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 
 const AuthButtons = () => {
   const userState = useRecoilValue(authState);
   const { isLoggedIn, currentUser } = userState;
   const setUserState = useSetRecoilState(authState)
+  const [_, loadingAuthState, loadingAuthError] = useAuthState(auth);
 
   const [signOut, loading, error] = useSignOut(auth);
   const displayName = currentUser ? currentUser.displayName : "Not applicable";
@@ -23,16 +24,19 @@ const AuthButtons = () => {
   };
 
   const waitForCurrentUser = () => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUserState((prevState) => ({
-          ...prevState,
-          isLoggedIn: false,
-          currentUser: null,
-        }));
-        console.log(user.displayName);
+    while(loadingAuthState){
+      if(loadingAuthError){
+        console.log("Couldn't set auth state")
+        return;
       }
-    });
+    }
+    setUserState((prevState) => ({
+      ...prevState,
+      isLoggedIn: false,
+      currentUser: null,
+    }));
+    console.log("SIGNED OUT");
+
   };
 
   return (

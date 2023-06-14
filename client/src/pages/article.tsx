@@ -5,7 +5,7 @@ import ArticleRecommendations from '@/components/Blogs/ArticleRecommendations'
 
 const article = () => {
   return (
-    <Stack direction={{md:"row", sm:"column"}} width="100vw" maxWidth="100vw">
+    <Stack direction={{md:"row", sm:"column"}} width={`calc(100vw - 12px)`} maxWidth="100vw" overflowX='hidden'>
       <Article></Article>
       <ArticleRecommendations></ArticleRecommendations>
     </Stack>

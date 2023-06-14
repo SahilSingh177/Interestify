@@ -9,6 +9,7 @@ const ArticleCard: React.FC<Props> = () => {
   return (
     <>
       <Card
+        bg='white'
         minHeight='20vh'
         direction={{ md: 'row', sm: 'column' }}
         overflow='hidden'

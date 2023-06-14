@@ -6,7 +6,7 @@ import { useRecoilValue } from 'recoil'
 const Banner: React.FC = () => {
   const isLoggedIn = useRecoilValue(authState).isLoggedIn;
   return (
-    <Flex flexDirection="column" width="100vw" maxWidth="100vw">
+    <Flex flexDirection="column" width={`calc(100vw - 12px)`} overflowX="hidden">
       {!isLoggedIn && <Flex flexDirection="row" height="60vh" bg="#ffdf00" marginTop="0" alignItems="center">
         <Box width="50vw" paddingLeft="10%">
           <Stack>
