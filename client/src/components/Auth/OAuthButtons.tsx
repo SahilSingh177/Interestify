@@ -1,7 +1,7 @@
-import { Button, Flex, Image } from '@chakra-ui/react';
+import { Button, Flex, Image, Text, Avatar } from '@chakra-ui/react';
 import React from 'react';
 import { auth } from '@/firebase/clientApp';
-import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
+import { useAuthState, useSignInWithGoogle } from 'react-firebase-hooks/auth';
 import { useSignInWithFacebook } from 'react-firebase-hooks/auth';
 import { useRouter } from 'next/router';
 import { authState } from '@/atoms/userAtom';
@@ -16,20 +16,24 @@ const OauthButtons = ({ imageSrc, providerName }: Props) => {
   const setUserState = useSetRecoilState(authState);
   const [signInWithGoogle, guser, gloading, gerror] = useSignInWithGoogle(auth);
   const [signInWithFacebook, fuser, floading, ferror] = useSignInWithFacebook(auth);
+  const [_, loadingAuthState, loadingAuthError] = useAuthState(auth);
 
   const Router = useRouter();
 
   const waitForCurrentUser = () => {
-    const unsubscribe = auth.onAuthStateChanged((guser) => {
-      if (guser) {
-        setUserState((prevState) => ({
-          ...prevState,
-          isLoggedIn: true,
-          currentUser: guser,
-        }));
-        console.log(guser.email);
+    while(loadingAuthState){
+      if(loadingAuthError){
+        console.log("Couldn't set auth state")
+        return;
       }
-    });
+    }
+    setUserState((prevState) => ({
+      ...prevState,
+      isLoggedIn: true,
+      currentUser: guser?.user,
+    }));
+    if(guser?.user)console.log(guser?.user.displayName);
+
   };
 
   const onSubmit = async () => {
@@ -54,9 +58,9 @@ const OauthButtons = ({ imageSrc, providerName }: Props) => {
   };
 
   return (
-    <Button variant="oauth" mb={2} width="20vw" height="10vh" fontSize="xl"
+    <Button variant="oauth" mb={2} width="20vw" height="10vh" fontSize="md"
       onClick={onSubmit}>
-      <Image src={imageSrc} height="30px" mr={1} />
+      <Avatar src={imageSrc} size="sm" mr={4} />
       Login with {providerName}
     </Button>
   );

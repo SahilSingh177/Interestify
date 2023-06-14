@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Flex, Input, FormLabel, Box } from "@chakra-ui/react";
-import { useCreateUserWithEmailAndPassword, useUpdateProfile } from 'react-firebase-hooks/auth';
+import { useAuthState, useCreateUserWithEmailAndPassword, useUpdateProfile } from 'react-firebase-hooks/auth';
 import { auth } from '../../firebase/clientApp';
 import Redirect from "./Redirect";
 import ShowAlert from "../Alert/Alert";
@@ -17,58 +17,61 @@ const SignupForm = () => {
     password: "",
     confirmPassword: "",
   });
-
+  
   const [
     createUserWithEmailAndPassword,
-    userCredential,
+    user,
     loading,
     error,
   ] = useCreateUserWithEmailAndPassword(auth);
-
+  
   const [updateProfile, updating, ProfileError] = useUpdateProfile(auth);
-  const [success, setSuccess] = useState(false);
-
+  const [_, loadingAuthState, loadingAuthError] = useAuthState(auth);
+  
   const waitForCurrentUser = () => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUserState((prevState) => ({
-          ...prevState,
-          isLoggedIn: true,
-          currentUser: user,
-        }));
-        console.log(user.displayName);
+    while (loadingAuthState) {
+      if (loadingAuthError) {
+        console.log("Couldn't set auth state");
+        return;
       }
-    });
+    }
+    setUserState((prevState) => ({
+      ...prevState,
+      isLoggedIn: true,
+      currentUser: user?.user,
+    }));
+    if (user?.user) console.log(user?.user.displayName);
   };
-
+  
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    // if (signupForm.password !== signupForm.confirmPassword) 
+  
     // handle password validation (e.g., check length, match, etc.)
-
-    await createUserWithEmailAndPassword(signupForm.email,signupForm.password)
-    await updateProfile({ displayName: signupForm.username })
-    if (error){
-       console.log(error);
-       return;
+    // if (signupForm.password !== signupForm.confirmPassword)
+  
+    await createUserWithEmailAndPassword(signupForm.email, signupForm.password);
+    await updateProfile({ displayName: signupForm.username });
+  
+    if (error) {
+      console.log(error);
+      return;
     }
+  
     waitForCurrentUser();
-    setSuccess(true);
-    setSignupForm({username:"",email:"",password:"",confirmPassword:""});
+    setSignupForm({ username: "", email: "", password: "", confirmPassword: "" });
     Router.push("/select-preferences");
   };
-
-
+  
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSignupForm(prev => ({
+    setSignupForm((prev) => ({
       ...prev,
       [event.target.name]: event.target.value,
-    }))
-  }
+    }));
+  };
+  
 
   return (
-    <Flex width="49vw" padding="5vw 10vw">
+    <Flex width="50vw" padding="5vw 10vw">
       <form onSubmit={onSubmit} >
         <FormLabel color="white">Username</FormLabel>
         <Input
@@ -121,7 +124,7 @@ const SignupForm = () => {
           bg="blue.800"
           border="blue.400"
         />
-        <Button variant="success" width="100%" height="50px" mt={2} mb={2} size="lg" type="submit" isLoading={loading}>
+        <Button variant="success" width="25vw" height="50px" mt={5} mb={2} size="lg" type="submit" isLoading={loading}>
           Sign Up
         </Button>
         <Redirect view="signup"></Redirect>
@@ -136,9 +139,6 @@ const SignupForm = () => {
           message={"Internal Server Error"}
         />
       )}
-      {success &&
-        <ShowAlert type="success" title="Congratulations" message="Successfully logged in"></ShowAlert>
-      }
     </Flex>
   )
 };

@@ -41,10 +41,11 @@ const Navbar: React.FC = () => {
       justifyContent="space-between"
       alignItems="center"
       overflowX="hidden"
+      overflowY="hidden"
     >
       <Link href="/">
         <Text fontWeight="extrabold" fontSize="5xl">
-          Intrestify
+          INTERESTIFY
         </Text>
 
       </Link>

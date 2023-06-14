@@ -14,7 +14,7 @@ const ArticleRecommendations = (props: Props) => {
             const currentPosition = window.pageYOffset;
             const containerHeight = containerRef.current?.offsetHeight || 0;
             setScrollPosition(currentPosition);
-            setIsScrolledPastThreshold(currentPosition > 50 + (containerHeight * 0.05));
+            setIsScrolledPastThreshold(currentPosition > 105 + (containerHeight * 0.05));
         };
 
         window.addEventListener('scroll', handleScroll);
@@ -47,13 +47,14 @@ const ArticleRecommendations = (props: Props) => {
             )}
             <VStack
                 width="30vw"
-                height="calc(100vh - 80px)"
+                height="calc(90vh - 80px)"
                 position={isScrolledPastThreshold ? 'fixed' : 'static'}
                 right={isScrolledPastThreshold ? '3.7vw' : '0'}
                 top={`calc(80px + 5vh)`}
                 overflowY="scroll"
                 borderRadius={10}
             >
+                <Heading margin='5% 0' color='gray.700'>Similar Articles</Heading>
                 <ArticleCard></ArticleCard>
                 <ArticleCard></ArticleCard>
                 <ArticleCard></ArticleCard>
