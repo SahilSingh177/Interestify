@@ -73,8 +73,7 @@ def get_top_articles():
         link = article_data['article_link']
         category = article_data['category']
         author = article_data['author']
-        article = read_article(link)
-        summary = summarize_article(article)
+        summary = read_article(link)
         resp.append({
             "link": link,
             "category": category,
