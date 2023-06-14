@@ -34,8 +34,8 @@ const register_mail = (props: Props) => {
                 </SimpleGrid>
             </Box>
             <Flex width="27%" justifyContent="space-between">
-            <Button variant="danger" size="lg" borderRadius="7" bg="red.500" onClick={() => Router.push('/')}>Register</Button>
-            <Button variant="success" size="lg" borderRadius="7" fontWeight="bold" onClick={() => Router.push('/')}>Skip</Button>
+                <Button variant="danger" size="lg" borderRadius="7" bg="red.500" onClick={() => Router.push('/')}>Register</Button>
+                <Button variant="success" size="lg" borderRadius="7" fontWeight="bold" onClick={() => Router.push('/')}>Skip</Button>
 
             </Flex>
             <Text marginTop="3" color="gray.600" fontSize="md" fontWeight="bold">You can unsubscribe anytime.</Text>

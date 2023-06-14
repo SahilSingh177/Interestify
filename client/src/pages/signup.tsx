@@ -9,10 +9,10 @@ type Props = {}
 const signup = (props: Props) => {
   return (
     <Flex flexDirection="row" height={`calc(100vh - 60px)`} justifyContent="center" bgImage="/assets/auth_bg.avif">
-    <OAuth view="signup"></OAuth>
-    <AuthDivider></AuthDivider>
-    <SignupForm></SignupForm>
-  </Flex>
+      <OAuth view="signup"></OAuth>
+      <AuthDivider></AuthDivider>
+      <SignupForm></SignupForm>
+    </Flex>
   )
 }
 
