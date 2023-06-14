@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 from sendgrid import SendGridAPIClient
-from config.config import SENDGRID_API_KEY
 from services.database.database import App
 from services.springer import start_scraping_thread
 from utils.read_article import read_article
@@ -14,6 +13,7 @@ initialized = False
 DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
 USER = "neo4j"
 PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
+SENDGRID_API_KEY = "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"
 
 uri = DATABASE_URL
 user = USER
