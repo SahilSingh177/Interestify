@@ -1,4 +1,3 @@
-# backend/app/utils/email_service.py
 import schedule
 import time
 from .database.database import App
@@ -6,11 +5,11 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 import threading
 
-from config.config import SENDER_EMAIL, SENDGRID_API_KEY
+SENDGRID_API_KEY = "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"
+SENDER_EMAIL = "nikhilranjan1103@gmail.com"
 # from backend.app.services.research_paper_service import fetch_papers
-from main import getTopArticlesPerUser
-from utils.read_article import read_article
-from utils.summarize_article import summarize_article
+# from main import getTopArticlesPerUser
+from ..utils.read_article import read_article
 
 
 DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
@@ -27,10 +26,10 @@ database = App(uri,user,password)
 sg = SendGridAPIClient(api_key=SENDGRID_API_KEY)
 
 def send_email(recipient_email):
-    article_links = getTopArticlesPerUser(recipient_email)
+    # article_links = getTopArticlesPerUser(recipient_email)
+    # neo4j db call
 
     article = read_article()
-    summarized = summarize_article()
 
     # for every article
     message = Mail(
@@ -46,14 +45,9 @@ def send_email(recipient_email):
     except Exception as e:
         print(str(e))
 
-def fetch_and_send_papers(recipient_email):
-    # fetch top 5 papers
-    article_links = [] #top articles retireve from db
-    summaries = []
-    send_email(recipient_email)
 
 def run_scheduler(recipient_email):
-    schedule.every().sunday.at('09:00').do(fetch_and_send_papers, recipient_email)
+    schedule.every().sunday.at('09:00').do(send_email, recipient_email)
 
     while True:
         schedule.run_pending()
