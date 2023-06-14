@@ -1,17 +1,30 @@
 # backend/app/utils/email_service.py
 import schedule
 import time
+from .database.database import App
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 import threading
 
-from backend.config.config import config
+from config.config import SENDER_EMAIL, SENDGRID_API_KEY
 # from backend.app.services.research_paper_service import fetch_papers
-from ..main import getTopArticlesPerUser
-from ..utils.read_article import read_article
-from ..utils.summarize_article import summarize_article
+from main import getTopArticlesPerUser
+from utils.read_article import read_article
+from utils.summarize_article import summarize_article
 
-sg = SendGridAPIClient(api_key=config.SENDGRID_API_KEY)
+
+DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
+USER = "neo4j"
+PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
+
+
+uri = DATABASE_URL
+user = USER
+password = PASSWORD
+
+database = App(uri,user,password)
+
+sg = SendGridAPIClient(api_key=SENDGRID_API_KEY)
 
 def send_email(recipient_email):
     article_links = getTopArticlesPerUser(recipient_email)
@@ -21,7 +34,7 @@ def send_email(recipient_email):
 
     # for every article
     message = Mail(
-        from_email=config.SENDER_EMAIL,
+        from_email=SENDER_EMAIL,
         to_emails=recipient_email,
         subject='Weekly Research Paper Recommendations',
         plain_text_content='Here are the recommended research papers based on your interests: ...'

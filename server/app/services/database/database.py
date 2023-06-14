@@ -3,10 +3,10 @@ import os
 
 from neo4j import GraphDatabase
 from neo4j.exceptions import Neo4jError
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from pathlib import Path
 
-load_dotenv()
+# load_dotenv()
 
 DATABASE_URL = "neo4j+s://38e75c45.databases.neo4j.io:7687"
 USER = "neo4j"

@@ -1,54 +1,70 @@
 from flask import Flask, request, jsonify
 from sendgrid import SendGridAPIClient
-from .config.config import config
-
-from .services.research_paper_services.springer import fetch_articles, start_scraping_thread
-from .utils.read_article import read_article
-from .utils.summarize_article import summarize_article
-from .services.email_service import start_scheduler_thread
+from config.config import SENDGRID_API_KEY
+from services.database.database import App
+from services.springer import start_scraping_thread
+from utils.read_article import read_article
+from utils.summarize_article import summarize_article
+import dotenv
 
 app = Flask(__name__)
 sg = None
+initialized = False
 
-@app.before_first_request
+DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
+USER = "neo4j"
+PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
+
+uri = DATABASE_URL
+user = USER
+password = PASSWORD
+database = App(uri, user, password)
+
+
+@app.before_request
 def initialize():
-    # Initialize db
-    start_scraping_thread()
-    sg = SendGridAPIClient(api_key=config.SENDGRID_API_KEY) #mail service
+    global initialized, sg
+    if not initialized:
+        app.logger.info("Starting scraping thread...")
+        start_scraping_thread()
+        sg = SendGridAPIClient(api_key=SENDGRID_API_KEY)  # mail service
+        initialized = True
 
 
-@app.route('./registerUser',methods=['GET'])
-def registerUser():
+@app.route('/registerUser', methods=['POST'])
+def register_user():
     data = request.json
     email = data['email']
+    print(email)
     # save it in database
-    #create_user function
+    database.create_user(email, "sami")
+    # create_user function
+    return jsonify({"message": "User registered successfully"})
 
-@app.route('./registerUserPreferences',methods=['POST'])
-def registerUserPreferences():
+
+@app.route('/registerUserPreferences', methods=['POST'])
+def register_user_preferences():
     data = request.json
     email = data['email']
     preferences = data['preferences']
-    percentage = 100/len(preferences)
+    # percentage = 100 / len(preferences)
     # save it in database
-    #user_to_category function
+    database.user_to_category(email,preferences)
+    # user_to_category function
+    return jsonify({"message": "User preferences registered successfully"})
 
-@app.route('./subscribeUser',methods=['POST'])
-def subscribeUser():
-    data = request.json
-    email = data['email']
-    start_scheduler_thread(email)
-    
 
-@app.route('./updatePreferences',methods=['POST'])
-def updatePreferences():
+@app.route('/updatePreferences', methods=['POST'])
+def update_preferences():
     data = request.json
     email = data['email']
     category_preferences = data['updated_preferences']
-    #user_to_category update
+    # user_to_category update
+    return jsonify({"message": "User preferences updated successfully"})
+
 
 @app.route('/getTopArticles', methods=['GET'])
-def getTopArticles():
+def get_top_articles():
     # data = get_articles_from_db()  # Retrieve data from the database
     data = []
     resp = []
@@ -69,7 +85,7 @@ def getTopArticles():
     return jsonify(resp)
 
 @app.route('/getTopArticlesPerUser', methods=['GET'])
-def getTopArticlesPerUser():
+def get_top_articles_per_user():
     # data = get_articles_from_db()  # Retrieve data from the database
     data = []
     resp = []
@@ -89,5 +105,7 @@ def getTopArticlesPerUser():
 
     return jsonify(resp)
 
-if __name__ == 'main':
-    app.run()
+
+if __name__ == "__main__":
+    database.create_user("test@mail", "sami")
+    app.run(host='0.0.0.0', port=5000)
