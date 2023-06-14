@@ -3,6 +3,17 @@ from bs4 import BeautifulSoup
 import time
 import concurrent.futures
 import threading
+# Call database to get categories
+from .database.database import App
+
+DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
+USER = "neo4j"
+PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
+
+
+uri = DATABASE_URL
+user = USER
+password = PASSWORD
 # from ...database.database import 
 
 root_url = "https://link.springer.com"
@@ -61,7 +72,9 @@ def fetch_new_articles():
             article_links = fetch_articles(page)
             for article in article_links:
                     #call to model to get categories
+                    app = App(uri, user, password)
                     #Save to db
+                    app.create_blog("umm",article,"Sahil")
                     print("New article found:", article)
 
         time.sleep(1800)  # Makes request every 30 minutes
@@ -72,3 +85,4 @@ def start_scraping_thread():
     fetch_articles_thread.start()
 
 # Start doing this as soon as app is run
+# start_scraping_thread()
