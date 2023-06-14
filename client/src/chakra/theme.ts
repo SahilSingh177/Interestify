@@ -13,21 +13,21 @@ export const theme = extendTheme({
   styles: {
     global: () => ({
       body: {
-        bg: "gray.100",
+        bg: "white",
       },
       '::-webkit-scrollbar-track': {
         borderRadius: '10px',
         backgroundColor: 'gray.200',
-        boxShadow:"inset 0 0 6px rgba(0,0,0,0.3)"
+        boxShadow: "inset 0 0 6px rgba(0,0,0,0.3)"
       },
       '::-webkit-scrollbar': {
         width: '12px',
         backgroundColor: 'gray.200',
       },
       '::-webkit-scrollbar-thumb': {
-        borderRadius:"10px",
-        backgroundColor: '#FFFAF0',
-        boxShadow:"inset 0 0 6px rgba(0,0,0,.3)",
+        borderRadius: "10px",
+        backgroundColor: 'gray.600',
+        boxShadow: "inset 0 0 6px rgba(0,0,0,.3)",
       },
     }),
   },

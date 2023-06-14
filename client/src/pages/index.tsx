@@ -5,13 +5,13 @@ import Blogs from '@/components/Blogs/Blogs'
 
 type Props = {}
 
-const index:React.FC = (props: Props) => {
+const index: React.FC = (props: Props) => {
   return (
     <>
-    <Stack>
+      <Stack>
         <Banner></Banner>
         <Blogs></Blogs>
-    </Stack>
+      </Stack>
     </>
   )
 }

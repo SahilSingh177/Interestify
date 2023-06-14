@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 
 const select_preferences = () => {
   const Router = useRouter();
-  const handleRegisterInterests = ()=>{
+  const handleRegisterInterests = () => {
     // CustomList.handleItemRegistration();
     Router.push('/register_mail')
 
@@ -17,8 +17,8 @@ const select_preferences = () => {
       <Flex width="50%" justifyContent="center" paddingLeft="5%"><CustomList /></Flex>
       <VStack width="50%" alignItems="center" justifyContent="center" flexDirection="column" spacing={5}>
         <Text color="gray.900" fontSize="7xl" fontWeight="extrabold" textAlign="center">SELECT YOUR PREFERENCES</Text>
-        <Button variant="continue" bg="#1d4ed8" width="200px" height="50px" fontSize="2xl" 
-                         onClick={()=>handleRegisterInterests()}> Continue </Button>
+        <Button variant="continue" bg="#1d4ed8" width="200px" height="50px" fontSize="2xl"
+          onClick={() => handleRegisterInterests()}> Continue </Button>
       </VStack>
     </Flex>
   )
