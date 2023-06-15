@@ -3,18 +3,16 @@ from bs4 import BeautifulSoup
 import time
 import concurrent.futures
 import threading
-# Call database to get categories
+
 from .database.database import App
 
 DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
 USER = "neo4j"
 PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
 
-
 uri = DATABASE_URL
 user = USER
 password = PASSWORD
-# from ...database.database import 
 
 root_url = "https://link.springer.com"
 base_url = "https://link.springer.com/search/page/"
@@ -34,55 +32,64 @@ def fetch_articles(page):
     for article in articles_list.find_all("li", class_="no-access"):
         article.decompose()
 
-    article_links = []
-    download_pdf_links = []
+    articles_data = []
 
     for article in articles_list.find_all("li"):
+        article_authors = article.find("span", class_="authors").find_all("a")
+        authors = [author.get_text() for author in article_authors]
+
+        article_title = article.find("a", class_="title").get_text()
+
         article_link = article.find("h2").find("a")
-        if article_link:
-            article_links.append(root_url + article_link.get("href"))
+        article_url = root_url + article_link.get("href") if article_link else None
 
-    def download_pdf(article_link):
-        """
-        Downloads the PDF for a given article link.
-        """
-        article_html = requests.get(article_link)
-        soup = BeautifulSoup(article_html.text, "html.parser")
-        pdf_link = soup.find("a", attrs={"data-article-pdf": "true"})
-        if pdf_link:
-            return root_url + pdf_link.get("href")
-        return None
+        pdf_link = None
+        if article_url:
+            pdf_link = download_pdf(article_url)
+        article_data = {
+            "authors": authors,
+            "title": article_title,
+            "link": article_url,
+            "pdf_link": pdf_link,
+        }
 
-    for article_link in article_links:
-        pdf_link = download_pdf(article_link)
-        if pdf_link:
-            download_pdf_links.append(pdf_link)
+        articles_data.append(article_data)
 
-    return download_pdf_links
+    return articles_data
 
-# Generate 10 articles
-page = 1
+def download_pdf(article_url):
+    """
+    Downloads the PDF for a given article link.
+    """
+    article_html = requests.get(article_url)
+    soup = BeautifulSoup(article_html.text, "html.parser")
+    pdf_link = soup.find("a", attrs={"data-article-pdf": "true"})
+    if pdf_link:
+        return root_url + pdf_link.get("href")
+    return None
 
 def fetch_new_articles():
     """
     Fetches new articles from page 1 and 2 and adds them to the generated_articles list.
     """
     while True:
-        for page in range(1, 2):
-            article_links = fetch_articles(page)
-            for article in article_links:
-                    #call to model to get categories
-                    app = App(uri, user, password)
-                    #Save to db
-                    app.create_blog("umm",article,"Sahil")
-                    print("New article found:", article)
+        for page in range(1, 3):
+            articles_data = fetch_articles(page)
+            for article_data in articles_data:
+                authors = ", ".join(article_data["authors"])
+                title = article_data["title"]
+                link = article_data["link"]
+                pdf_link = article_data["pdf_link"]
+                app = App(uri, user, password)
+                app.create_blog(title, link, authors, pdf_link)
+                print("New article found:", title)
 
-        time.sleep(1800)  # Makes request every 30 minutes
+        time.sleep(1)  # Makes request every 30 minutes
 
 def start_scraping_thread():
     # Start fetching new articles on a separate thread
     fetch_articles_thread = threading.Thread(target=fetch_new_articles)
     fetch_articles_thread.start()
 
-# Start doing this as soon as app is run
-# start_scraping_thread()
+# Start doing this as soon as the app is run
+start_scraping_thread()
