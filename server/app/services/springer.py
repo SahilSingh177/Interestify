@@ -6,9 +6,9 @@ import threading
 
 from .database.database import App
 
-DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://874e6982.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
+PASSWORD = "bfVN1NOoQbK9xp3Eu9G1Y3dYaFfpONP-5Iq6hyPgFmw"
 
 uri = DATABASE_URL
 user = USER
@@ -84,7 +84,7 @@ def fetch_new_articles():
                 app.create_blog(title, link, authors, pdf_link)
                 print("New article found:", title)
 
-        time.sleep(1)  # Makes request every 30 minutes
+        time.sleep(10000)  # Makes request every 30 minutes
 
 def start_scraping_thread():
     # Start fetching new articles on a separate thread

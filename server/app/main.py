@@ -10,9 +10,9 @@ CORS(app, origins=['http://localhost:3000'])
 sg = None
 initialized = False
 
-DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://874e6982.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
+PASSWORD = "bfVN1NOoQbK9xp3Eu9G1Y3dYaFfpONP-5Iq6hyPgFmw"
 SENDGRID_API_KEY = "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"
 
 uri = DATABASE_URL
@@ -78,12 +78,16 @@ def get_top_articles():
         category = database.get_category_by_blog(article_data['link'])
         author = article_data['author']
         summary = article_data['summary']
+        time = article_data['read_time']
+        # print(data)
+
         resp.append({
             "link": link,
             "title": title,
             "category": category,
             "author": author,
-            "summary": summary
+            "summary": summary,
+            "time":time
         })
     print(resp)
     return jsonify(resp)
@@ -133,6 +137,26 @@ def get_top_articles_by_category():
     print(resp)
     return jsonify(resp)
 
+@app.route('/addBookmark',methods=['GET'])
+def addBookmark():
+    database.user_to_blog("test@mail","no one")
+    return jsonify({"result":True})
+
+@app.route('/getBookMarks', methods=['GET'])
+def getBookMarks():
+    try:
+        user_email = request.args.get('email')
+        if user_email is None:
+            return jsonify(error='Email parameter is missing'), 400
+
+        data = database.get_user_blogs(user_email)
+        return jsonify(data=data), 200
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+
 if __name__ == "__main__":
     database.create_user("test@mail", "sami")
+    database.user_to_blog("test@mail","no one")
+    database.user_to_blog("test@mail","https://link.springer.com/article/10.1007/s42757-022-0154-6")
+    print("END............................")
     app.run(host='0.0.0.0', port=5000)

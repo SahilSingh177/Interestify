@@ -8,9 +8,10 @@ type Props = {
   Category: string |null,
   Title: string,
   Summary: string,
+  ReadingTime: string,
 };
 
-const ArticleCard: React.FC<Props> = ({Author,Category,Title,Summary}:Props) => {
+const ArticleCard: React.FC<Props> = ({Author,Category,Title,Summary, ReadingTime}:Props) => {
   const colours=["red","orange","yellow","teal","cyan","purple","pink"];
   const getRandomColour = ()=>{
     const randomIndex = Math.floor(Math.random()*colours.length);
@@ -68,7 +69,7 @@ const ArticleCard: React.FC<Props> = ({Author,Category,Title,Summary}:Props) => 
               </HStack>
               <HStack spacing={1}>
                 <Icon as={FaRegEye}></Icon>
-                <Text fontSize='sm' color="gray.500">5 min read</Text>
+                <Text fontSize='sm' color="gray.500">{ReadingTime}</Text>
               </HStack>
               <Spacer />
               <Text fontSize='sm' color="gray.500">By {Author?Author:"Unknown"}</Text>

@@ -10,9 +10,9 @@ from pathlib import Path
 from .read_article import read_article
 
 # load_dotenv()
-DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://874e6982.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
+PASSWORD = "bfVN1NOoQbK9xp3Eu9G1Y3dYaFfpONP-5Iq6hyPgFmw"
 print(USER)
 
 class App:
@@ -135,25 +135,31 @@ class App:
             if self.check_blog_exists(blog_link):
                 print("Blog already exists")
                 return False
-            summary = read_article(download_link)
+
+            summaryData = read_article(download_link)
+            summary = summaryData[0]
+            read_time = str(summaryData[1])
             summary_text = summary.summary
             lines = summary_text.splitlines()
             cleaned_lines = [line.lstrip("- ") for line in lines]
             cleaned_summary = "\n".join(cleaned_lines)
+            print(summary)
+            print(read_time)
+            print(type(read_time))
             result = session.execute_write(
-                self._create_blog, blog_title, blog_link, blog_author, download_link, cleaned_summary)
+                self._create_blog, blog_title, blog_link, blog_author,read_time, download_link, cleaned_summary)
             for record in result:
                 print("Created Blog: {b}"
                       .format(b=record['b']))
             return True
 
     @staticmethod
-    def _create_blog(tx, blog_title, blog_link, blog_author, download_link, summary):
+    def _create_blog(tx, blog_title, blog_link, blog_author, read_time, download_link, summary):
         query = (
-            "CREATE (b:Blog { title: $blog_title, link: $blog_link, author: $blog_author, likes: 0, download_link: $download_link, summary: $summary}) "
+            "CREATE (b:Blog { title: $blog_title, link: $blog_link, author: $blog_author, read_time: $read_time ,likes: 0, download_link: $download_link, summary: $summary}) "
             "RETURN b"
         )
-        result = tx.run(query, blog_title = blog_title, blog_link = blog_link, blog_author = blog_author, download_link = download_link, summary = summary)
+        result = tx.run(query, blog_title = blog_title, blog_link = blog_link, blog_author = blog_author,read_time=read_time ,download_link = download_link, summary = summary)
         try:
             return [{"b": record["b"]["title"]}
                     for record in result]
@@ -413,6 +419,24 @@ class App:
                 query=query, exception=exception))
             raise
 
+    def get_user_blogs(self, user_email):
+        print("hello")
+        with self.driver.session(database="neo4j") as session:
+            if not self.check_user_exists(user_email):
+                print("User does not exist")
+                return []
+
+            query = (
+                "MATCH (u:User {email: $user_email})--(b:Blog) "
+                "RETURN b.title, b.download_link"
+            )
+            result = session.run(query, user_email=user_email)
+            user_blogs = [
+                {"title": record["b.title"], "link": record["b.download_link"]}
+                for record in result
+            ]
+            
+            return user_blogs
     def user_to_author(self, user_email, author_name):
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
@@ -478,6 +502,8 @@ class App:
                 query=query, exception=exception))
             raise
 
+
+
     def get_blogs_by_likes(self, category_name: Optional[str] = None):
         with self.driver.session(database="neo4j") as session:
             result = session.read_transaction(self._get_blogs_by_likes, category_name)
@@ -489,20 +515,20 @@ class App:
         if category_name:
             query = (
                 "MATCH (b:Blog)-[:IN_CATEGORY]->(c:Category {name:$category_name}) "
-                "RETURN b.author AS author, b.title AS title, b.link AS link , b.download_link AS pdf_link, b.summary AS summary "
+                "RETURN b.author AS author, b.title AS title, b.link AS link , b.download_link AS pdf_link, b.summary AS summary, b.read_time as read_time "
                 "ORDER BY b.likes DESC"
             )
             result = tx.run(query, category_name=category_name)
         else:
             query = (
                 "MATCH (b:Blog) "
-                "RETURN b.author AS author, b.title AS title, b.link AS link , b.download_link AS pdf_link, b.summary AS summary "
+                "RETURN b.author AS author, b.title AS title, b.link AS link , b.download_link AS pdf_link, b.summary AS summary, b.read_time as read_time "
                 "ORDER BY b.likes DESC"
             )
             result = tx.run(query)
         try:
             return [
-                {"author": record["author"], "title": record["title"], "link": record["link"], "pdf_link": record["pdf_link"], "summary": record["summary"]}
+                {"author": record["author"], "title": record["title"], "link": record["link"], "pdf_link": record["pdf_link"], "summary": record["summary"], "read_time":record["read_time"]}
                 for record in result
             ]
         except Neo4jError as exception:
@@ -519,13 +545,13 @@ class App:
     def _get_blogs_by_likes_and_category(tx, category_name):
         query = (
             "MATCH (b:Blog)-[:IN_CATEGORY]->(c:Category {name:$category_name}) "
-            "RETURN b.author AS author, b.title AS title, b.link AS link "
+            "RETURN b.author AS author, b.title AS title, b.link AS link, b.read_time AS read_time"
             "ORDER BY b.likes DESC"
         )
         result = tx.run(query, category_name=category_name)
         try:
             return [
-                {"author": record["author"], "title": record["title"], "link": record["link"]}
+                {"author": record["author"], "title": record["title"], "link": record["link"], "read_time":record["read_link"]}
                 for record in result
             ]
         except Neo4jError as exception:
@@ -661,6 +687,7 @@ if __name__ == "__main__":
     user = USER
     password = PASSWORD
     app = App(uri, user, password)
+    # app.create_blog("testing title","https://link.springer.com/content/pdf/10.1007/s42757-022-0154-6.pdf?pdf=button","https://link.springer.com/content/pdf/10.1007/s42757-022-0154-6.pdf?pdf=button")
     # Creation of nodes
     # app.create_user("Sample@gmail.com","Sample")
     # app.create_user("nikhil@gmail.com","Nikhil")
@@ -678,8 +705,8 @@ if __name__ == "__main__":
     # app.author_to_category("Sampleauthor","Samplecategory")
 
     # # Creation of relationships (Users)
-    # app.user_to_blog("Sample@gmail.com","Samplelink")
-    # app.user_to_author("Sample@gmail.com","Sampleauthor")
+    # app.user_to_blog_bookmark("Sample@gmail.com","Samplelink")
+    # app.user_to_blog_bookmark("Sample@gmail.com","Sampleauthor")
     # app.user_to_category("nikhil@gmail.com","dsnjdsnjdsnnkjds")
     # app.user_to_category_browsing("nikhil@gmail.com","dsnjdsnjdsnnkjds",29)
     # app.user_to_category("nikhil@gmail.com","bc")
@@ -695,12 +722,12 @@ if __name__ == "__main__":
     # print(ans)
     # for i in ans:
     #     print(i["pdf_link"])
-    summary = read_article("https://link.springer.com/content/pdf/10.1007/s00120-023-02043-2.pdf?pdf=button")
-    summary_text = summary.summary
-    lines = summary_text.splitlines()
-    cleaned_lines = [line.lstrip("- ") for line in lines]
-    cleaned_summary = "\n".join(cleaned_lines)
-    print(cleaned_summary)
+    # summary = read_article("https://link.springer.com/content/pdf/10.1007/s00120-023-02043-2.pdf?pdf=button")
+    # summary_text = summary.summary
+    # lines = summary_text.splitlines()
+    # cleaned_lines = [line.lstrip("- ") for line in lines]
+    # cleaned_summary = "\n".join(cleaned_lines)
+    # print(cleaned_summary)
     # app.user_to_category_browsing("nikhil@gmail.com","dsnjdsnjdsnnkjds",92)
     # app.delete_user_to_category("sahil@gmail.com")
     # ans = app.get_category_by_blog("https://link.springer.com/content/pdf/10.1007/s42757-022-0144-8.pdf?pdf=button")
