@@ -37,8 +37,7 @@ const SignupForm = () => {
     }
     setUserState((prevState) => ({
       ...prevState,
-      isLoggedIn: true,
-      currentUser: user?.user,
+      isLoggedIn: true
     }));
     if (user?.user) console.log(user?.user.displayName);
   };
@@ -48,9 +47,11 @@ const SignupForm = () => {
   
     // handle password validation (e.g., check length, match, etc.)
     // if (signupForm.password !== signupForm.confirmPassword)
+    
   
     await createUserWithEmailAndPassword(signupForm.email, signupForm.password);
     await updateProfile({ displayName: signupForm.username });
+    await updateProfile({ photoURL: '/assets/default_profile_photo.png' });
   
     if (error) {
       console.log(error);

@@ -15,7 +15,7 @@ const Layout = ({ children }: React.PropsWithChildren<Props>) => {
         bg="black"
         borderColor="black"
         position="fixed"
-        zIndex="200"
+        zIndex="1"
       />
       {children}
     </>
