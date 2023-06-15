@@ -2,6 +2,7 @@ import requests
 import PyPDF2
 import os
 import cohere
+import readtime
 
 co = cohere.Client('410fhpjmHWW23NoOKDJ9u9yTkRqxyWrJdKHLJ04u')
 
@@ -23,7 +24,9 @@ def read_article(link):
 
     article = pageData
     summary = co.summarize(text=article)
+    read_time = readtime.of_text(article)
+    data = [summary,read_time]
     pdf_file.close()
     os.remove("temp.pdf")
 
-    return summary
+    return data

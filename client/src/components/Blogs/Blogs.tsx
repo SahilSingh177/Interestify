@@ -12,6 +12,7 @@ const Blogs: React.FC = () => {
         link: string;
         title: string,
         summary: string,
+        time: string,
     }
 
     const [data, setData] = useState<Article[] | undefined>(undefined);
@@ -53,7 +54,7 @@ const Blogs: React.FC = () => {
                     </VStack>
                 }
                 {data && data.map((articleInfo, id) =>
-                    <ArticleCard Author={articleInfo.author} Category={articleInfo.category} Title={articleInfo.title} Summary={articleInfo.summary}
+                    <ArticleCard Author={articleInfo.author} Category={articleInfo.category} Title={articleInfo.title} Summary={articleInfo.summary} ReadingTime={articleInfo.time}
                         key={id}></ArticleCard>)
                 }
             </Flex>

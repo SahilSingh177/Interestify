@@ -12,9 +12,9 @@ SENDER_EMAIL = "nikhilranjan1103@gmail.com"
 from .database.read_article import read_article
 
 
-DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://874e6982.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
+PASSWORD = "bfVN1NOoQbK9xp3Eu9G1Y3dYaFfpONP-5Iq6hyPgFmw"
 
 
 uri = DATABASE_URL
@@ -29,7 +29,7 @@ def send_email(recipient_email):
     # article_links = getTopArticlesPerUser(recipient_email)
     # neo4j db call
 
-    article = read_article()
+    article = read_article()[0]
 
     # for every article
     message = Mail(
