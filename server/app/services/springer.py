@@ -68,7 +68,7 @@ def fetch_new_articles():
     Fetches new articles from page 1 and 2 and adds them to the generated_articles list.
     """
     while True:
-        for page in range(1, 3):
+        for page in range(1, 2):
             article_links = fetch_articles(page)
             for article in article_links:
                     #call to model to get categories

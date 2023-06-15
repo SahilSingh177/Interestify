@@ -26,17 +26,18 @@ const Sidebar: React.FC<Props> = () => {
   }, []);
 
   return (
-    <Flex marginTop="3vh" width={`calc(0.3*90vw)`} flexDirection="column">
-      <Flex width={`calc(0.3*90vw)`} height={0} />
+    <Flex marginTop="3vh" width="25vw" flexDirection="column">
+      <Flex width="25vw" height={0} />
       <Stack
         spacing="1vh"
-        position={isFixed ? 'fixed' : 'static'}
+        position={{lg: isFixed ? 'fixed' : 'static',md:"static"}}
         top={isFixed ? 'calc(100px + 10vh)' : 'auto'}
         right="auto"
         left="auto"
-        width={`calc(0.3*90vw)`}
+        width={{lg:`calc(0.3*85vw)`,md:`calc(100vw - 12px)`}}
+
       >
-        <Text fontWeight="medium" fontSize="20px" marginBottom="10px">
+        <Text fontWeight="medium" fontSize="20px" marginBottom="10px" textAlign={{lg:"left",md:"center"}}>
           Discover more of what matters to you
         </Text>
         <Flex flexWrap="wrap" justifyContent="center">
