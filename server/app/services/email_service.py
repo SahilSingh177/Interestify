@@ -45,7 +45,6 @@ def send_email(recipient_email):
     except Exception as e:
         print(str(e))
 
-
 def run_scheduler(recipient_email):
     schedule.every().sunday.at('09:00').do(send_email, recipient_email)
 
