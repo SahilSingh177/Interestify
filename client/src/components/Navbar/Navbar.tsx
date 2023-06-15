@@ -19,7 +19,7 @@ const Navbar: React.FC = () => {
     const handleScroll = () => {
       const currentPosition = window.pageYOffset;
       setScrollPosition(currentPosition);
-      setIsScrolledPastThreshold(currentPosition > 60 + (window.innerHeight * 0.50));
+      setIsScrolledPastThreshold(currentPosition > 80 + (window.innerHeight * 0.50));
     };
 
     window.addEventListener('scroll', handleScroll);

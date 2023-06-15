@@ -2,11 +2,13 @@ from flask import Flask, request, jsonify
 from sendgrid import SendGridAPIClient
 from services.database.database import App
 from services.springer import start_scraping_thread
-from utils.read_article import read_article
-from utils.summarize_article import summarize_article
+# from utils.read_article import read_article
+# from utils.summarize_article import summarize_article
 import dotenv
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, origins=['http://localhost:3000'])
 sg = None
 initialized = False
 

@@ -1,7 +1,6 @@
 import requests
 import PyPDF2
 import os
-import summarize_article
 import cohere
 co = cohere.Client('410fhpjmHWW23NoOKDJ9u9yTkRqxyWrJdKHLJ04u')
 

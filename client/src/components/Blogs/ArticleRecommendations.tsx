@@ -55,6 +55,7 @@ const ArticleRecommendations = (props: Props) => {
                 borderRadius={10}
             >
                 <Heading margin='5% 0' color='gray.700'>Similar Articles</Heading>
+                {/* <ArticleCard></ArticleCard>
                 <ArticleCard></ArticleCard>
                 <ArticleCard></ArticleCard>
                 <ArticleCard></ArticleCard>
@@ -65,8 +66,7 @@ const ArticleRecommendations = (props: Props) => {
                 <ArticleCard></ArticleCard>
                 <ArticleCard></ArticleCard>
                 <ArticleCard></ArticleCard>
-                <ArticleCard></ArticleCard>
-                <ArticleCard></ArticleCard>
+                <ArticleCard></ArticleCard> */}
             </VStack>
         </Box>
     );
