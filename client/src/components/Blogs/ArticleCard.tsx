@@ -9,6 +9,11 @@ type Props = {
 };
 
 const ArticleCard: React.FC<Props> = ({Author,Category}:Props) => {
+  const colours=["red","orange","yellow","teal","cyan","purple","pink"];
+  const getRandomColour = ()=>{
+    const randomIndex = Math.floor(Math.random()*colours.length);
+    return colours[randomIndex];
+  }
   const Router = useRouter();
   const [isLiked, setIsLiked] = useState<Boolean>(false); //liked or not should be fetched from backend
   const [isBookMarked, setIsBookMarked] = useState<Boolean>(false);
@@ -43,7 +48,7 @@ const ArticleCard: React.FC<Props> = ({Author,Category}:Props) => {
           <CardBody width="full" onClick={() => Router.push('/article')}>
             <HStack>
               <Heading size='md'>The perfect latte</Heading>
-              <Tag size="sm" variant='solid' colorScheme='teal'>
+              <Tag size="sm" variant='solid' colorScheme={getRandomColour()}>
                 {Category?Category:"Unknown"}
               </Tag>
 

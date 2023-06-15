@@ -7,6 +7,7 @@ import Banner from "./Banner";
 import Link from 'next/link';
 import { authState } from "@/atoms/userAtom";
 import { useRecoilValue } from "recoil";
+import SearchBar from "./SearchBar";
 
 const Navbar: React.FC = () => {
   const isLoggedIn = useRecoilValue(authState).isLoggedIn;
@@ -36,7 +37,7 @@ const Navbar: React.FC = () => {
       width="100vw"
       maxWidth="100vw"
       height="80px"
-      padding="10px 10vw"
+      padding="10px 5vw"
       zIndex="200"
       justifyContent="space-between"
       alignItems="center"
@@ -44,11 +45,14 @@ const Navbar: React.FC = () => {
       overflowY="hidden"
     >
       <Link href="/">
-        <Text fontWeight="extrabold" fontSize="5xl">
+        {/* <Text fontWeight="extrabold" fontSize="5xl">
           Interestify
-        </Text>
+        </Text> */}
+        {/* <Icon></Icon> */}
+        <Image src="/assets/logo-no-background.svg" height="80px" transform="scale(1.3)"></Image>
 
       </Link>
+        <SearchBar></SearchBar>
       <Flex>
         <AuthButtons />
       </Flex>

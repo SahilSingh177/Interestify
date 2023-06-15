@@ -4,7 +4,7 @@ import { VStack, Stack, Flex, Box, Text, Badge, Link, Avatar } from '@chakra-ui/
 const AuthorCard = () => {
   return (
     <Flex flexDirection={{ md: "row", sm: "column" }}>
-      <Avatar src='https://bit.ly/sage-adebayo' />
+      <Avatar src='/assets/default_profile_photo.png' />
       <VStack>
         <Box ml='3'>
           <Text fontWeight='bold'>
