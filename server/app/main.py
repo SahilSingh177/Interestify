@@ -49,7 +49,8 @@ def register_user_preferences():
     preferences = data['preferences']
     # percentage = 100 / len(preferences)
     # save it in database
-    database.user_to_category(email,preferences)
+    for preference in preferences:
+        database.user_to_category(email,preference)
     # user_to_category function
     return jsonify({"message": "User preferences registered successfully"})
 
@@ -59,6 +60,9 @@ def update_preferences():
     data = request.json
     email = data['email']
     category_preferences = data['updated_preferences']
+    database.delete_user_to_category(email)
+    for update_preference in category_preferences:
+        database.user_to_category(email,update_preference)
     # user_to_category update
     return jsonify({"message": "User preferences updated successfully"})
 
@@ -66,44 +70,67 @@ def update_preferences():
 @app.route('/getTopArticles', methods=['GET'])
 def get_top_articles():
     # data = get_articles_from_db()  # Retrieve data from the database
-    data = []
+    data = database.get_blogs_by_likes()
     resp = []
-
     for article_data in data:
-        link = article_data['article_link']
-        category = article_data['category']
+        link = article_data['link']
+        category = database.get_category_by_blog(article_data['link'])
         author = article_data['author']
-        summary = read_article(link)
+        # article = read_article(link)
+        # summary = summarize_article(article)
         resp.append({
             "link": link,
             "category": category,
             "author": author,
-            "summary": summary
+            # "summary": summary
         })
-
+    print(resp)
     return jsonify(resp)
 
 @app.route('/getTopArticlesPerUser', methods=['GET'])
 def get_top_articles_per_user():
     # data = get_articles_from_db()  # Retrieve data from the database
-    data = []
+    args = request.args
+    category = args['category']
+    limit = int(args['limit'])
+    data = database.get_blogs_by_category_and_limit(category,limit)
     resp = []
 
     for article_data in data:
-        link = article_data['article_link']
-        category = article_data['category']
+        link = article_data['link']
         author = article_data['author']
-        article = read_article(link)
-        summary = summarize_article(article)
+        # article = read_article(link)
+        # summary = summarize_article(article)
         resp.append({
             "link": link,
             "category": category,
             "author": author,
-            "summary": summary
+            # "summary": summary
         })
 
     return jsonify(resp)
 
+@app.route('/getTopArticlesfor', methods=['GET'])
+def get_top_articles_by_category():
+    args = request.args
+    category = args['category']
+    print(category)
+    data = database.get_blogs_by_likes_and_category(category)
+    resp = []
+    for article_data in data:
+        link = article_data['link']
+        category = database.get_category_by_blog(article_data['link'])
+        author = article_data['author']
+        # article = read_article(link)
+        # summary = summarize_article(article)
+        resp.append({
+            "link": link,
+            "category": category,
+            "author": author,
+            # "summary": summary
+        })
+    print(resp)
+    return jsonify(resp)
 
 if __name__ == "__main__":
     database.create_user("test@mail", "sami")
