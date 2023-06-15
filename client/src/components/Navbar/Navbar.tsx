@@ -31,7 +31,7 @@ const Navbar: React.FC = () => {
 
   return (
     <Flex
-      bg={isHomePage && !isLoggedIn && !isScrolledPastThreshold ? "#ffdf00" : "#f1f5f9"}
+      bg={isHomePage && !isLoggedIn && !isScrolledPastThreshold ? "#ffdf00" : "white"}
       position="fixed"
       width="100vw"
       maxWidth="100vw"

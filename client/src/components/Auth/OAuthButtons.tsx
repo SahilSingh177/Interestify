@@ -33,6 +33,7 @@ const OauthButtons = ({ imageSrc, providerName }: Props) => {
       currentUser: guser?.user,
     }));
     if(guser?.user)console.log(guser?.user.displayName);
+    // if(guser?.user)console.log(guser?.user.photoURL);
 
   };
 

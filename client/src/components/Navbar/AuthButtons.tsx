@@ -1,31 +1,35 @@
 import React from "react";
+import { useEffect } from "react";
 import Link from 'next/link';
-import { Button, Box, Image, Menu, MenuButton, MenuList, MenuItem, IconButton, Icon } from "@chakra-ui/react";
-import { AddIcon, EditIcon, ExternalLinkIcon, HamburgerIcon, RepeatIcon } from '@chakra-ui/icons'
+import { Button } from "@chakra-ui/react";
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { authState } from '../../atoms/userAtom'
 import { auth } from "@/firebase/clientApp";
-import { SignOutHook, useAuthState, useSignOut } from 'react-firebase-hooks/auth'
-// import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
+import { useAuthState, useSignOut } from 'react-firebase-hooks/auth'
+import MenuDropDown from "./MenuDropDown";
 
 const AuthButtons = () => {
   const userState = useRecoilValue(authState);
-  const { isLoggedIn, currentUser } = userState;
+  const { isLoggedIn } = userState;
   const setUserState = useSetRecoilState(authState)
   const [_, loadingAuthState, loadingAuthError] = useAuthState(auth);
-
   const [signOut, loading, error] = useSignOut(auth);
-  const displayName = currentUser ? currentUser.displayName : "Not applicable";
-  const displayPic = currentUser ? currentUser.photoUrl : "none";
+
+
+  useEffect(() => {
+    if (auth) {
+      setUserState((prevState) => ({
+        ...prevState,
+        isLoggedIn:( auth.currentUser!=null)?true:false,
+      }));
+    }
+  }, [auth])
+
 
   const handleSignOut = async () => {
     await signOut();
-    waitForCurrentUser();
-  };
-
-  const waitForCurrentUser = () => {
-    while(loadingAuthState){
-      if(loadingAuthError){
+    while (loadingAuthState) {
+      if (loadingAuthError) {
         console.log("Couldn't set auth state")
         return;
       }
@@ -33,10 +37,8 @@ const AuthButtons = () => {
     setUserState((prevState) => ({
       ...prevState,
       isLoggedIn: false,
-      currentUser: null,
     }));
     console.log("SIGNED OUT");
-
   };
 
   return (
@@ -51,7 +53,7 @@ const AuthButtons = () => {
         color="black"
         height="45px"
         display={{ base: "none", sm: "flex" }}
-        width={{ base: "120", md: "110px" }}
+        width={{ base: "120px", md: "110px" }}
         mr={2}
       >
         Sign In
@@ -69,48 +71,8 @@ const AuthButtons = () => {
         Get Started
       </Button>}
 
-      {isLoggedIn && <Button
-        as={Link}
-        href="/"
-        variant=""
-        size="lg"
-        bg="red.500"
-        color="white"
-        height="45px"
-        display={{ base: "none", sm: "flex" }}
-        width={{ base: "120px", md: "110px" }}
-        onClick={handleSignOut}
-        isLoading={loading}
-        marginRight="3vw"
-      >
-        Log Out
-      </Button>}
       {isLoggedIn &&
-        <Menu isLazy={true} strategy="fixed" >
-          <MenuButton
-            as={IconButton}
-            aria-label='Options'
-            icon={<HamburgerIcon />}
-            variant='outline'
-          />
-          <MenuList>
-            <MenuItem>
-              Profile
-            </MenuItem>
-            <MenuItem>
-              Activity
-            </MenuItem>
-            <MenuItem>
-              Bookmarks
-            </MenuItem>
-            <MenuItem>
-              History
-            </MenuItem>
-            <MenuItem onClick={handleSignOut} >
-              Log Out
-            </MenuItem>
-          </MenuList>
-        </Menu>
+        <MenuDropDown handleSignOut={handleSignOut} />
       }
     </>
   );

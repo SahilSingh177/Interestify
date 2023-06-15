@@ -38,8 +38,7 @@ const LoginForm = () => {
     }
     setUserState((prevState) => ({
       ...prevState,
-      isLoggedIn: true,
-      currentUser: user?.user,
+      isLoggedIn: true
     }));
     if (user?.user) console.log(user?.user.displayName);
   };
