@@ -7,6 +7,8 @@ from neo4j.exceptions import Neo4jError
 # from dotenv import load_dotenv
 from pathlib import Path
 
+from .read_article import read_article
+
 # load_dotenv()
 DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
 USER = "neo4j"
@@ -128,25 +130,30 @@ class App:
                 query=query, exception=exception))
             raise
 
-    def create_blog(self, blog_title, blog_link, blog_author):
+    def create_blog(self, blog_title, blog_link, blog_author, download_link):
         with self.driver.session(database="neo4j") as session:
             if self.check_blog_exists(blog_link):
                 print("Blog already exists")
                 return False
+            summary = read_article(download_link)
+            summary_text = summary.summary
+            lines = summary_text.splitlines()
+            cleaned_lines = [line.lstrip("- ") for line in lines]
+            cleaned_summary = "\n".join(cleaned_lines)
             result = session.execute_write(
-                self._create_blog, blog_title, blog_link, blog_author)
+                self._create_blog, blog_title, blog_link, blog_author, download_link, cleaned_summary)
             for record in result:
                 print("Created Blog: {b}"
                       .format(b=record['b']))
             return True
 
     @staticmethod
-    def _create_blog(tx, blog_title, blog_link, blog_author):
+    def _create_blog(tx, blog_title, blog_link, blog_author, download_link, summary):
         query = (
-            "CREATE (b:Blog { title: $blog_title, link: $blog_link, author: $blog_author, likes: 0}) "
+            "CREATE (b:Blog { title: $blog_title, link: $blog_link, author: $blog_author, likes: 0, download_link: $download_link, summary: $summary}) "
             "RETURN b"
         )
-        result = tx.run(query, blog_title = blog_title, blog_link = blog_link, blog_author = blog_author)
+        result = tx.run(query, blog_title = blog_title, blog_link = blog_link, blog_author = blog_author, download_link = download_link, summary = summary)
         try:
             return [{"b": record["b"]["title"]}
                     for record in result]
@@ -482,20 +489,20 @@ class App:
         if category_name:
             query = (
                 "MATCH (b:Blog)-[:IN_CATEGORY]->(c:Category {name:$category_name}) "
-                "RETURN b.author AS author, b.title AS title, b.link AS link "
+                "RETURN b.author AS author, b.title AS title, b.link AS link , b.download_link AS pdf_link, b.summary AS summary "
                 "ORDER BY b.likes DESC"
             )
             result = tx.run(query, category_name=category_name)
         else:
             query = (
                 "MATCH (b:Blog) "
-                "RETURN b.author AS author, b.title AS title, b.link AS link "
+                "RETURN b.author AS author, b.title AS title, b.link AS link , b.download_link AS pdf_link, b.summary AS summary "
                 "ORDER BY b.likes DESC"
             )
             result = tx.run(query)
         try:
             return [
-                {"author": record["author"], "title": record["title"], "link": record["link"]}
+                {"author": record["author"], "title": record["title"], "link": record["link"], "pdf_link": record["pdf_link"], "summary": record["summary"]}
                 for record in result
             ]
         except Neo4jError as exception:
@@ -680,19 +687,22 @@ if __name__ == "__main__":
     # app.user_to_category_browsing("nikhil@gmail.com","ent",1)
     # app.user_to_category("nikhil@gmail.com","mc")
     # app.get_categories_ordered_by_browsing_duration("nikhil@gmail.com")
-    # app.add_likes_to_blog("nikhil@gmail.com","https://link.springer.com/content/pdf/10.1007/s00120-023-02043-2.pdf?pdf=button")
-    # app.add_likes_to_blog("nikhil@gmail.com","https://link.springer.com/content/pdf/10.1007/s42757-022-0156-4.pdf?pdf=button")
     # app.add_likes_to_blog("nikhil@gmail.com","https://link.springer.com/content/pdf/10.1007/s42757-022-0144-8.pdf?pdf=button")
-    # app.blog_to_category("https://link.springer.com/content/pdf/10.1007/s00120-023-02043-2.pdf?pdf=button","bc")
+    # app.add_likes_to_blog("nikhil@gmail.com","https://link.springer.com/content/pdf/10.1007/s42757-022-0156-4.pdf?pdf=button")
     # app.blog_to_category("https://link.springer.com/content/pdf/10.1007/s42757-022-0156-4.pdf?pdf=button","bc")
-    app.blog_to_category("https://link.springer.com/content/pdf/10.1007/s42757-022-0144-8.pdf?pdf=button","bc")
-    # ans = app.get_blogs_by_likes("bc")
+    # app.blog_to_category("https://link.springer.com/content/pdf/10.1007/s42757-022-0144-8.pdf?pdf=button","bc")
+    # ans = app.get_blogs_by_likes()
     # print(ans)
     # for i in ans:
-    #     print(i['blog']["link"])
-
+    #     print(i["pdf_link"])
+    summary = read_article("https://link.springer.com/content/pdf/10.1007/s00120-023-02043-2.pdf?pdf=button")
+    summary_text = summary.summary
+    lines = summary_text.splitlines()
+    cleaned_lines = [line.lstrip("- ") for line in lines]
+    cleaned_summary = "\n".join(cleaned_lines)
+    print(cleaned_summary)
     # app.user_to_category_browsing("nikhil@gmail.com","dsnjdsnjdsnnkjds",92)
     # app.delete_user_to_category("sahil@gmail.com")
-    ans = app.get_category_by_blog("https://link.springer.com/content/pdf/10.1007/s42757-022-0144-8.pdf?pdf=button")
-    print(ans)
+    # ans = app.get_category_by_blog("https://link.springer.com/content/pdf/10.1007/s42757-022-0144-8.pdf?pdf=button")
+    # print(ans)
     app.close()

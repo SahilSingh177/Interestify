@@ -2,8 +2,6 @@ from flask import Flask, request, jsonify
 from sendgrid import SendGridAPIClient
 from services.database.database import App
 from services.springer import start_scraping_thread
-# from utils.read_article import read_article
-# from utils.summarize_article import summarize_article
 import dotenv
 from flask_cors import CORS
 
@@ -76,15 +74,16 @@ def get_top_articles():
     resp = []
     for article_data in data:
         link = article_data['link']
+        title = article_data['title']
         category = database.get_category_by_blog(article_data['link'])
         author = article_data['author']
-        # article = read_article(link)
-        # summary = summarize_article(article)
+        summary = article_data['summary']
         resp.append({
             "link": link,
+            "title": title,
             "category": category,
             "author": author,
-            # "summary": summary
+            "summary": summary
         })
     print(resp)
     return jsonify(resp)
