@@ -9,7 +9,7 @@ SENDGRID_API_KEY = "SG.inw3N3GnQQO3c4HYCVz7OA.Gno_ogxSt3r5-axy5wOppEWl5mcw6Lf8Sn
 SENDER_EMAIL = "nikhilranjan1103@gmail.com"
 # from backend.app.services.research_paper_service import fetch_papers
 # from main import getTopArticlesPerUser
-from ..utils.read_article import read_article
+from .database.read_article import read_article
 
 
 DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"

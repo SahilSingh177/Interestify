@@ -6,14 +6,11 @@ import { FaBookmark, FaRegBookmark, FaRegEye, FaRegThumbsUp } from 'react-icons/
 type Props = {
   Author: string,
   Category: string |null,
+  Title: string,
+  Summary: string,
 };
 
-const ArticleCard: React.FC<Props> = ({Author,Category}:Props) => {
-  const colours=["red","orange","yellow","teal","cyan","purple","pink"];
-  const getRandomColour = ()=>{
-    const randomIndex = Math.floor(Math.random()*colours.length);
-    return colours[randomIndex];
-  }
+const ArticleCard: React.FC<Props> = ({Author,Category,Title,Summary}:Props) => {
   const Router = useRouter();
   const [isLiked, setIsLiked] = useState<Boolean>(false); //liked or not should be fetched from backend
   const [isBookMarked, setIsBookMarked] = useState<Boolean>(false);
@@ -47,15 +44,14 @@ const ArticleCard: React.FC<Props> = ({Author,Category}:Props) => {
         <VStack width="full">
           <CardBody width="full" onClick={() => Router.push('/article')}>
             <HStack>
-              <Heading size='md'>The perfect latte</Heading>
-              <Tag size="sm" variant='solid' colorScheme={getRandomColour()}>
+              <Heading size='md'>{Title?Title:"Title"}</Heading>
+              <Tag size="sm" variant='solid' colorScheme='teal'>
                 {Category?Category:"Unknown"}
               </Tag>
 
             </HStack>
             <Text py='2'>
-              Caffè latte is a coffee beverage of Italian origin made with espresso
-              and steamed milk.
+              {Summary?Summary:"Summary"}
             </Text>
           </CardBody>
 
