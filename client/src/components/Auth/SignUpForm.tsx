@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Flex, Input, FormLabel, Box } from "@chakra-ui/react";
 import { useAuthState, useCreateUserWithEmailAndPassword, useUpdateProfile } from 'react-firebase-hooks/auth';
 import { auth } from '../../firebase/clientApp';
@@ -28,19 +28,13 @@ const SignupForm = () => {
   const [updateProfile, updating, ProfileError] = useUpdateProfile(auth);
   const [_, loadingAuthState, loadingAuthError] = useAuthState(auth);
   
-  const waitForCurrentUser = () => {
-    while (loadingAuthState) {
-      if (loadingAuthError) {
-        console.log("Couldn't set auth state");
-        return;
-      }
-    }
+  useEffect(() => {
     setUserState((prevState) => ({
       ...prevState,
       isLoggedIn: true
     }));
     if (user?.user) console.log(user?.user.displayName);
-  };
+  }, [loadingAuthState])
   
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -58,9 +52,10 @@ const SignupForm = () => {
       return;
     }
   
-    waitForCurrentUser();
-    setSignupForm({ username: "", email: "", password: "", confirmPassword: "" });
-    Router.push("/select-preferences");
+    if(!loadingAuthState){
+      setSignupForm({username:"", email: "", password: "",confirmPassword:""});
+      Router.push("/select-preferences");
+    }
   };
   
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
