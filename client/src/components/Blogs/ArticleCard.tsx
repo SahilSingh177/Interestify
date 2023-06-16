@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { Spacer, Card, VStack, HStack, CardBody, Heading, Text, CardFooter, Icon, Tag } from '@chakra-ui/react';
+import {auth} from '@/firebase/clientApp';
+import { Spacer, Card, Image, VStack, HStack, CardBody, Heading, Text, CardFooter, Icon, Tag } from '@chakra-ui/react';
 import { FaBookmark, FaRegBookmark, FaRegEye, FaRegThumbsUp } from 'react-icons/fa';
 import { getRandomColour } from '@/helper/getRandomColour';
 
@@ -32,6 +33,23 @@ const ArticleCard: React.FC<Props> =
       console.log("DELETED SUCCESSFULLY")     
     }
   }
+
+  const updateBlogList = async (articleId: string) => {
+    if(!auth.currentUser?.email) return;
+    await fetch("http://127.0.0.1:5000/registerBlog", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ 'email': auth.currentUser?.email , 'blog_id' : articleId}),
+    });
+  }
+
+  const handleClick = (articleId: string) => {
+    Router.push(`/article/${articleId}`);
+    updateBlogList(articleId); 
+  }
+
   return (
     <>
       <Card
@@ -43,7 +61,7 @@ const ArticleCard: React.FC<Props> =
         cursor='pointer'
       >
         <VStack width="full">
-          <CardBody width="full" onClick={() => Router.push(`/article/${articleId}`)}>
+          <CardBody width="full" onClick={() => handleClick(articleId)}>
             <HStack>
               <Heading size='md' width='90%'>{Title?Title:"Title"}</Heading>
               <Tag size="sm" variant='solid' colorScheme={getRandomColour()}>
