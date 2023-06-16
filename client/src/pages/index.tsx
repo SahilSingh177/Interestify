@@ -15,5 +15,5 @@ const index: React.FC = (props: Props) => {
     </>
   )
 }
-
+export const revalidate = false
 export default index

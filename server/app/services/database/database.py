@@ -386,6 +386,19 @@ class App:
             logging.error("{query} raised an error: \n {exception}".format(
                 query=query, exception=exception))
             raise
+    
+    def get_blog_by_id(self, article_id):
+        with self.driver.session(database="neo4j") as session:
+            query = (
+                "MATCH (b:Blog) WHERE ID(b)=$article_id "
+                "RETURN b.author AS author, b.title AS title, b.link AS link, b.download_link AS pdf_link, b.summary AS summary, b.read_time as read_time, ID(b) AS id"
+            )
+            result = session.run(query, article_id=article_id)
+            return [
+                {"author": record["author"], "title": record["title"], "link": record["link"], "pdf_link": record["pdf_link"], "summary": record["summary"], "read_time":record["read_time"], "id":record["id"]}
+                for record in result
+            ]   
+            # create seprate
 
     def user_to_blog(self, user_email, blog_link):
         with self.driver.session(database="neo4j") as session:
@@ -428,11 +441,11 @@ class App:
 
             query = (
                 "MATCH (u:User {email: $user_email})--(b:Blog) "
-                "RETURN b.title, b.download_link"
+                "RETURN b.title, b.download_link, ID(b) "
             )
             result = session.run(query, user_email=user_email)
             user_blogs = [
-                {"title": record["b.title"], "link": record["b.download_link"]}
+                {"title": record["b.title"], "link": record["b.download_link"], "id":record["ID(b)"]}
                 for record in result
             ]
             
@@ -515,20 +528,20 @@ class App:
         if category_name:
             query = (
                 "MATCH (b:Blog)-[:IN_CATEGORY]->(c:Category {name:$category_name}) "
-                "RETURN b.author AS author, b.title AS title, b.link AS link , b.download_link AS pdf_link, b.summary AS summary, b.read_time as read_time "
+                "RETURN b.author AS author, b.title AS title, b.link AS link , b.download_link AS pdf_link, b.summary AS summary, b.read_time as read_time, ID(b) AS id "
                 "ORDER BY b.likes DESC"
             )
             result = tx.run(query, category_name=category_name)
         else:
             query = (
                 "MATCH (b:Blog) "
-                "RETURN b.author AS author, b.title AS title, b.link AS link , b.download_link AS pdf_link, b.summary AS summary, b.read_time as read_time "
+                "RETURN b.author AS author, b.title AS title, b.link AS link , b.download_link AS pdf_link, b.summary AS summary, b.read_time as read_time, ID(b) AS id "
                 "ORDER BY b.likes DESC"
             )
             result = tx.run(query)
         try:
             return [
-                {"author": record["author"], "title": record["title"], "link": record["link"], "pdf_link": record["pdf_link"], "summary": record["summary"], "read_time":record["read_time"]}
+                {"author": record["author"], "title": record["title"], "link": record["link"], "pdf_link": record["pdf_link"], "summary": record["summary"], "read_time":record["read_time"], "id":record["id"]}
                 for record in result
             ]
         except Neo4jError as exception:
