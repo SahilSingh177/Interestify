@@ -7,9 +7,6 @@ import Redirect from "./Redirect";
 import ShowAlert from "../Alert/Alert";
 import { authState } from "@/atoms/userAtom";
 import { useSetRecoilState, useRecoilValue } from "recoil";
-import firebase from 'firebase/app';
-import { onAuthStateChanged } from "firebase/auth";
-import {User,FirebaseAuth} from '@firebase/auth-types';
 
 const LoginForm = () => {
   const setUserState = useSetRecoilState(authState);
@@ -28,20 +25,15 @@ const LoginForm = () => {
   const Router = useRouter();
   const userInfo = useRecoilValue(authState);
   const [_, loadingAuthState, loadingAuthError] = useAuthState(auth);
-  
-  const waitForCurrentUser = () => {
-    while (loadingAuthState) {
-      if (loadingAuthError) {
-        console.log("Couldn't set auth state");
-        return;
-      }
-    }
+
+  useEffect(() => {
     setUserState((prevState) => ({
       ...prevState,
       isLoggedIn: true
     }));
     if (user?.user) console.log(user?.user.displayName);
-  };
+  }, [loadingAuthState])
+  
   
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -52,10 +44,10 @@ const LoginForm = () => {
       console.log(error);
       return;
     }
-  
-    waitForCurrentUser();
-    setLoginForm({ email: "", password: "" });
-    Router.push("/select-preferences");
+    if(!loadingAuthState){
+      setLoginForm({ email: "", password: "" });
+      Router.push("/select-preferences");
+    }
   };
   
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {

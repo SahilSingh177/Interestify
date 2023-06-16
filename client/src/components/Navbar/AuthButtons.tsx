@@ -17,23 +17,18 @@ const AuthButtons = () => {
 
 
   useEffect(() => {
-    if (auth) {
+    if (auth.currentUser!=null) {
+      console.log(auth);
       setUserState((prevState) => ({
         ...prevState,
-        isLoggedIn:( auth.currentUser!=null)?true:false,
+        isLoggedIn:true,
       }));
     }
-  }, [auth])
+  }, [auth.currentUser])
 
 
   const handleSignOut = async () => {
     await signOut();
-    while (loadingAuthState) {
-      if (loadingAuthError) {
-        console.log("Couldn't set auth state")
-        return;
-      }
-    }
     setUserState((prevState) => ({
       ...prevState,
       isLoggedIn: false,
