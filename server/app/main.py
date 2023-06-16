@@ -141,8 +141,14 @@ def get_top_articles_by_category():
 
 @app.route('/addBookmark',methods=['GET'])
 def addBookmark():
-    database.user_to_blog("test@mail","no one")
-    return jsonify({"result":True})
+    args = request.args
+    email = args.email
+    link = args.link
+    try:
+        database.user_to_blog(email,link)
+        return jsonify({"result":"success"}),200
+    except Exception as e:
+        return jsonify(error=str(e)), 500
 
 @app.route('/getBookMarks', methods=['GET'])
 def getBookMarks():

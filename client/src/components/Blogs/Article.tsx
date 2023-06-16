@@ -74,7 +74,7 @@ const Article: React.FC<Props> = ({ Content, Author, Category, Title, Summary, R
   const [isLiked, setIsLiked] = useState<Boolean>(false); //liked or not should be fetched from backend
   const [isBookMarked, setIsBookMarked] = useState<Boolean>(false);
 
-  const bookmarkArticle = () => {
+  const bookmarkArticle = async() => {
     setIsBookMarked(!isBookMarked);
     if (isBookMarked) {
       const articleLink = Router.asPath;
