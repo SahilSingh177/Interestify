@@ -37,7 +37,7 @@ const Blogs: React.FC = () => {
     }, []);
 
     return <>
-        <Flex flexDirection={{ lg: "row", md: "column" }} marginTop="10vh" width={`calc(100vw - 12px)`} justifyContent="space-evenly">
+        <Flex flexDirection={{ lg: "row", md: "column",sm:"column"}} marginTop="10vh" width={`calc(100vw - 12px)`} justifyContent="space-evenly">
             <Flex flexDirection="column" justifyContent={{ lg: "flex-start", md: "center" }} width={{ lg: "55vw", md: `calc(80vw - 12px)` }} overflowX="hidden">
 
                 {isLoading && <Spinner
@@ -59,7 +59,7 @@ const Blogs: React.FC = () => {
                 }
 
                 {data && data.map((articleInfo, id) =>
-                    <ArticleCard articleId={articleInfo.id} Author={articleInfo.author} Category={articleInfo.category} Title={articleInfo.title} Summary={articleInfo.summary} ReadingTime={articleInfo.time}
+                    <ArticleCard articleId={articleInfo.id} Author={articleInfo.author} Category={articleInfo.category} Title={articleInfo.title} Summary={articleInfo.summary} ReadingTime={articleInfo.time} ArticleLink={articleInfo.link}
                         key={id}></ArticleCard>)
                 }
 

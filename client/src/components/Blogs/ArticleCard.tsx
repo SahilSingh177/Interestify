@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { Spacer, Card, Image, VStack, HStack, CardBody, Heading, Text, CardFooter, Icon, Tag } from '@chakra-ui/react';
+import { Spacer, Card, VStack, HStack, CardBody, Heading, Text, CardFooter, Icon, Tag } from '@chakra-ui/react';
 import { FaBookmark, FaRegBookmark, FaRegEye, FaRegThumbsUp } from 'react-icons/fa';
+import { getRandomColour } from '@/helper/getRandomColour';
 
 type Props = {
   articleId: string
@@ -10,24 +11,25 @@ type Props = {
   Title: string,
   Summary: string,
   ReadingTime: string,
+  ArticleLink: string,
 };
 
-const ArticleCard: React.FC<Props> = ({articleId,Author,Category,Title,Summary, ReadingTime}:Props) => {
-  const colours=["red","orange","yellow","teal","cyan","purple","pink"];
-  const getRandomColour = ()=>{
-    const randomIndex = Math.floor(Math.random()*colours.length);
-    return colours[randomIndex];
-  }
+const ArticleCard: React.FC<Props> = 
+        ({articleId,Author,Category,Title,Summary, ReadingTime,ArticleLink}:Props) => {
   const Router = useRouter();
-  const [isLiked, setIsLiked] = useState<Boolean>(false); //liked or not should be fetched from backend
+  const [isLiked, setIsLiked] = useState<Boolean>(false);
   const [isBookMarked, setIsBookMarked] = useState<Boolean>(false);
 
-  const bookmarkArticle = () => {
-    setIsBookMarked(!isBookMarked);
-    if (isBookMarked) {
-      const articleLink = Router.asPath;
-      console.log("Bookmarked: ")
-      console.log(articleLink);
+  const bookmarkArticle = async () => {
+    if(!isBookMarked){
+      await fetch(`http://127.0.0.1:5000/addBookmark?email=test@mail&link=${ArticleLink}`); 
+      setIsBookMarked(true);
+      console.log("SUCCESSFULLY ADDED")
+    }
+    else{
+      await fetch(`http://127.0.0.1:5000/deleteBookmark?email=test@mail&link=${ArticleLink}`); 
+      setIsBookMarked(false);
+      console.log("DELETED SUCCESSFULLY")     
     }
   }
   return (
