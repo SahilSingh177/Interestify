@@ -141,11 +141,20 @@ def get_top_articles_by_category():
 
 @app.route('/addBookmark',methods=['GET'])
 def addBookmark():
-    args = request.args
-    email = args.email
-    link = args.link
+    email = request.args.get('email')
+    link = request.args.get('link')
     try:
         database.user_to_blog(email,link)
+        return jsonify({"result":"success"}),200
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+    
+@app.route('/deleteBookmark',methods=['GET'])
+def deleteBookmark():
+    email = request.args.get('email')
+    link = request.args.get('link')
+    try:
+        database.delete_user_to_blog(email,link)
         return jsonify({"result":"success"}),200
     except Exception as e:
         return jsonify(error=str(e)), 500
@@ -183,6 +192,9 @@ if __name__ == "__main__":
     database.create_user("test@mail", "sami")
     database.user_to_blog("test@mail","no one")
     database.user_to_blog("test@mail","https://link.springer.com/article/10.1007/s42757-022-0154-6")
+    database.delete_user_to_blog("test@mail","https://link.springer.com/article/10.1007/s42757-022-0154-6")
+    database.user_to_blog("test@mail","https://link.springer.com/article/10.1007/s42757-022-0152-8")
+    database.user_to_blog("test@mail","https://link.springer.com/article/10.1007/s42757-022-0139-5")
     database.create_blog("Fuck off,it's a research paper","https://link.springer.com/content/pdf/10.1007/s42757-022-0154-6.pdf?pdf=button","Some Nerd","https://link.springer.com/content/pdf/10.1007/s42757-022-0154-6.pdf?pdf=button")
     database.get_blog_by_id(9)
     print("END............................")

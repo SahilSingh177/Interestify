@@ -427,7 +427,37 @@ class App:
         try:
             return [{"u": record["u"]["email"], "b": record["b"]["title"]}
                     for record in result]
-        # Capture any errors along with the query and data for traceability
+        except Neo4jError as exception:
+            logging.error("{query} raised an error: \n {exception}".format(
+                query=query, exception=exception))
+            raise
+
+    def delete_user_to_blog(self, user_email, blog_link):
+        with self.driver.session(database="neo4j") as session:
+            if not self.check_user_exists(user_email):
+                print("User does not exist")
+                return False
+            if not self.check_blog_exists(blog_link):
+                print("Blog does not exist")
+                return False
+            result = session.execute_write(
+                self._user_to_blog, user_email, blog_link)
+            for record in result:
+                print("Deleted User: {u} to Blog: {b}"
+                    .format(u=record['u'], b=record['b']))
+            return True
+
+    @staticmethod
+    def _delete_user_to_blog(tx, user_email, blog_link):
+        query = (
+            "MATCH (u:User {email:$user_email}), (b:Blog{link:$blog_link}) "
+            "DELETE r "
+            "RETURN u, b"
+        )
+        result = tx.run(query, user_email = user_email, blog_link = blog_link)
+        try:
+            return [{"u": record["u"]["email"], "b": record["b"]["title"]}
+                    for record in result]
         except Neo4jError as exception:
             logging.error("{query} raised an error: \n {exception}".format(
                 query=query, exception=exception))
@@ -442,11 +472,11 @@ class App:
 
             query = (
                 "MATCH (u:User {email: $user_email})--(b:Blog) "
-                "RETURN b.title, b.download_link, ID(b) "
+                "RETURN b.title, b.link, b.author , ID(b) "
             )
             result = session.run(query, user_email=user_email)
             user_blogs = [
-                {"title": record["b.title"], "link": record["b.download_link"], "id":record["ID(b)"]}
+                {"title": record["b.title"], "link": record["b.link"],"author": record["b.author"] , "id":record["ID(b)"]}
                 for record in result
             ]
             

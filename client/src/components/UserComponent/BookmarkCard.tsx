@@ -2,22 +2,23 @@ import React from 'react'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { Card, CardBody, CardFooter, Icon, Tag, VStack, HStack, Spacer, Heading, Text} from '@chakra-ui/react'
-import { FaBookmark, FaRegBookmark, FaRegEye, FaRegThumbsUp } from 'react-icons/fa'
-import { Link } from '@chakra-ui/next-js'
+import { FaBookmark, FaRegBookmark } from 'react-icons/fa'
+import { Link } from '@chakra-ui/react'
+import { getRandomColour } from '@/helper/getRandomColour';
 
-type Props = {}
+type Props = {
+    author: string;
+    article_id: string,
+    link: string;
+    title: string,
+}
 
-const BookmarkCard = (props: Props) => {
+const BookmarkCard = ({author,article_id,link,title}: Props) => {
     const Router = useRouter();
     const [isBookMarked, setIsBookMarked] = useState<Boolean>(false);
 
     const bookmarkArticle = () => {
-      setIsBookMarked(!isBookMarked);
-      if (isBookMarked) {
-        const articleLink = Router.asPath;
-        console.log("Bookmarked: ")
-        console.log(articleLink);
-      }
+      setIsBookMarked(false);
     }
   return (
     <Card
@@ -32,18 +33,19 @@ const BookmarkCard = (props: Props) => {
     <VStack width="full">
       <CardBody width="full">
         <HStack>
-          <Heading size='md' width='90%'>Message from the Guest Editor of the 18th Multiphase Flow Conference Special Issue</Heading>
-          <Tag size="sm" variant='solid' colorScheme="teal">Unknown
+          <Heading size='md' width='90%'>{title}</Heading>
+          <Spacer/>
+          <Tag size="sm" variant='solid' colorScheme={getRandomColour()}>Unknown
               </Tag>
         </HStack>
       </CardBody>
 
       <CardFooter width="full">
         <HStack spacing={4} justifyContent="flex-end" width="full">
-          <Link href="https://link.springer.com/article/10.1007/s42757-022-0154-6" color="teal" >Read Full Article Here</Link>
+          <Link href={link} isExternal color="teal" _hover={{textDecoration:"none"}} >Read Full Article Here</Link>
           <Spacer/>
-          <Text fontSize='sm' color="gray.500">By "NERD"</Text>
-          <Icon as={isBookMarked ? FaBookmark : FaRegBookmark} onClick={bookmarkArticle} />
+          <Text fontSize='sm' color="gray.500">By {author}</Text>
+          <Icon as={FaBookmark} onClick={bookmarkArticle} />
         </HStack>
       </CardFooter>
     </VStack>
