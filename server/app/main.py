@@ -79,6 +79,7 @@ def get_top_articles():
         author = article_data['author']
         summary = article_data['summary']
         time = article_data['read_time']
+        id = article_data['id']
         # print(data)
 
         resp.append({
@@ -87,7 +88,8 @@ def get_top_articles():
             "category": category,
             "author": author,
             "summary": summary,
-            "time":time
+            "time":time,
+            "id": id
         })
     print(resp)
     return jsonify(resp)
@@ -150,13 +152,31 @@ def getBookMarks():
             return jsonify(error='Email parameter is missing'), 400
 
         data = database.get_user_blogs(user_email)
+        print(data)
         return jsonify(data=data), 200
     except Exception as e:
         return jsonify(error=str(e)), 500
+
+@app.route('/getArticle',methods=['GET'])    
+def getArticle():
+    try:
+        article_id = request.args.get('article_id')
+        # print(type(article_id))
+        article_id = int(article_id)
+        if article_id is None:
+            return jsonify(error='ID parameter is missing'), 400
+        data = database.get_blog_by_id(article_id)
+        print(data)
+        return jsonify(data=data), 200
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+    
+# @app.route()
 
 if __name__ == "__main__":
     database.create_user("test@mail", "sami")
     database.user_to_blog("test@mail","no one")
     database.user_to_blog("test@mail","https://link.springer.com/article/10.1007/s42757-022-0154-6")
+    database.get_blog_by_id(9)
     print("END............................")
     app.run(host='0.0.0.0', port=5000)

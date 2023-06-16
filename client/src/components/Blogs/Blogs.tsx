@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, cache } from 'react';
 import ArticleCard from './ArticleCard'
 import SideBar from './SideBar'
 import { Flex, Divider, Spinner, VStack, Heading } from '@chakra-ui/react'
@@ -18,39 +18,40 @@ const Blogs: React.FC = () => {
     const [data, setData] = useState<Article[] | undefined>(undefined);
     const [loading, setLoading] = useState<Boolean>(true);
 
+    const fetchData = async () => {
+        try {
+            let response = await fetch('http://127.0.0.1:5000/getTopArticles', 
+            { next: { revalidate: 60 } });
+            const bodyData = await response.json();
+            console.log(bodyData);
+            setData(bodyData);
+        } catch (error) {
+            console.error(error);
+        }
+        setLoading(false);
+    };
+    
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                let response = await axios.get('http://127.0.0.1:5000/getTopArticles');
-                console.log(response.data);
-                const bodyData = response.data;
-                setData(bodyData);
-            } catch (error) {
-                console.error(error);
-            }
-            setLoading(false);
-        };
-
         fetchData();
-    },[]);
+    }, []);
 
     return <>
         <Flex flexDirection={{ lg: "row", md: "column" }} marginTop="10vh" width={`calc(100vw - 12px)`} justifyContent="space-evenly">
-            <Flex flexDirection="column" justifyContent={{ lg: "flex-start", md: "center" }}  width={{ lg: "55vw", md: `calc(80vw - 12px)` }} overflowX="hidden">
+            <Flex flexDirection="column" justifyContent={{ lg: "flex-start", md: "center" }} width={{ lg: "55vw", md: `calc(80vw - 12px)` }} overflowX="hidden">
                 {loading && <Spinner
                     margin='auto'
                     thickness='4px'
                     speed='0.65s'
                     emptyColor='gray.200'
                     color='blue.500'
-                    size='xl'/>
+                    size='xl' />
                 }
                 {
-                    !loading && !data && 
+                    !loading && !data &&
                     <VStack spacing={10}>
-                    <Heading size="2xl">INTERNAL SERVER ERROR</Heading>
-                    <Heading size="xl">We'll be back soon</Heading>
-                    <iframe width="100%" src="https://giphy.com/embed/ykaNntbZ3hfsWotKmA"/>
+                        <Heading size="2xl">INTERNAL SERVER ERROR</Heading>
+                        <Heading size="xl">We'll be back soon</Heading>
+                        <iframe width="100%" src="https://giphy.com/embed/ykaNntbZ3hfsWotKmA" />
                     </VStack>
                 }
                 {data && data.map((articleInfo, id) =>
@@ -63,5 +64,5 @@ const Blogs: React.FC = () => {
         </Flex>
     </>
 }
-
+export const revalidate = false
 export default Blogs

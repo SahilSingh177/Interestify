@@ -81,5 +81,5 @@ const ArticleCard: React.FC<Props> = ({Author,Category,Title,Summary, ReadingTim
     </>
   );
 };
-
+export const revalidate = false
 export default ArticleCard;
