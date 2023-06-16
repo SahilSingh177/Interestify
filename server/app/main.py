@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Flask, request, jsonify
 from sendgrid import SendGridAPIClient
 from services.database.database import App
@@ -10,9 +11,9 @@ CORS(app, origins=['http://localhost:3000'])
 sg = None
 initialized = False
 
-DATABASE_URL = "neo4j+s://874e6982.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "bfVN1NOoQbK9xp3Eu9G1Y3dYaFfpONP-5Iq6hyPgFmw"
+PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
 SENDGRID_API_KEY = "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"
 
 uri = DATABASE_URL
@@ -35,9 +36,10 @@ def initialize():
 def register_user():
     data = request.json
     email = data['email']
+    username = data['username']
     print(email)
     # save it in database
-    database.create_user(email, "sami")
+    database.create_user(email, username)
     # create_user function
     return jsonify({"message": "User registered successfully"})
 
@@ -54,6 +56,18 @@ def register_user_preferences():
     # user_to_category function
     return jsonify({"message": "User preferences registered successfully"})
 
+@app.route('/registerBlog', methods=['POST'])
+def register_blog():
+    data = request.json
+    email = data['email']
+    blog_id = data['blog_id']
+    # save it in database
+    res = database.user_to_blog_read(email,blog_id)
+    if res:
+        return jsonify({"message": "Blog registered successfully"})
+    else:
+        return jsonify({"message": res})
+    
 
 @app.route('/updatePreferences', methods=['POST'])
 def update_preferences():
@@ -186,16 +200,58 @@ def getArticle():
     except Exception as e:
         return jsonify(error=str(e)), 500
     
-# @app.route()
+@app.route('/history',methods=['GET'])
+def get_history():
+    args = request.args
+    email = args['email']
+    data = database.get_history(email)
+    if data:
+        print(data)
+        resp = []
+        for article_data in data:
+            link = article_data['link']
+            title = article_data['title']
+            category = database.get_category_by_blog(article_data['link'])
+            author = article_data['author']
+            history_time = article_data['time']
+            id = article_data['id']
+            rid = article_data['rid']
+            date = str(history_time.date().isoformat())
+
+            resp.append({
+                "link": link,
+                "title": title,
+                "category": category,
+                "author": author,
+                "date": date,
+                # "time": time,
+                "id": id,
+                "rid": rid
+            })
+        print(resp)
+        return jsonify(data=resp)
+    else:
+        return jsonify({"message":"No history found"})
+
+@app.route('/deletehistory', methods=['GET'])
+def delete_history():
+    args = request.args
+    email = args['email']
+    rid = args['rid']
+    try:
+        database.delete_history(email,rid)
+        return jsonify({"result":"success"}),200
+    except Exception as e:
+        return jsonify(error=str(e)), 500
 
 if __name__ == "__main__":
-    database.create_user("test@mail", "sami")
-    database.user_to_blog("test@mail","no one")
-    database.user_to_blog("test@mail","https://link.springer.com/article/10.1007/s42757-022-0154-6")
-    database.delete_user_to_blog("test@mail","https://link.springer.com/article/10.1007/s42757-022-0154-6")
-    database.user_to_blog("test@mail","https://link.springer.com/article/10.1007/s42757-022-0152-8")
-    database.user_to_blog("test@mail","https://link.springer.com/article/10.1007/s42757-022-0139-5")
-    database.create_blog("Fuck off,it's a research paper","https://link.springer.com/content/pdf/10.1007/s42757-022-0154-6.pdf?pdf=button","Some Nerd","https://link.springer.com/content/pdf/10.1007/s42757-022-0154-6.pdf?pdf=button")
-    database.get_blog_by_id(9)
-    print("END............................")
+    # database.create_user("test@mail", "sami")
+    # database.user_to_blog("test@mail","no one")
+    # database.user_to_blog("test@mail","https://link.springer.com/article/10.1007/s42757-022-0154-6")
+    # database.delete_user_to_blog("test@mail","https://link.springer.com/article/10.1007/s42757-022-0154-6")
+    # database.user_to_blog("test@mail","https://link.springer.com/article/10.1007/s42757-022-0152-8")
+    # database.user_to_blog("test@mail","https://link.springer.com/article/10.1007/s42757-022-0139-5")
+    # database.create_blog("Fuck off,it's a research paper","https://link.springer.com/content/pdf/10.1007/s42757-022-0154-6.pdf?pdf=button","Some Nerd","https://link.springer.com/content/pdf/10.1007/s42757-022-0154-6.pdf?pdf=button")
+    # database.get_blog_by_id(9)
+    # print("END............................")
     app.run(host='0.0.0.0', port=5000)

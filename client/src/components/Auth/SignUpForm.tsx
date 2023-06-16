@@ -51,8 +51,14 @@ const SignupForm = () => {
       console.log(error);
       return;
     }
-  
     if(!loadingAuthState){
+      await fetch("http://127.0.0.1:5000/registerUser", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: signupForm.email , username : signupForm.username}),
+    });
       setSignupForm({username:"", email: "", password: "",confirmPassword:""});
       Router.push("/select-preferences");
     }
