@@ -31,6 +31,7 @@ import AuthorCard from '../Author/AuthorCard';
 
 
 type Props = {
+  Content: string,
   Author: string,
   Category: string | null,
   Title: string,
@@ -39,45 +40,12 @@ type Props = {
   PDFLink: string,
 }
 
-const Article: React.FC<Props> = ({ Author, Category, Title, Summary, ReadingTime, PDFLink }: Props) => {
+const Article: React.FC<Props> = ({ Content, Author, Category, Title, Summary, ReadingTime, PDFLink }: Props) => {
   console.log("PDF", PDFLink)
   const [articleProgress, setArticleProgress] = useState<number>(0);
-  const [articleContent, setArticleContent] = useState<string>("");
-
-// const pdfjsLib = require('pdfjs-dist/webpack');
-// pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.js`;
-
-// const extractTextFromPDF = async (): Promise<string> => {
-//   // Load the PDF document
-//   const loadingTask = pdfjsLib.getDocument(pdfUrl);
-//   const pdf: PDFDocumentProxy = await loadingTask.promise;
-
-//   // Extract text from each page
-//   const numPages = pdf.numPages;
-//   const textContent: string[] = [];
-
-//   for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-//     const page = await pdf.getPage(pageNum);
-//     const content = await page.getTextContent();
-//     const text = content.items.map((item) => item.str).join(' ');
-//     textContent.push(text);
-//   }
-
-//   // Combine all the extracted text
-//   const combinedText = textContent.join(' ');
-
-//   return combinedText;
-// };
-
-
-  useEffect(() => {
-    // extractTextFromPDF(PDFLink);
-  }, [PDFLink])
-
 
   useEffect(() => {
     const startTime = Date.now();
-
     return () => {
       const endTime = Date.now();
       const duration = endTime - startTime;
@@ -150,7 +118,7 @@ const Article: React.FC<Props> = ({ Author, Category, Title, Summary, ReadingTim
       <Divider bg="gray.400" borderColor="gray.600" />
 
       <Text lineHeight={2} padding={5} overflowX='hidden'>
-
+        {Content}
       </Text>
 
 

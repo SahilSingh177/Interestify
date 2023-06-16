@@ -137,8 +137,9 @@ class App:
                 return False
 
             summaryData = read_article(download_link)
-            summary = summaryData[0]
-            read_time = str(summaryData[1])
+            text = summaryData[0]
+            summary = summaryData[1]
+            read_time = str(summaryData[2])
             summary_text = summary.summary
             lines = summary_text.splitlines()
             cleaned_lines = [line.lstrip("- ") for line in lines]
@@ -147,19 +148,19 @@ class App:
             print(read_time)
             print(type(read_time))
             result = session.execute_write(
-                self._create_blog, blog_title, blog_link, blog_author,read_time, download_link, cleaned_summary)
+                self._create_blog, blog_title, blog_link, blog_author,read_time, download_link, cleaned_summary,text)
             for record in result:
                 print("Created Blog: {b}"
                       .format(b=record['b']))
             return True
 
     @staticmethod
-    def _create_blog(tx, blog_title, blog_link, blog_author, read_time, download_link, summary):
+    def _create_blog(tx, blog_title, blog_link, blog_author, read_time, download_link, summary, text):
         query = (
-            "CREATE (b:Blog { title: $blog_title, link: $blog_link, author: $blog_author, read_time: $read_time ,likes: 0, download_link: $download_link, summary: $summary}) "
+            "CREATE (b:Blog { title: $blog_title, link: $blog_link, author: $blog_author, read_time: $read_time ,likes: 0, download_link: $download_link, summary: $summary, text:$text}) "
             "RETURN b"
         )
-        result = tx.run(query, blog_title = blog_title, blog_link = blog_link, blog_author = blog_author,read_time=read_time ,download_link = download_link, summary = summary)
+        result = tx.run(query, blog_title = blog_title, blog_link = blog_link, blog_author = blog_author,read_time=read_time ,download_link = download_link, summary = summary, text = text)
         try:
             return [{"b": record["b"]["title"]}
                     for record in result]
@@ -391,11 +392,11 @@ class App:
         with self.driver.session(database="neo4j") as session:
             query = (
                 "MATCH (b:Blog) WHERE ID(b)=$article_id "
-                "RETURN b.author AS author, b.title AS title, b.link AS link, b.download_link AS pdf_link, b.summary AS summary, b.read_time as read_time, ID(b) AS id"
+                "RETURN b.author AS author, b.title AS title, b.link AS link, b.download_link AS pdf_link, b.summary AS summary, b.read_time as read_time, ID(b) AS id, b.text as text"
             )
             result = session.run(query, article_id=article_id)
             return [
-                {"author": record["author"], "title": record["title"], "link": record["link"], "pdf_link": record["pdf_link"], "summary": record["summary"], "read_time":record["read_time"], "id":record["id"]}
+                {"author": record["author"], "title": record["title"], "link": record["link"], "pdf_link": record["pdf_link"], "summary": record["summary"], "read_time":record["read_time"], "id":record["id"], "text":record["text"]}
                 for record in result
             ]   
             # create seprate

@@ -29,7 +29,7 @@ def send_email(recipient_email):
     # article_links = getTopArticlesPerUser(recipient_email)
     # neo4j db call
 
-    article = read_article()[0]
+    article = read_article()[1]
 
     # for every article
     message = Mail(

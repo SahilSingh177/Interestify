@@ -3,7 +3,6 @@ import { useState, useEffect, cache } from 'react';
 import ArticleCard from './ArticleCard'
 import SideBar from './SideBar'
 import { Flex, Divider, Spinner, VStack, Heading } from '@chakra-ui/react'
-import axios from 'axios';
 
 const Blogs: React.FC = () => {
     interface Article {

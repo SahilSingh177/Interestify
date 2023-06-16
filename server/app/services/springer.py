@@ -84,7 +84,7 @@ def fetch_new_articles():
                 app.create_blog(title, link, authors, pdf_link)
                 print("New article found:", title)
 
-        time.sleep(1800)  # Makes request every 30 minutes
+        time.sleep(3600)  # Makes request every 60 minutes
 
 def start_scraping_thread():
     # Start fetching new articles on a separate thread
