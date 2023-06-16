@@ -177,6 +177,7 @@ if __name__ == "__main__":
     database.create_user("test@mail", "sami")
     database.user_to_blog("test@mail","no one")
     database.user_to_blog("test@mail","https://link.springer.com/article/10.1007/s42757-022-0154-6")
+    database.create_blog("Fuck off,it's a research paper","https://link.springer.com/content/pdf/10.1007/s42757-022-0154-6.pdf?pdf=button","Some Nerd","https://link.springer.com/content/pdf/10.1007/s42757-022-0154-6.pdf?pdf=button")
     database.get_blog_by_id(9)
     print("END............................")
     app.run(host='0.0.0.0', port=5000)

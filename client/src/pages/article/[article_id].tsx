@@ -11,6 +11,7 @@ const article = () => {
   const [isLoading, setIsLoading] = useState<Boolean>(false);
 
   type Article = {
+    Text: string,
     Author: string,
     Category: string |null,
     Title: string,
@@ -26,7 +27,9 @@ const article = () => {
     const data = await response.json();
     const filteredData = data.data[0];
     console.log(filteredData);
+    
     const formattedData:Article={
+      Text:filteredData['text'],
       Author:filteredData['author'],
       Category:filteredData['category'],
       Title:filteredData['title'],
@@ -34,8 +37,8 @@ const article = () => {
       ReadingTime:filteredData['read_time'],
       PDFLink:filteredData['pdf_link']
     };
+
     setArticleData(formattedData);
-    console.log("article data set",articleData)
   }
   useEffect(() => {
     if(article_id){
@@ -46,7 +49,7 @@ const article = () => {
   
   return (
     <Stack direction={{md:"row", sm:"column"}} width={`calc(100vw - 12px)`} maxWidth="100vw" overflowX='hidden'>
-      {articleData && <Article Author={articleData.Author} Category={articleData.Category}
+      {articleData && <Article Content={articleData.Text} Author={articleData.Author} Category={articleData.Category}
       Title={articleData.Title} ReadingTime={articleData.ReadingTime} Summary={articleData.Summary}
       PDFLink={articleData.PDFLink}
       ></Article>}
