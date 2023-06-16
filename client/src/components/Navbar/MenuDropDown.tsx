@@ -22,7 +22,8 @@ const MenuDropDown = ({handleSignOut}:Props) => {
         <MenuItem icon={<FaChartLine/>}>
           Activity
         </MenuItem>
-        <MenuItem icon={<FaRegBookmark/>}>
+        <MenuItem as='a' icon={<FaRegBookmark/>} cursor="pointer" 
+                                                    onClick={()=>Router.push('/user/bookmarks')}>
           Bookmarks
         </MenuItem >
         <MenuItem icon={<FaRegClock/>}>

@@ -4,6 +4,7 @@ import { Spacer, Card, Image, VStack, HStack, CardBody, Heading, Text, CardFoote
 import { FaBookmark, FaRegBookmark, FaRegEye, FaRegThumbsUp } from 'react-icons/fa';
 
 type Props = {
+  articleId: string
   Author: string,
   Category: string |null,
   Title: string,
@@ -11,7 +12,7 @@ type Props = {
   ReadingTime: string,
 };
 
-const ArticleCard: React.FC<Props> = ({Author,Category,Title,Summary, ReadingTime}:Props) => {
+const ArticleCard: React.FC<Props> = ({articleId,Author,Category,Title,Summary, ReadingTime}:Props) => {
   const colours=["red","orange","yellow","teal","cyan","purple","pink"];
   const getRandomColour = ()=>{
     const randomIndex = Math.floor(Math.random()*colours.length);
@@ -39,16 +40,8 @@ const ArticleCard: React.FC<Props> = ({Author,Category,Title,Summary, ReadingTim
         marginBottom={5}
         cursor='pointer'
       >
-        {/* <Image
-          objectFit='cover'
-          maxW={{ md: '25%', sm: '100%' }}
-          maxHeight={{ md: '100%', sm: '50%' }}
-          src='https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60'
-          alt='Caffe Latte'
-        /> */}
-
         <VStack width="full">
-          <CardBody width="full" onClick={() => Router.push('/article')}>
+          <CardBody width="full" onClick={() => Router.push(`/article/${articleId}`)}>
             <HStack>
               <Heading size='md' width='90%'>{Title?Title:"Title"}</Heading>
               <Tag size="sm" variant='solid' colorScheme={getRandomColour()}>

@@ -6,6 +6,7 @@ import { Flex, Divider, Spinner, VStack, Heading } from '@chakra-ui/react'
 
 const Blogs: React.FC = () => {
     interface Article {
+        id: string,
         author: string;
         category: string;
         link: string;
@@ -15,7 +16,7 @@ const Blogs: React.FC = () => {
     }
 
     const [data, setData] = useState<Article[] | undefined>(undefined);
-    const [loading, setLoading] = useState<Boolean>(true);
+    const [isLoading, setIsLoading] = useState<Boolean>(true);
 
     const fetchData = async () => {
         try {
@@ -24,10 +25,11 @@ const Blogs: React.FC = () => {
             const bodyData = await response.json();
             console.log(bodyData);
             setData(bodyData);
-        } catch (error) {
+        } 
+        catch (error) {
             console.error(error);
         }
-        setLoading(false);
+        setIsLoading(false);
     };
     
     useEffect(() => {
@@ -37,7 +39,8 @@ const Blogs: React.FC = () => {
     return <>
         <Flex flexDirection={{ lg: "row", md: "column" }} marginTop="10vh" width={`calc(100vw - 12px)`} justifyContent="space-evenly">
             <Flex flexDirection="column" justifyContent={{ lg: "flex-start", md: "center" }} width={{ lg: "55vw", md: `calc(80vw - 12px)` }} overflowX="hidden">
-                {loading && <Spinner
+
+                {isLoading && <Spinner
                     margin='auto'
                     thickness='4px'
                     speed='0.65s'
@@ -45,18 +48,21 @@ const Blogs: React.FC = () => {
                     color='blue.500'
                     size='xl' />
                 }
+
                 {
-                    !loading && !data &&
+                    !isLoading && !data &&
                     <VStack spacing={10}>
                         <Heading size="2xl">INTERNAL SERVER ERROR</Heading>
                         <Heading size="xl">We'll be back soon</Heading>
                         <iframe width="100%" src="https://giphy.com/embed/ykaNntbZ3hfsWotKmA" />
                     </VStack>
                 }
+
                 {data && data.map((articleInfo, id) =>
-                    <ArticleCard Author={articleInfo.author} Category={articleInfo.category} Title={articleInfo.title} Summary={articleInfo.summary} ReadingTime={articleInfo.time}
+                    <ArticleCard articleId={articleInfo.id} Author={articleInfo.author} Category={articleInfo.category} Title={articleInfo.title} Summary={articleInfo.summary} ReadingTime={articleInfo.time}
                         key={id}></ArticleCard>)
                 }
+
             </Flex>
             <Divider orientation='vertical' borderColor='black' bg="black" size="5px"></Divider>
             <SideBar></SideBar>
