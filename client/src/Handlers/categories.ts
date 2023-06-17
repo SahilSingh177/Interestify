@@ -1,0 +1,1 @@
+export const categories = ["Medicine & Public Health", "Life Sciences", "Chemistry", "Physics", "Biomedicine", "Engineering", "Materials Science", "Mathematics", "Computer Science", "Enviornment", "Psychology", "Pharmacy"]
