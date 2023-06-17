@@ -12,9 +12,9 @@ SENDER_EMAIL = "nikhilranjan1103@gmail.com"
 from .database.read_article import read_article
 
 
-DATABASE_URL = "neo4j+s://874e6982.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://feacbda5.databases.neo4j.io"
 USER = "neo4j"
-PASSWORD = "bfVN1NOoQbK9xp3Eu9G1Y3dYaFfpONP-5Iq6hyPgFmw"
+PASSWORD = "nKH7aCT0Ft2r61zxvbyzPD9OtdG6cD_Yl3XcEY_TfMs"
 
 
 uri = DATABASE_URL
