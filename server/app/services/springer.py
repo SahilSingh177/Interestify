@@ -124,10 +124,9 @@ def fetch_articles(page, current_category):
         # Check if the element has the 'no-access' class
         if article.get("class") and "no-access" in article.get("class"):
             continue
-
-        article_authors = article.find("span", class_="authors").find_all("a")
-        authors = [author.get_text() for author in article_authors]
-
+        if article.find("span", class_="authors") :
+            article_authors = article.find("span", class_="authors").find_all("a")
+            authors = [author.get_text() for author in article_authors]
         article_title = article.find("a", class_="title").get_text()
 
         article_link = article.find("h2").find("a")

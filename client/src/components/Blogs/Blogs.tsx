@@ -14,9 +14,7 @@ const Blogs: React.FC = () => {
         summary: string,
         time: string,
         likes : number,
-        isLiked:  boolean,
     }
-
     const [data, setData] = useState<Article[] | undefined>(undefined);
     const [isLoading, setIsLoading] = useState<Boolean>(true);
 
@@ -60,8 +58,7 @@ const Blogs: React.FC = () => {
                 }
 
                 {data && data.map((articleInfo, id) =>
-                    <ArticleCard articleId={articleInfo.id} Author={articleInfo.author} Category={articleInfo.category} Title={articleInfo.title} Summary={articleInfo.summary} ReadingTime={articleInfo.time} ArticleLink={articleInfo.link} Likes={articleInfo.likes} hasLiked={articleInfo.isLiked}
-                    key={id}></ArticleCard>)
+                    <ArticleCard articleId={articleInfo.id} Author={articleInfo.author} Category={articleInfo.category} Title={articleInfo.title} Summary={articleInfo.summary} ReadingTime={articleInfo.time} ArticleLink={articleInfo.link} Likes={articleInfo.likes} key={id}></ArticleCard>)
                 }
 
             </Flex>
