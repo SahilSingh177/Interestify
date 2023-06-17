@@ -467,6 +467,7 @@ class App:
             raise
     
     def get_blogs_by_likes(self, category_name: Optional[str] = None):
+        print(category_name)
         with self.driver.session(database="neo4j") as session:
             result = session.read_transaction(self._get_blogs_by_likes, category_name)
             print("Success")
@@ -477,12 +478,12 @@ class App:
     def _get_blogs_by_likes(tx, category_name: Optional[str] = None):
         if category_name:
             query = (
-                "MATCH (u:User)-[r:LIKES]->(b:Blog)-[:HAS_CATEGORY]->(c:Category{name:$category_name}) "
+                "MATCH (u:User)-[r:LIKES]->(b:Blog)-[:BELONGS_TO]->(c:Category{name:$category_name}) "
                 "WITH b, COUNT(r) AS likeCount "
                 "ORDER BY likeCount DESC "
                 "RETURN b.title AS title, likeCount, b.author AS author, b.link AS link, b.download_link AS download_link, b.summary AS summary, b.read_time AS read_time, ID(b) AS id "
                 "UNION "
-                "MATCH (b:Blog)-[:HAS_CATEGORY]->(c:Category{name:$category_name}) "
+                "MATCH (b:Blog)-[:BELONGS_TO]->(c:Category{name:$category_name}) "
                 "WHERE NOT EXISTS((:User)-[:LIKES]->(b)) "
                 "RETURN b.title AS title, 0 AS likeCount, b.author AS author, b.link AS link, b.download_link AS download_link, b.summary AS summary, b.read_time AS read_time, ID(b) AS id "
                 "ORDER BY b.createdAt DESC"

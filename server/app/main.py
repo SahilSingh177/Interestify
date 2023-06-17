@@ -171,24 +171,11 @@ def get_top_articles_per_user():
 @app.route('/getTopArticlesfor', methods=['GET'])
 def get_top_articles_by_category():
     args = request.args
-    category = args['category']
+    print("here")
+    category = args.get('category')
     print(category)
-    data = database.get_blogs_by_likes_and_category(category)
-    resp = []
-    for article_data in data:
-        link = article_data['link']
-        category = database.get_category_by_blog(article_data['link'])
-        author = article_data['author']
-        # article = read_article(link)
-        # summary = summarize_article(article)
-        resp.append({
-            "link": link,
-            "category": category,
-            "author": author,
-            # "summary": summary
-        })
-    print(resp)
-    return jsonify(resp)
+    data = database.get_blogs_by_likes(category)
+    return jsonify(data)
 
 @app.route('/addBookmark',methods=['GET'])
 def addBookmark():

@@ -61,7 +61,7 @@ export const Button: ComponentStyleConfig = {
       color: "black",
       bg: "none",
       _hover: {
-        bg: "none"
+        bg: "none",
       }
     },
     link: {
