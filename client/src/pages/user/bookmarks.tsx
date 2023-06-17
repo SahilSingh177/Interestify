@@ -2,6 +2,7 @@ import React from 'react'
 import { useState, useEffect} from 'react'
 import { Stack, HStack , Heading, Spinner } from '@chakra-ui/react'
 import BookmarkCard from '@/components/UserComponent/BookmarkCard'
+import { auth } from '@/firebase/clientApp'
 
 type Props = {}
 
@@ -13,12 +14,13 @@ const bookmarks = (props: Props) => {
         title: string,
     }
 
+    const email = auth.currentUser?.email;
     const [data, setData] = useState<BookmarkedArticles[] | undefined>(undefined);
     const [isLoading, setIsLoading] = useState<Boolean>(true);
 
     const fetchData = async () => {
         try {
-            let response = await fetch('http://127.0.0.1:5000/getBookMarks?email=test@mail', 
+            let response = await fetch(`http://127.0.0.1:5000/getBookMarks?email=${email}`, 
             { next: { revalidate: 60 } });
             const bodyData = await response.json();
             const filteredData = bodyData.data;

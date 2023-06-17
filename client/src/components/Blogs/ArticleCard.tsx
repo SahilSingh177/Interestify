@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { Spacer, Card, VStack, HStack, CardBody, Heading, Text, CardFooter, Icon, Tag, Divider } from '@chakra-ui/react';
+import { Spacer, Card, VStack, HStack, CardBody, Heading, Text, CardFooter, Icon, Tag } from '@chakra-ui/react';
 import { FaBookmark, FaRegBookmark, FaRegEye, FaRegThumbsUp } from 'react-icons/fa';
 import { getRandomColour } from '@/Handlers/getRandomColour';
 import { bookmarkArticle } from '@/Handlers/bookmarkArticle'
@@ -21,11 +21,18 @@ const ArticleCard: React.FC<Props> =
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [isBookMarked, setIsBookMarked] = useState<boolean>(false);
 
-  const handleBookmark = async () => {
-    const updatedIsBookmarked = await bookmarkArticle(isBookMarked, ArticleLink);
-    setIsBookMarked(updatedIsBookmarked);
-  };
-
+  const bookmarkArticle = async () => {
+    if(!isBookMarked){
+      await fetch(`http://127.0.0.1:5000/addBookmark?email=test@mail&link=${ArticleLink}`); 
+      setIsBookMarked(true);
+      console.log("SUCCESSFULLY ADDED")
+    }
+    else{
+      await fetch(`http://127.0.0.1:5000/deleteBookmark?email=test@mail&link=${ArticleLink}`); 
+      setIsBookMarked(false);
+      console.log("DELETED SUCCESSFULLY")     
+    }
+  }
   return (
     <>
       <Card
@@ -37,7 +44,7 @@ const ArticleCard: React.FC<Props> =
         cursor='pointer'
       >
         <VStack width="full">
-          <CardBody width="full" onClick={() => Router.push(`/article/${articleId}`)}>
+          <CardBody width="full" onClick={() => handleClick(articleId)}>
             <HStack>
               <Heading size='md' width='90%'>{Title?Title:"Title"}</Heading>
               <Tag size="sm" variant='solid' colorScheme={getRandomColour()}>

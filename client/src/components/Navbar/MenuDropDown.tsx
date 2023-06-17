@@ -23,7 +23,8 @@ const MenuDropDown = ({handleSignOut}:Props) => {
                                                     onClick={()=>Router.push('/user/bookmarks')}>
           Bookmarks
         </MenuItem >
-        <MenuItem icon={<FaRegClock/>}>
+        <MenuItem icon={<FaRegClock/>} as='a' cursor="pointer" 
+                                                    onClick={()=>Router.push('/user/history')}>
           History
         </MenuItem>
         <MenuDivider mb={0}/>
