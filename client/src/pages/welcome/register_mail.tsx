@@ -5,7 +5,7 @@ import {
     Stack, Text, Input, SimpleGrid, GridItem,
     InputGroup, InputLeftAddon, InputRightElement, Icon, Box, Button, Flex
 } from '@chakra-ui/react'
-import { FaEnvelope } from "react-icons/fa";
+import { FaArrowCircleRight, FaEnvelope } from "react-icons/fa";
 
 type Props = {}
 
@@ -33,12 +33,9 @@ const register_mail = (props: Props) => {
                     </GridItem>
                 </SimpleGrid>
             </Box>
-            <Flex width="27%" justifyContent="space-between">
-                <Button variant="danger" size="lg" borderRadius="7" bg="red.500" onClick={() => Router.push('/')}>Register</Button>
-                <Button variant="success" size="lg" borderRadius="7" fontWeight="bold" onClick={() => Router.push('/')}>Skip</Button>
-
-            </Flex>
+            <Button variant="danger" size="lg" borderRadius="7" bg="red.500" onClick={() => Router.push('/')}>Register</Button>
             <Text marginTop="3" color="gray.600" fontSize="md" fontWeight="bold">You can unsubscribe anytime.</Text>
+            <Icon cursor="pointer" boxSize="5vw" as={FaArrowCircleRight} position="fixed" bottom="2vw" right="2vw"></Icon>
         </Stack>
     )
 }
