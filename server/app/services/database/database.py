@@ -10,9 +10,10 @@ from pathlib import Path
 from .read_article import read_article
 
 # load_dotenv()
-DATABASE_URL = "neo4j+s://feacbda5.databases.neo4j.io"
+
+DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "nKH7aCT0Ft2r61zxvbyzPD9OtdG6cD_Yl3XcEY_TfMs"
+PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
 print(USER)
 
 class App:
@@ -446,20 +447,20 @@ class App:
             
     @staticmethod
     def _remove_likes_from_blog(tx, user_email, blog_id):
-        query = (
-            "MATCH (u:User {email: $user_email})-[r:LIKES]->(b:Blog) "
-            "WHERE ID(b) = 1 "
-            "DELETE r "
-            "WITH b "
-            "MATCH (u2:User)-[r2:LIKES]->(b) "
-            "WITH COUNT(*) AS likecount "
-            "RETURN likecount"
-
-        )
-        result = tx.run(query, user_email = user_email, blog_id = blog_id)
         try:
-            return [{"likeCount": record["likeCount"]}
-                    for record in result]
+            query = (
+                "MATCH (u:User {email: $user_email})-[r:LIKES]->(b:Blog) "
+                "WHERE ID(b) = $blog_id "
+                "DELETE r "
+                "WITH b "
+                "MATCH (u2:User)-[r2:LIKES]->(b) "
+                "WITH COUNT(*) AS likecount "
+                "RETURN likecount"
+
+            )
+            result = tx.run(query, user_email = user_email, blog_id = blog_id)
+            return [{"likecount": record["likecount"]}
+                        for record in result]
         # Capture any errors along with the query and data for traceability
         except Neo4jError as exception:
             logging.error("{query} raised an error: \n {exception}".format(
@@ -767,6 +768,7 @@ if __name__ == "__main__":
     # app.create_user("sam@gmail.com","Sam")
     # app.remove_likes_from_blog("sam@gmail.com",30)
     # app.get_blogs_by_likes()
-    app.add_likes_to_blog("sahilsingh1221177@gmail.com",1)
-    app.remove_likes_from_blog("sahilsingh1221177@gmail.com",1)
+    # app.add_likes_to_blog("sahilsingh1221177@gmail.com",30)
+    # app.remove_likes_from_blog("sahilsingh1221177@gmail.com",30)
+    # app.get_blogs_by_likes("Physics")
     app.close()

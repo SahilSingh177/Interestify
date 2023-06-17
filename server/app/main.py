@@ -80,10 +80,8 @@ def update_preferences():
     # user_to_category update
     return jsonify({"message": "User preferences updated successfully"})
 
-
 @app.route('/getTopArticles', methods=['GET'])
 def get_top_articles():
-    # data = get_articles_from_db()  # Retrieve data from the database
     data = database.get_blogs_by_likes()
     resp = []
     for article_data in data:
@@ -103,9 +101,9 @@ def get_top_articles():
             "category": category,
             "author": author,
             "summary": summary,
-            "time":time,
+            "time": time,
             "id": id,
-            "likes": likes
+            "likes": likes,
         })
     print(resp)
     return jsonify(resp)
@@ -127,7 +125,7 @@ def dislike_article():
     email = args['email']
     blog_id = args['blog_id']
     ans = database.remove_likes_from_blog(email,blog_id)
-    print(ans)
+    # print(ans)
     if ans:
         return jsonify({"total_likes": ans[0]["likecount"]})
     else:

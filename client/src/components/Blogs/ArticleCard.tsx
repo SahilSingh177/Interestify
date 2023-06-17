@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import {
   Spacer,
@@ -17,6 +17,7 @@ import {
   FaRegBookmark,
   FaRegEye,
   FaRegThumbsUp,
+  FaThumbsUp,
 } from "react-icons/fa";
 import { getRandomColour } from "@/Handlers/getRandomColour";
 import { bookmarkArticle } from "@/Handlers/bookmarkArticle";
@@ -31,7 +32,6 @@ type Props = {
   ReadingTime: string;
   ArticleLink: string;
   Likes: number;
-  hasLiked: boolean | null;
 };
 
 const ArticleCard: React.FC<Props> = ({
@@ -43,10 +43,10 @@ const ArticleCard: React.FC<Props> = ({
   ReadingTime,
   ArticleLink,
   Likes,
-  hasLiked,
 }: Props) => {
   const Router = useRouter();
-  const [isLiked, setIsLiked] = useState<boolean>(hasLiked ? hasLiked : false);
+  const [hasLiked, setHasLiked] = useState<boolean>(false);
+  const [isLiked, setIsLiked] = useState<boolean>(hasLiked);
   const [isBookMarked, setIsBookMarked] = useState<boolean>(false);
   const [likes, setLikes] = useState<number>(Likes);
 
@@ -77,40 +77,54 @@ const ArticleCard: React.FC<Props> = ({
     updateBlogList(articleId);
   };
 
-  const likeArticle = (articleId: string) => async () => {
+  const likeArticle = async (articleId: string) => {
     if (!auth.currentUser?.email) return;
-    if (isLiked) {
-      setIsLiked(false);
-      try {
-        let response = await fetch(
-          "http://127.0.0.1:5000/likeArticle?email=" +
-            auth.currentUser?.email +
-            "&blog_id=" +
-            articleId,
-          { next: { revalidate: 60 } }
-        );
-        const bodyData = await response.json();
-        setLikes(bodyData);
-      } catch (error) {
-        console.error(error);
-      }
-    } else {
-      setIsLiked(true);
-      try {
-        let response = await fetch(
-          "http://127.0.0.1:5000/dislikeArticle?email=" +
-            auth.currentUser?.email +
-            "&blog_id=" +
-            articleId,
-          { next: { revalidate: 60 } }
-        );
-        const bodyData = await response.json();
-        setLikes(bodyData);
-      } catch (error) {
-        console.error(error);
-      }
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:5000/likeArticle?email=${auth.currentUser?.email}&blog_id=${articleId}`,
+        { next: { revalidate: 60 } }
+      );
+      const bodyData = await response.json();
+      setLikes(bodyData.total_likes);
+    } catch (error) {
+      console.error(error);
     }
   };
+
+  const dislikeArticle = async (articleId: string) => {
+    if (!auth.currentUser?.email) return;
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:5000/dislikeArticle?email=${auth.currentUser?.email}&blog_id=${articleId}`,
+        { next: { revalidate: 60 } }
+      );
+      const bodyData = await response.json();
+      setLikes(bodyData.total_likes);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchHasLiked = async () => {
+      if (!auth.currentUser?.email) return;
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:5000/isArticleLiked?email=${auth.currentUser?.email}&blog_id=${articleId}`
+        );
+        const bodyData = await response.json();
+        console.log(bodyData);
+        setHasLiked(bodyData);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchHasLiked();
+  }, [articleId]);
+
+  useEffect(() => {
+    setIsLiked(hasLiked);
+  }, [hasLiked]);
 
   return (
     <>
@@ -137,7 +151,16 @@ const ArticleCard: React.FC<Props> = ({
           <CardFooter width="full" marginTop={2}>
             <HStack spacing={4} width="full">
               <HStack spacing={1}>
-                <Icon as={FaRegThumbsUp} onClick={likeArticle(articleId)} />
+                <Icon
+                  as={isLiked ? FaThumbsUp : FaRegThumbsUp}
+                  onClick={() => {
+                    if (isLiked) {
+                      dislikeArticle(articleId);
+                    } else {
+                      likeArticle(articleId);
+                    }
+                  }}
+                />
                 <Text fontSize="sm" color="gray.500">
                   {likes}
                 </Text>
