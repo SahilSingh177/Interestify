@@ -39,6 +39,7 @@ const article = () => {
           PDFLink: filteredData['pdf_link'],
           ArticleLink: filteredData['link']
         };
+        console.log(formattedData)
         setArticleData(formattedData);
     }
     catch (error){

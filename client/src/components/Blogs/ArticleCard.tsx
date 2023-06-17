@@ -3,7 +3,8 @@ import { useRouter } from 'next/router';
 import { Spacer, Card, VStack, HStack, CardBody, Heading, Text, CardFooter, Icon, Tag } from '@chakra-ui/react';
 import { FaBookmark, FaRegBookmark, FaRegEye, FaRegThumbsUp } from 'react-icons/fa';
 import { getRandomColour } from '@/Handlers/getRandomColour';
-import { bookmarkArticle } from '@/Handlers/bookmarkArticle'
+import { bookmarkArticle } from '@/Handlers/bookmarkArticle';
+import {auth} from '@/firebase/clientApp';
 
 type Props = {
   articleId: string
@@ -21,17 +22,25 @@ const ArticleCard: React.FC<Props> =
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [isBookMarked, setIsBookMarked] = useState<boolean>(false);
 
-  const bookmarkArticle = async () => {
-    if(!isBookMarked){
-      await fetch(`http://127.0.0.1:5000/addBookmark?email=test@mail&link=${ArticleLink}`); 
-      setIsBookMarked(true);
-      console.log("SUCCESSFULLY ADDED")
-    }
-    else{
-      await fetch(`http://127.0.0.1:5000/deleteBookmark?email=test@mail&link=${ArticleLink}`); 
-      setIsBookMarked(false);
-      console.log("DELETED SUCCESSFULLY")     
-    }
+  const handleBookmark = async () => {
+    const updatedIsBookmarked = await bookmarkArticle(isBookMarked, ArticleLink);
+    setIsBookMarked(updatedIsBookmarked);
+  };
+
+  const updateBlogList = async (articleId: string) => {
+    if(!auth.currentUser?.email) return;
+    await fetch("http://127.0.0.1:5000/registerBlog", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ 'email': auth.currentUser?.email , 'blog_id' : articleId}),
+    });
+  }
+
+  const handleClick = (articleId: string) => {
+    Router.push(`/article/${articleId}`);
+    updateBlogList(articleId); 
   }
   return (
     <>
