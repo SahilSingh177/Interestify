@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { Spacer, Card, VStack, HStack, CardBody, Heading, Text, CardFooter, Icon, Tag } from '@chakra-ui/react';
+import { Spacer, Card, VStack, HStack, CardBody, Heading, Text, CardFooter, Icon, Tag, Divider } from '@chakra-ui/react';
 import { FaBookmark, FaRegBookmark, FaRegEye, FaRegThumbsUp } from 'react-icons/fa';
-import { getRandomColour } from '@/helper/getRandomColour';
+import { getRandomColour } from '@/Handlers/getRandomColour';
+import { bookmarkArticle } from '@/Handlers/bookmarkArticle'
 
 type Props = {
   articleId: string
@@ -17,21 +18,14 @@ type Props = {
 const ArticleCard: React.FC<Props> = 
         ({articleId,Author,Category,Title,Summary, ReadingTime,ArticleLink}:Props) => {
   const Router = useRouter();
-  const [isLiked, setIsLiked] = useState<Boolean>(false);
-  const [isBookMarked, setIsBookMarked] = useState<Boolean>(false);
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [isBookMarked, setIsBookMarked] = useState<boolean>(false);
 
-  const bookmarkArticle = async () => {
-    if(!isBookMarked){
-      await fetch(`http://127.0.0.1:5000/addBookmark?email=test@mail&link=${ArticleLink}`); 
-      setIsBookMarked(true);
-      console.log("SUCCESSFULLY ADDED")
-    }
-    else{
-      await fetch(`http://127.0.0.1:5000/deleteBookmark?email=test@mail&link=${ArticleLink}`); 
-      setIsBookMarked(false);
-      console.log("DELETED SUCCESSFULLY")     
-    }
-  }
+  const handleBookmark = async () => {
+    const updatedIsBookmarked = await bookmarkArticle(isBookMarked, ArticleLink);
+    setIsBookMarked(updatedIsBookmarked);
+  };
+
   return (
     <>
       <Card
@@ -55,9 +49,8 @@ const ArticleCard: React.FC<Props> =
               {Summary?Summary:"Summary"}
             </Text>
           </CardBody>
-
-          <CardFooter width="full">
-            <HStack spacing={4} width="full">
+          <CardFooter width="full" marginTop={2}>
+            <HStack spacing={4}width="full">
               <HStack spacing={1}>
                 <Icon as={FaRegThumbsUp}></Icon>
                 <Text fontSize='sm' color="gray.500">69</Text>
@@ -68,7 +61,7 @@ const ArticleCard: React.FC<Props> =
               </HStack>
               <Spacer />
               <Text fontSize='sm' color="gray.500">By {Author?Author:"Unknown"}</Text>
-              <Icon as={isBookMarked ? FaBookmark : FaRegBookmark} onClick={bookmarkArticle} />
+              <Icon as={isBookMarked ? FaBookmark : FaRegBookmark} onClick={handleBookmark} />
             </HStack>
           </CardFooter>
         </VStack>

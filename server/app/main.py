@@ -158,6 +158,27 @@ def deleteBookmark():
         return jsonify({"result":"success"}),200
     except Exception as e:
         return jsonify(error=str(e)), 500
+    
+
+@app.route('/addLike',methods=['GET'])
+def addLike():
+    email = request.args.get('email')
+    link = request.args.get('link')
+    try:
+        database.user_to_blog(email,link)
+        return jsonify({"result":"success"}),200
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+    
+@app.route('/deleteLike',methods=['GET'])
+def deleteLike():
+    email = request.args.get('email')
+    link = request.args.get('link')
+    try:
+        database.delete_user_to_blog(email,link)
+        return jsonify({"result":"success"}),200
+    except Exception as e:
+        return jsonify(error=str(e)), 500
 
 @app.route('/getBookMarks', methods=['GET'])
 def getBookMarks():

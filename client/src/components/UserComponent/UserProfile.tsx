@@ -1,40 +1,113 @@
 import React from 'react';
 import { auth } from '@/firebase/clientApp';
-import { Flex, Box, Card, CardBody, Image, Stack, HStack, Heading, CardFooter, Button, Text } from '@chakra-ui/react';
-import 'chart.js/auto';
+import {
+    Flex, VStack, HStack, Card, CardBody, Stack, Heading, Text, Image, Divider, CardFooter, TagLabel,
+    Tag, TagCloseButton, Button
+} from '@chakra-ui/react';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+import { categories } from '@/Handlers/categories';
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Tooltip,
+    Legend
+);
+
+
+export const options = {
+    responsive: true,
+    plugins: {
+        title: { display: false },
+    },
+    scales: {
+        x: { grid: { display: false } },
+        y: { grid: { display: false } },
+    },
+};
+
+const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+
+export const data = {
+    labels,
+    datasets: [
+        {
+            data: [50, 60, 30, 2, 56, 69, 12],
+            backgroundColor: "RGBA(0, 0, 0, 0.80)",
+        }
+    ]
+};
+
+import OptionsMenu from './OptionsMenu';
+import { getRandomColour } from '@/Handlers/getRandomColour';
 
 const UserProfile: React.FC = () => {
     let imageURL = auth.currentUser?.photoURL || undefined;
     if (!imageURL) imageURL = '/assets/default_profile_photo.png'
-    //TODO: IT STILL DISPLAYS USER'S DP EVEN IF HE LOGS OUT.
     let displayName = auth.currentUser?.displayName;
+    let userEmail = auth.currentUser?.email;
     return (
-        <Box maxHeight="80vh" height="80vh" width="25vw" padding={5} borderRadius={10}>
-            <Card
-                direction={{ base: 'column', sm: 'row' }}
-                overflow='hidden'
-                maxHeight="15vh"
-                boxShadow={0}
-                borderColor="none"
-            >
-                <Image
-                    objectFit='cover'
-                    borderRadius={10}
-                    maxW="30%"
-                    src={imageURL}
-                    alt='Caffe Latte'
-                />
-
-                <Flex flexDirection="column" padding="0 5%" flexGrow="1" justifyContent="space-around">
-                    <HStack>
-                        <Text size='md' fontWeight="semibold">{displayName}</Text>
-                    </HStack>
-                    <Button variant="transparent" bg="green.100" color="green.600" fontWeight="semibold" fontSize="sm" borderRadius={10} _hover={{ "bg": "green.100" }}>Edit Profile</Button>
-                    {/* Open a Modal that asks user to update their username and display photo */}
-                </Flex>
-            </Card>
-
-        </Box>
+        <Flex>
+            <OptionsMenu></OptionsMenu>
+            <HStack height={'calc(90vh - 80px'} overflow="hidden" justifyContent='space-between' alignItems='center'>
+                <VStack width="35vw" height={`calc(90vh - 12px)`} paddingBottom={0}>
+                    <Card borderRadius={50} width="full" height="50%">
+                        <CardBody>
+                            <Image
+                                src={imageURL}
+                                alt='Green double couch with wooden legs'
+                                borderRadius='lg'
+                                height="50%"
+                            />
+                            <Stack mt='6' spacing='3'>
+                                <Heading size='md'>{displayName}</Heading>
+                                <Text>
+                                    <Text color="gray.600">Signed in as</Text>
+                                     {userEmail}
+                                </Text>
+                            </Stack>
+                        </CardBody>
+                        <Divider />
+                        <CardFooter>
+                            <Button variant='solid'>
+                                Edit Profile
+                            </Button>
+                        </CardFooter>
+                    </Card>
+                    <Bar width="full" options={options} data={data} />
+                </VStack>
+                <VStack width={`calc(40vw - 20px)`} paddingLeft="5vw" paddingRight="5vw" justifyContent="space-around">
+                    <Flex flexWrap="wrap">
+                        {categories.map((category, id) => {
+                            return (
+                                <Tag
+                                    margin={2}
+                                    size="lg"
+                                    key={id}
+                                    borderRadius="full"
+                                    variant="solid"
+                                    colorScheme={getRandomColour()}
+                                >
+                                    <TagLabel>{category}</TagLabel>
+                                    <TagCloseButton />
+                                </Tag>
+                            );
+                        })}
+                    </Flex>
+                    <Button variant="solid" marginTop={10} width="15vw" padding="20px 10px" fontSize="xl">Edit Categories</Button>
+                </VStack>
+            </HStack>
+        </Flex >
     );
 }
 

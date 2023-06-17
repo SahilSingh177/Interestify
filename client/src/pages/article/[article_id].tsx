@@ -18,6 +18,7 @@ const article = () => {
     Summary: string,
     ReadingTime: string,
     PDFLink: string,
+    ArticleLink: string,
   };
 
   const [articleData, setArticleData] = useState<Article | undefined>(undefined);
@@ -27,7 +28,6 @@ const article = () => {
         const response = await fetch(`http://127.0.0.1:5000/getArticle?article_id=${article_id}`);
         const data = await response.json();
         const filteredData = data.data[0];
-        console.log(filteredData);
     
         const formattedData: Article = {
           Text: filteredData['text'],
@@ -36,7 +36,8 @@ const article = () => {
           Title: filteredData['title'],
           Summary: filteredData['summary'],
           ReadingTime: filteredData['read_time'],
-          PDFLink: filteredData['pdf_link']
+          PDFLink: filteredData['pdf_link'],
+          ArticleLink: filteredData['link']
         };
         setArticleData(formattedData);
     }
@@ -78,7 +79,7 @@ const article = () => {
         articleData && 
         <Article Content={articleData.Text} Author={articleData.Author} Category={articleData.Category}
           Title={articleData.Title} ReadingTime={articleData.ReadingTime} Summary={articleData.Summary}
-          PDFLink={articleData.PDFLink}
+          PDFLink={articleData.PDFLink} ArticleLink={articleData.ArticleLink}
         ></Article>
       }
 

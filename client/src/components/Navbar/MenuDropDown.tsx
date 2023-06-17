@@ -16,11 +16,8 @@ const MenuDropDown = ({handleSignOut}:Props) => {
         aria-label='Options'
       />
       <MenuList pl={2} pr={2}>
-        <MenuItem as='a' icon={<FaUser/>} cursor="pointer" onClick={()=>Router.push('/profile')}>
+        <MenuItem as='a' icon={<FaUser/>} cursor="pointer" onClick={()=>Router.push('user/profile')}>
           Profile
-        </MenuItem>
-        <MenuItem icon={<FaChartLine/>}>
-          Activity
         </MenuItem>
         <MenuItem as='a' icon={<FaRegBookmark/>} cursor="pointer" 
                                                     onClick={()=>Router.push('/user/bookmarks')}>
