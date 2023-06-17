@@ -14,7 +14,7 @@ import {
     Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
-import { categories } from '@/Handlers/CategoriesData';
+import { categoriesData } from '@/Handlers/CategoriesData';
 
 ChartJS.register(
     CategoryScale,
@@ -88,7 +88,7 @@ const UserProfile: React.FC = () => {
                 </VStack>
                 <VStack width={`calc(40vw - 20px)`} paddingLeft="5vw" paddingRight="5vw" justifyContent="space-around">
                     <Flex flexWrap="wrap">
-                        {categories.map((category, id) => {
+                        {categoriesData.slice(0,10).map((category, id) => {
                             return (
                                 <Tag
                                     margin={2}
