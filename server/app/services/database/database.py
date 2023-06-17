@@ -10,9 +10,9 @@ from pathlib import Path
 from .read_article import read_article
 
 # load_dotenv()
-DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://feacbda5.databases.neo4j.io"
 USER = "neo4j"
-PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
+PASSWORD = "nKH7aCT0Ft2r61zxvbyzPD9OtdG6cD_Yl3XcEY_TfMs"
 print(USER)
 
 class App:

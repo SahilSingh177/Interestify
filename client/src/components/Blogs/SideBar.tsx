@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Flex, Stack, Text, Button, Divider, Center, Badge } from '@chakra-ui/react';
 import { authState } from '@/atoms/userAtom';
 import { useRecoilValue } from 'recoil';
-import { categories } from '@/Handlers/categories'; 
+import { categoriesData } from '@/Handlers/CategoriesData'; 
 // display top categories later
 
 type Props = {};
@@ -42,7 +42,7 @@ const Sidebar: React.FC<Props> = () => {
           Discover more of what matters to you
         </Text>
         <Flex flexWrap="wrap" justifyContent="center">
-          {categories.map((category, id) => {
+          {categoriesData.map((category, id) => {
             return (<Badge key={id} marginLeft={5} marginBottom={5} padding={2} borderRadius={20} fontWeight="light" bg="gray.100" cursor="pointer">{category}</Badge>);
           })}
         </Flex>

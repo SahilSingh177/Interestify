@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { useRouter } from "next/router";
 import {
   Card,
@@ -42,6 +42,7 @@ const HistoryCard = ({
   const handleClick = (articleId: string) => {
     Router.push(`/article/${articleId}`);
   };
+  const [isDeleted, setIsDeleted] = useState<boolean>(false)
   const email = auth.currentUser?.email;
   const deleteHistory = async () => {
     try {
@@ -52,11 +53,13 @@ const HistoryCard = ({
       const bodyData = await response.json();
       const filteredData = bodyData.data;
       console.log(filteredData);
+      setIsDeleted(true);
     } catch (error) {
       console.error(error);
     }
   };
   return (
+    !isDeleted?
     <Card
       bg="white"
       direction={{ md: "row", sm: "column" }}
@@ -105,7 +108,7 @@ const HistoryCard = ({
           </HStack>
         </CardBody>
       </VStack>
-    </Card>
+    </Card>: null
   );
 };
 

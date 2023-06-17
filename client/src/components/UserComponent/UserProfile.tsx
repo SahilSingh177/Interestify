@@ -14,7 +14,7 @@ import {
     Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
-import { categories } from '@/Handlers/categories';
+import { categories } from '@/Handlers/CategoriesData';
 
 ChartJS.register(
     CategoryScale,

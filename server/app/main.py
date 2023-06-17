@@ -11,9 +11,9 @@ CORS(app, origins=['http://localhost:3000'])
 sg = None
 initialized = False
 
-DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://feacbda5.databases.neo4j.io"
 USER = "neo4j"
-PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
+PASSWORD = "nKH7aCT0Ft2r61zxvbyzPD9OtdG6cD_Yl3XcEY_TfMs"
 SENDGRID_API_KEY = "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"
 
 uri = DATABASE_URL
