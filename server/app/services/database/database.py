@@ -82,25 +82,6 @@ class App:
         else:
             return False
 
-    def check_author_exists(self, author_name):
-        with self.driver.session(database="neo4j") as session:
-            return session.execute_read(
-                self._check_author_exists, author_name)
-
-    @staticmethod
-    def _check_author_exists(tx, author_name):
-        query = (
-            "MATCH (a:Author) "
-            "WHERE a.name = $author_name "
-            "RETURN a"
-        )
-        result = tx.run(query, author_name=author_name)
-        # Check if result has any data or multiple data
-        if result.peek():
-            return True
-        else:
-            return False
-
     # Creation
     def create_user(self, user_email, user_name):
         with self.driver.session(database="neo4j") as session:
@@ -130,37 +111,43 @@ class App:
                 query=query, exception=exception))
             raise
 
-    def create_blog(self, blog_title, blog_link, blog_author, download_link):
+    def create_blog(self, blog_title, blog_link, blog_author, download_link, category_name):
         with self.driver.session(database="neo4j") as session:
             if self.check_blog_exists(blog_link):
                 print("Blog already exists")
                 return False
-
-            summaryData = read_article(download_link)
-            text = summaryData[0]
-            summary = summaryData[1]
-            read_time = str(summaryData[2])
-            summary_text = summary.summary
-            lines = summary_text.splitlines()
-            cleaned_lines = [line.lstrip("- ") for line in lines]
-            cleaned_summary = "\n".join(cleaned_lines)
-            print(summary)
-            print(read_time)
-            print(type(read_time))
-            result = session.execute_write(
-                self._create_blog, blog_title, blog_link, blog_author,read_time, download_link, cleaned_summary,text)
-            for record in result:
-                print("Created Blog: {b}"
-                      .format(b=record['b']))
-            return True
+            if not self.check_category_exists(category_name):
+                self.create_category(category_name)
+            try:
+                summaryData = read_article(download_link)
+                text = summaryData[0]
+                summary = summaryData[1]
+                read_time = str(summaryData[2])
+                summary_text = summary.summary
+                lines = summary_text.splitlines()
+                cleaned_lines = [line.lstrip("- ") for line in lines]
+                cleaned_summary = "\n".join(cleaned_lines)
+                result = session.execute_write(
+                    self._create_blog, blog_title, blog_link, blog_author,read_time, download_link, cleaned_summary,text, category_name)
+                for record in result:
+                    print("Created Blog: {b}"
+                        .format(b=record['b']))
+                return True
+            except:
+                print("Error creating blog")
+                return False
 
     @staticmethod
-    def _create_blog(tx, blog_title, blog_link, blog_author, read_time, download_link, summary, text):
+    def _create_blog(tx, blog_title, blog_link, blog_author, read_time, download_link, summary, text, category_name):
         query = (
-            "CREATE (b:Blog { title: $blog_title, link: $blog_link, author: $blog_author, read_time: $read_time ,likes: 0, download_link: $download_link, summary: $summary, text:$text}) "
+            "CREATE (b:Blog { title: $blog_title, link: $blog_link, author: $blog_author, read_time: $read_time, download_link: $download_link, summary: $summary, text: $text }) "
+            "WITH b "
+            "MATCH (c:Category) WHERE c.name = $category_name "
+            "MERGE (b)-[:BELONGS_TO]->(c) "
             "RETURN b"
+
         )
-        result = tx.run(query, blog_title = blog_title, blog_link = blog_link, blog_author = blog_author,read_time=read_time ,download_link = download_link, summary = summary, text = text)
+        result = tx.run(query, blog_title = blog_title, blog_link = blog_link, blog_author = blog_author,read_time=read_time ,download_link = download_link, summary = summary, text = text, category_name = category_name)
         try:
             return [{"b": record["b"]["title"]}
                     for record in result]
@@ -200,34 +187,6 @@ class App:
             raise
 
 
-    def add_author(self, author_name):
-        with self.driver.session(database="neo4j") as session:
-            if self.check_author_exists(author_name):
-                print("Author already exists")
-                return False
-            result = session.execute_write(
-                self._add_author, author_name)
-            for record in result:
-                print("Added Author: {a}"
-                      .format(a=record['a']))
-            return True
-
-    @staticmethod
-    def _add_author(tx, author_name):
-        query = (
-            "CREATE (a:Author { name: $author_name }) "
-            "RETURN a"
-        )
-        result = tx.run(query, author_name = author_name)
-        try:
-            return [{"a": record["a"]["name"]}
-                    for record in result]
-        # Capture any errors along with the query and data for traceability
-        except Neo4jError as exception:
-            logging.error("{query} raised an error: \n {exception}".format(
-                query=query, exception=exception))
-            raise
-
     # Relationship
     def blog_to_category(self, blog_link, category_name):
         with self.driver.session(database="neo4j") as session:
@@ -254,69 +213,6 @@ class App:
         result = tx.run(query, blog_link = blog_link, category_name = category_name)
         try:
             return [{"b": record["b"]["title"], "c": record["c"]["name"]}
-                    for record in result]
-        # Capture any errors along with the query and data for traceability
-        except Neo4jError as exception:
-            logging.error("{query} raised an error: \n {exception}".format(
-                query=query, exception=exception))
-            raise
-
-    def blog_to_author(self, blog_link, author_name):
-        with self.driver.session(database="neo4j") as session:
-            if not self.check_blog_exists(blog_link):
-                print("Blog does not exist")
-                return False
-            if not self.check_author_exists(author_name):
-                print("Author does not exist")
-                return False
-            result = session.execute_write(self._blog_to_author, blog_link, author_name)
-            for record in result:
-                print("Added Blog: {b} written by Author: {a}".format(b=record['b'], a=record['a']))
-            return True
-
-    @staticmethod
-    def _blog_to_author(tx, blog_link, author_name):
-        query = (
-            "MATCH (b:Blog {link: $blog_link}), (a:Author {name: $author_name}) "  # Fixed missing closing parenthesis
-            "MERGE (b)-[r:WRITTEN_BY]->(a) "
-            "RETURN b, a"
-        )
-        result = tx.run(query, blog_link=blog_link, author_name=author_name)
-        try:
-            return [
-                {"b": record["b"]["title"], "a": record["a"]["name"]}
-                for record in result
-            ]
-        except Neo4jError as exception:
-            logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
-            raise
-
-
-    def author_to_category(self, author_name, category_name):
-        with self.driver.session(database="neo4j") as session:
-            if not self.check_author_exists(author_name):
-                print("Author does not exist")
-                return False
-            if not self.check_category_exists(category_name):
-                print("Category does not exist")
-                return False
-            result = session.execute_write(
-                self._author_to_category, author_name, category_name)
-            for record in result:
-                print("Added Author: {a} to Category: {c}"
-                      .format(a=record['a'], c=record['c']))
-            return True
-
-    @staticmethod
-    def _author_to_category(tx, author_name, category_name):
-        query = (
-            "MATCH (a:Author {name:$author_name}), (c:Category {name:$category_name}) "
-            "MERGE (a)-[r:IN_CATEGORY]->(c) "
-            "RETURN a, c"
-        )
-        result = tx.run(query, author_name = author_name, category_name = category_name)
-        try:
-            return [{"a": record["a"]["name"], "c": record["c"]["name"]}
                     for record in result]
         # Capture any errors along with the query and data for traceability
         except Neo4jError as exception:
@@ -420,7 +316,7 @@ class App:
     def _user_to_blog(tx, user_email, blog_link):
         query = (
             "MATCH (u:User {email:$user_email}), (b:Blog{link:$blog_link}) "
-            "MERGE (u)-[r:READ]->(b) "
+            "MERGE (u)-[r:READS]->(b) "
             "RETURN u, b"
         )
         result = tx.run(query, user_email = user_email, blog_link = blog_link)
@@ -481,64 +377,49 @@ class App:
             ]
             
             return user_blogs
-    def user_to_author(self, user_email, author_name):
+        
+    def isBlogLiked(self, user_email, blog_id):
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
                 print("User does not exist")
                 return False
-            if not self.check_author_exists(author_name):
-                print("Author does not exist")
-                return False
-            result = session.execute_write(
-                self._user_to_author, user_email, author_name)
-            for record in result:
-                print("Added User: {u} to Author: {a}"
-                      .format(u=record['u'], a=record['a']))
-            return True
-
-    @staticmethod
-    def _user_to_author(tx, user_email, author_name):
-        query = (
-            "MATCH (u:User{email:$user_email}), (a:Author{name:$author_name}) "
-            "MERGE (u)-[r:READS]->(a) "
-            "RETURN u, a"
-        )
-        result = tx.run(query, user_email = user_email, author_name = author_name)
-        try:
-            return [{"u": record["u"]["email"], "a": record["a"]["name"]}
-                    for record in result]
-        # Capture any errors along with the query and data for traceability
-        except Neo4jError as exception:
-            logging.error("{query} raised an error: \n {exception}".format(
-                query=query, exception=exception))
-            raise
-
-    def add_likes_to_blog(self, user_email, blog_link):
+            query = (
+                "MATCH (u:User {email: $user_email})-[r:LIKES]->(b:Blog) "
+                "WHERE ID(b) = $blog_id "
+                "RETURN r"
+            )
+            result = session.run(query, user_email=user_email, blog_id=int(blog_id))
+            return result.peek()
+        
+    def add_likes_to_blog(self, user_email, blog_id):
         with self.driver.session(database="neo4j") as session:
-            if not self.check_user_exists(user_email):
-                print("User does not exist")
+            try:
+                if not self.check_user_exists(user_email):
+                    print("User does not exist")
+                    return False
+                result = session.execute_write(
+                    self._add_likes_to_blog, user_email, int(blog_id))
+                for record in result:
+                    print("{likecount} likes for Blog"
+                        .format(likecount=record['likecount']))
+                return result
+            except Exception as e:
+                print(e)
                 return False
-            if not self.check_blog_exists(blog_link):
-                print("Blog does not exist")
-                return False
-            result = session.execute_write(
-                self._add_likes_to_blog, user_email, blog_link)
-            for record in result:
-                print("{u} liked Blog: {b}"
-                      .format(u=record['u'], b=record['b']))
-            return True
         
     @staticmethod
-    def _add_likes_to_blog(tx, user_email, blog_link):
+    def _add_likes_to_blog(tx, user_email, blog_id):
         query = (
-            "MATCH (u:User {email:$user_email}), (b:Blog{link:$blog_link}) "
+            "MATCH (u:User {email:$user_email}), (b:Blog) WHERE ID(b) = $blog_id "
             "MERGE (u)-[r:LIKES]->(b) "
-            "SET b.likes = b.likes + 1 "
-            "RETURN u, b"
+            "WITH b "
+            "MATCH (u2:User)-[r2:LIKES]->(b) "
+            "WITH COUNT(r2) AS likecount "
+            "RETURN likecount"
         )
-        result = tx.run(query, user_email = user_email, blog_link = blog_link)
+        result = tx.run(query, user_email = user_email, blog_id = blog_id)
         try:
-            return [{"u": record["u"]["email"], "b": record["b"]["title"]}
+            return [{"likecount": record["likecount"]}
                     for record in result]
         # Capture any errors along with the query and data for traceability
         except Neo4jError as exception:
@@ -547,55 +428,82 @@ class App:
             raise
 
 
+    def remove_likes_from_blog(self, user_email, blog_id):
+        with self.driver.session(database="neo4j") as session:
+            try:
+                if not self.check_user_exists(user_email):
+                    print("User does not exist")
+                    return False
+                result = session.execute_write(
+                    self._remove_likes_from_blog, user_email, int(blog_id))
+                for record in result:
+                    print("{likecount} likes for Blog"
+                        .format(likecount=record['likecount']))
+                return result
+            except Exception as e:
+                print(e)
+                return False
+            
+    @staticmethod
+    def _remove_likes_from_blog(tx, user_email, blog_id):
+        query = (
+            "MATCH (u:User {email: $user_email})-[r:LIKES]->(b:Blog) "
+            "WHERE ID(b) = 1 "
+            "DELETE r "
+            "WITH b "
+            "MATCH (u2:User)-[r2:LIKES]->(b) "
+            "WITH COUNT(*) AS likecount "
+            "RETURN likecount"
 
+        )
+        result = tx.run(query, user_email = user_email, blog_id = blog_id)
+        try:
+            return [{"likeCount": record["likeCount"]}
+                    for record in result]
+        # Capture any errors along with the query and data for traceability
+        except Neo4jError as exception:
+            logging.error("{query} raised an error: \n {exception}".format(
+                query=query, exception=exception))
+            raise
+    
     def get_blogs_by_likes(self, category_name: Optional[str] = None):
         with self.driver.session(database="neo4j") as session:
             result = session.read_transaction(self._get_blogs_by_likes, category_name)
             print("Success")
+            print(result)
             return result
 
     @staticmethod
     def _get_blogs_by_likes(tx, category_name: Optional[str] = None):
         if category_name:
             query = (
-                "MATCH (b:Blog)-[:IN_CATEGORY]->(c:Category {name:$category_name}) "
-                "RETURN b.author AS author, b.title AS title, b.link AS link , b.download_link AS pdf_link, b.summary AS summary, b.read_time as read_time, ID(b) AS id "
-                "ORDER BY b.likes DESC"
+                "MATCH (u:User)-[r:LIKES]->(b:Blog)-[:HAS_CATEGORY]->(c:Category{name:$category_name}) "
+                "WITH b, COUNT(r) AS likeCount "
+                "ORDER BY likeCount DESC "
+                "RETURN b.title AS title, likeCount, b.author AS author, b.link AS link, b.download_link AS download_link, b.summary AS summary, b.read_time AS read_time, ID(b) AS id "
+                "UNION "
+                "MATCH (b:Blog)-[:HAS_CATEGORY]->(c:Category{name:$category_name}) "
+                "WHERE NOT EXISTS((:User)-[:LIKES]->(b)) "
+                "RETURN b.title AS title, 0 AS likeCount, b.author AS author, b.link AS link, b.download_link AS download_link, b.summary AS summary, b.read_time AS read_time, ID(b) AS id "
+                "ORDER BY b.createdAt DESC"
             )
             result = tx.run(query, category_name=category_name)
         else:
             query = (
+                "MATCH (u:User)-[r:LIKES]->(b:Blog) "
+                "WITH b, COUNT(r) AS likeCount "
+                "ORDER BY likeCount DESC "
+                "RETURN b.title AS title, likeCount, b.author AS author, b.link AS link, b.download_link AS download_link, b.summary AS summary, b.read_time AS read_time, ID(b) AS id "
+                "UNION "
                 "MATCH (b:Blog) "
-                "RETURN b.author AS author, b.title AS title, b.link AS link , b.download_link AS pdf_link, b.summary AS summary, b.read_time as read_time, ID(b) AS id "
-                "ORDER BY b.likes DESC"
+                "WHERE NOT EXISTS((:User)-[:LIKES]->(b)) "
+                "RETURN b.title AS title, 0 AS likeCount, b.author AS author, b.link AS link, b.download_link AS download_link, b.summary AS summary, b.read_time AS read_time, ID(b) AS id "
+                "ORDER BY b.createdAt DESC"
             )
             result = tx.run(query)
         try:
             return [
-                {"author": record["author"], "title": record["title"], "link": record["link"], "pdf_link": record["pdf_link"], "summary": record["summary"], "read_time":record["read_time"], "id":record["id"]}
-                for record in result
-            ]
-        except Neo4jError as exception:
-            logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
-            raise
-
-    def get_blogs_by_likes_and_category(self, category_name):    
-        with self.driver.session(database="neo4j") as session:
-            result = session.read_transaction(self._get_blogs_by_likes_and_category, category_name)
-            print("Success")
-            return result
-        
-    @staticmethod
-    def _get_blogs_by_likes_and_category(tx, category_name):
-        query = (
-            "MATCH (b:Blog)-[:IN_CATEGORY]->(c:Category {name:$category_name}) "
-            "RETURN b.author AS author, b.title AS title, b.link AS link, b.read_time AS read_time"
-            "ORDER BY b.likes DESC"
-        )
-        result = tx.run(query, category_name=category_name)
-        try:
-            return [
-                {"author": record["author"], "title": record["title"], "link": record["link"], "read_time":record["read_link"]}
+                {"author": record["author"], "title": record["title"], "link": record["link"], "pdf_link": record["download_link"], "summary": record["summary"], "read_time":record["read_time"], "id":record["id"], "likes": record["likeCount"]}
                 for record in result
             ]
         except Neo4jError as exception:
@@ -655,21 +563,21 @@ class App:
                 query=query, exception=exception))
             raise
 
-    def get_category_by_blog(self, blog_link):
+    def get_category_by_blog(self, blog_id):
         with self.driver.session(database="neo4j") as session:
-            result = session.execute_read(self._get_category_by_blog, blog_link)
+            result = session.execute_read(self._get_category_by_blog, blog_id)
             if result:
                 return result[0]
             else:
                 return None
 
     @staticmethod
-    def _get_category_by_blog(tx, blog_link):
+    def _get_category_by_blog(tx, blog_id):
         query = (
-            "MATCH (b:Blog {link: $blog_link})-[r:IN_CATEGORY]->(c:Category) "
+            "MATCH (b:Blog)-[r:BELONGS_TO]->(c:Category) WHERE ID(b) = $blog_id "
             "RETURN c.name AS categoryName"
         )
-        result = tx.run(query, blog_link=blog_link)
+        result = tx.run(query, blog_id=blog_id)
         try:
             return [record.get("categoryName") for record in result]
         except Neo4jError as exception:
@@ -714,7 +622,7 @@ class App:
     @staticmethod
     def _delete_user_to_category(tx, user_email):
         query = (
-            "MATCH (u:User {email: $user_email})-[r:BROWSED]->(c:Category) "
+            "MATCH (u:User {email: $user_email})-[r:BROWSES]->(c:Category) "
             "DELETE r "
         )
         result = tx.run(query, user_email=user_email)
@@ -854,4 +762,10 @@ if __name__ == "__main__":
     # app.user_to_blog_read("sahil@gmail.com",53)
     # print(app.get_history("sahil@gmail.com"))
     # print(ans)
+    # app.create_blog("Myblg","Samplelink","Sampleauthor","https://link.springer.com/content/pdf/10.1007/s42757-022-0144-8.pdf?pdf=button","sample_category")
+    # app.create_user("sam@gmail.com","Sam")
+    # app.remove_likes_from_blog("sam@gmail.com",30)
+    # app.get_blogs_by_likes()
+    app.add_likes_to_blog("sahilsingh1221177@gmail.com",1)
+    app.remove_likes_from_blog("sahilsingh1221177@gmail.com",1)
     app.close()

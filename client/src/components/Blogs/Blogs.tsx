@@ -13,6 +13,8 @@ const Blogs: React.FC = () => {
         title: string,
         summary: string,
         time: string,
+        likes : number,
+        isLiked:  boolean,
     }
 
     const [data, setData] = useState<Article[] | undefined>(undefined);
@@ -23,7 +25,6 @@ const Blogs: React.FC = () => {
             let response = await fetch('http://127.0.0.1:5000/getTopArticles', 
             { next: { revalidate: 60 } });
             const bodyData = await response.json();
-            console.log(bodyData);
             setData(bodyData);
         } 
         catch (error) {
@@ -59,8 +60,8 @@ const Blogs: React.FC = () => {
                 }
 
                 {data && data.map((articleInfo, id) =>
-                    <ArticleCard articleId={articleInfo.id} Author={articleInfo.author} Category={articleInfo.category} Title={articleInfo.title} Summary={articleInfo.summary} ReadingTime={articleInfo.time} ArticleLink={articleInfo.link}
-                        key={id}></ArticleCard>)
+                    <ArticleCard articleId={articleInfo.id} Author={articleInfo.author} Category={articleInfo.category} Title={articleInfo.title} Summary={articleInfo.summary} ReadingTime={articleInfo.time} ArticleLink={articleInfo.link} Likes={articleInfo.likes} hasLiked={articleInfo.isLiked}
+                    key={id}></ArticleCard>)
                 }
 
             </Flex>
