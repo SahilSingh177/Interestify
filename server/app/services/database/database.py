@@ -10,9 +10,9 @@ from pathlib import Path
 from .read_article import read_article
 
 # load_dotenv()
-DATABASE_URL = "neo4j+s://874e6982.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "bfVN1NOoQbK9xp3Eu9G1Y3dYaFfpONP-5Iq6hyPgFmw"
+PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
 print(USER)
 
 class App:
@@ -725,6 +725,79 @@ class App:
                 query=query, exception=exception))
             raise
 
+    def user_to_blog_read(self, user_email, blog_id):
+        with self.driver.session(database="neo4j") as session:
+            if not self.check_user_exists(user_email):
+                print("User does not exist")
+                return False
+            result = session.execute_write(self._user_to_blog_read, user_email, blog_id)
+            print("success")
+            return result
+
+    @staticmethod
+    def _user_to_blog_read(tx, user_email, blog_id):
+        query = (
+            "MATCH (u:User {email: $user_email}),(b:Blog) "
+            "WHERE ID(b) = $blog_id "
+            "CREATE (u)-[r:READS]->(b) "
+            "SET r.time = datetime() "
+            "RETURN b.title AS title, b.link AS link, r.time AS time, b.author AS author"
+        )
+        result = tx.run(query, user_email=user_email, blog_id=blog_id)
+        try:
+            return result
+        except Neo4jError as exception:
+            logging.error("{query} raised an error: \n {exception}".format(
+                query=query, exception=exception))
+            raise
+
+    def get_history(self, user_email):
+        with self.driver.session(database="neo4j") as session:
+            if not self.check_user_exists(user_email):
+                print("User does not exist")
+                return False
+            result = session.execute_read(self._get_history, user_email)
+            print("success")
+            return result
+
+    @staticmethod
+    def _get_history(tx, user_email):
+        query = (
+            "MATCH (u:User {email: $user_email})-[r:READS]->(b:Blog) "
+            "RETURN b.title AS title, b.link AS link, r.time AS time, b.author AS author, b.summary AS summary, ID(b) AS id, ID(r) as rid "
+            "ORDER BY r.time DESC"
+        )
+        result = tx.run(query, user_email=user_email)
+        try:
+            return [{"title":record["title"],"link": record["link"], "time": record["time"], "author": record["author"], "id":record["id"],"rid":record["rid"]} for record in result]
+        except Neo4jError as exception:
+            logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
+            raise
+    
+    def delete_history(self, user_email, rid):
+        with self.driver.session(database="neo4j") as session:
+            if not self.check_user_exists(user_email):
+                print("User does not exist")
+                return False
+            print(int(rid))
+            result = session.execute_write(self._delete_history, user_email,int(rid))
+            print("success")
+            return result
+        
+    @staticmethod
+    def _delete_history(tx, user_email, rid):
+        query = (
+            "MATCH (u:User {email: $user_email})-[r:READS]->(b:Blog) "
+            "WHERE ID(r) = $rid "
+            "DELETE r "
+        )
+        result = tx.run(query, user_email=user_email, rid=rid)
+        try:
+            return result
+        except Neo4jError as exception:
+            logging.error("{query} raised an error: \n {exception}".format(
+                query=query, exception=exception))
+            raise
 if __name__ == "__main__":
     # Aura queries use an encrypted connection using the "neo4j+s" URI scheme
     uri = DATABASE_URL
@@ -733,7 +806,7 @@ if __name__ == "__main__":
     app = App(uri, user, password)
     # app.create_blog("testing title","https://link.springer.com/content/pdf/10.1007/s42757-022-0154-6.pdf?pdf=button","https://link.springer.com/content/pdf/10.1007/s42757-022-0154-6.pdf?pdf=button")
     # Creation of nodes
-    # app.create_user("Sample@gmail.com","Sample")
+    # app.create_user("Sa@gmail.com","Sample")
     # app.create_user("nikhil@gmail.com","Nikhil")
     # app.create_blog("Sampleblog","Samplelink","Sampleauthor")
     # app.create_category("Samplecategory")
@@ -758,7 +831,7 @@ if __name__ == "__main__":
     # app.user_to_category_browsing("nikhil@gmail.com","ent",1)
     # app.user_to_category("nikhil@gmail.com","mc")
     # app.get_categories_ordered_by_browsing_duration("nikhil@gmail.com")
-    # app.add_likes_to_blog("nikhil@gmail.com","https://link.springer.com/content/pdf/10.1007/s42757-022-0144-8.pdf?pdf=button")
+    # app.add_likes_to_blog("sahil@gmail.com","https://link.springer.com/content/pdf/10.1007/s42757-022-0144-8.pdf?pdf=button")
     # app.add_likes_to_blog("nikhil@gmail.com","https://link.springer.com/content/pdf/10.1007/s42757-022-0156-4.pdf?pdf=button")
     # app.blog_to_category("https://link.springer.com/content/pdf/10.1007/s42757-022-0156-4.pdf?pdf=button","bc")
     # app.blog_to_category("https://link.springer.com/content/pdf/10.1007/s42757-022-0144-8.pdf?pdf=button","bc")
@@ -775,5 +848,10 @@ if __name__ == "__main__":
     # app.user_to_category_browsing("nikhil@gmail.com","dsnjdsnjdsnnkjds",92)
     # app.delete_user_to_category("sahil@gmail.com")
     # ans = app.get_category_by_blog("https://link.springer.com/content/pdf/10.1007/s42757-022-0144-8.pdf?pdf=button")
+    # app.user_to_blog_read("sahil@gmail.com",58)
+    # app.user_to_blog_read("sahil@gmail.com",56)
+    # app.user_to_blog_read("sahil@gmail.com",57)
+    # app.user_to_blog_read("sahil@gmail.com",53)
+    # print(app.get_history("sahil@gmail.com"))
     # print(ans)
     app.close()
