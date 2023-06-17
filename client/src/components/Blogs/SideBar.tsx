@@ -42,7 +42,7 @@ const Sidebar: React.FC<Props> = () => {
           Discover more of what matters to you
         </Text>
         <Flex flexWrap="wrap" justifyContent="center">
-          {categoriesData.map((category, id) => {
+          {categoriesData.slice(0, 10).map((category, id) => {
             return (<Badge key={id} marginLeft={5} marginBottom={5} padding={2} borderRadius={20} fontWeight="light" bg="gray.100" cursor="pointer">{category}</Badge>);
           })}
         </Flex>
