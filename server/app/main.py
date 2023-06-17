@@ -11,9 +11,9 @@ CORS(app, origins=['http://localhost:3000'])
 sg = None
 initialized = False
 
-DATABASE_URL = "neo4j+s://feacbda5.databases.neo4j.io"
+DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "nKH7aCT0Ft2r61zxvbyzPD9OtdG6cD_Yl3XcEY_TfMs"
+PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
 SENDGRID_API_KEY = "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"
 
 uri = DATABASE_URL
@@ -89,7 +89,8 @@ def get_top_articles():
     for article_data in data:
         link = article_data['link']
         title = article_data['title']
-        category = database.get_category_by_blog(article_data['link'])
+        category = database.get_category_by_blog(article_data['id'])
+        likes = article_data['likes']
         author = article_data['author']
         summary = article_data['summary']
         time = article_data['read_time']
@@ -103,10 +104,46 @@ def get_top_articles():
             "author": author,
             "summary": summary,
             "time":time,
-            "id": id
+            "id": id,
+            "likes": likes
         })
     print(resp)
     return jsonify(resp)
+
+@app.route('/likeArticle', methods=['GET'])
+def like_article():
+    args = request.args
+    email = args['email']
+    blog_id = args['blog_id']
+    ans = database.add_likes_to_blog(email,blog_id)
+    if ans:
+        return jsonify({"total_likes": ans[0]["likecount"]})
+    else:
+        return jsonify({"message": "Article already liked"})
+
+@app.route('/dislikeArticle', methods=['GET']) 
+def dislike_article():
+    args = request.args
+    email = args['email']
+    blog_id = args['blog_id']
+    ans = database.remove_likes_from_blog(email,blog_id)
+    print(ans)
+    if ans:
+        return jsonify({"total_likes": ans[0]["likecount"]})
+    else:
+        return jsonify({"message": "Article already disliked"})
+
+
+@app.route('/isArticleLiked', methods=['GET'])
+def is_article_liked():
+    args = request.args
+    email = args['email']
+    blog_id = args['blog_id']
+    ans = database.isBlogLiked(email,blog_id)
+    if ans:
+        return jsonify({"message": True})
+    else:
+        return jsonify({"message": False})
 
 @app.route('/getTopArticlesPerUser', methods=['GET'])
 def get_top_articles_per_user():
