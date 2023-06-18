@@ -36,8 +36,8 @@ const Blogs: React.FC = () => {
     }, []);
 
     return <>
-        <Flex flexDirection={{ lg: "row", md: "column",sm:"column"}} marginTop="10vh" width={`calc(100vw - 12px)`} justifyContent="space-evenly">
-            <Flex flexDirection="column" justifyContent={{ lg: "flex-start", md: "center" }} width={{ lg: "55vw", md: `calc(80vw - 12px)` }} overflowX="hidden">
+        <Flex flexDirection={{ lg: "row", md: "column",sm:"column"}} marginTop="10vh" width={`calc(100vw - 12px)`} justifyContent="space-evenly" minHeight={`calc(100vh-80px)`}>
+            <Flex minHeight='full' flexDirection="column" justifyContent={{ lg: "flex-start", md: "center" }} width={{ lg: "55vw", md: `calc(80vw - 12px)` }} overflowX="hidden">
 
                 {isLoading && <Spinner
                     margin='auto'
