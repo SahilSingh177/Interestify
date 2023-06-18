@@ -467,16 +467,16 @@ class App:
                 query=query, exception=exception))
             raise
     
-    def get_blogs_by_likes(self, category_name: Optional[str] = None):
+    def get_blogs_by_likes(self, category_name: Optional[str] = None, limit: int = 10):
         print(category_name)
         with self.driver.session(database="neo4j") as session:
-            result = session.read_transaction(self._get_blogs_by_likes, category_name)
+            result = session.read_transaction(self._get_blogs_by_likes, category_name, limit)
             print("Success")
             print(result)
             return result
 
     @staticmethod
-    def _get_blogs_by_likes(tx, category_name: Optional[str] = None):
+    def _get_blogs_by_likes(tx, category_name: Optional[str] = None, limit: int = 10):
         if category_name:
             query = (
                 "MATCH (u:User)-[r:LIKES]->(b:Blog)-[:BELONGS_TO]->(c:Category{name:$category_name}) "
@@ -503,11 +503,12 @@ class App:
                 "ORDER BY b.createdAt DESC"
             )
             result = tx.run(query)
+
         try:
             return [
                 {"author": record["author"], "title": record["title"], "link": record["link"], "pdf_link": record["download_link"], "summary": record["summary"], "read_time":record["read_time"], "id":record["id"], "likes": record["likeCount"]}
                 for record in result
-            ]
+            ][:limit]  # Return only the specified number of blogs
         except Neo4jError as exception:
             logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
             raise
