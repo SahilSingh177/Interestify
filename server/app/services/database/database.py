@@ -11,9 +11,10 @@ from .read_article import read_article
 
 # load_dotenv()
 
-DATABASE_URL = "neo4j+s://58ad0a3e.databases.neo4j.io:7687"
+
+DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "TrU2Lb35p2JaTVKag7sn-RPD-BQtCCP0eBZMyhwXFY4"
+PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
 print(USER)
 
 class App:
@@ -315,7 +316,7 @@ class App:
     def _user_to_blog(tx, user_email, blog_link):
         query = (
             "MATCH (u:User {email:$user_email}), (b:Blog{link:$blog_link}) "
-            "MERGE (u)-[r:READS]->(b) "
+            "MERGE (u)-[r:BOOKMARK]->(b) "
             "RETURN u, b"
         )
         result = tx.run(query, user_email=user_email, blog_link=blog_link)
@@ -341,7 +342,7 @@ class App:
     @staticmethod
     def _delete_user_to_blog(tx, user_email, blog_link):
         query = (
-            "MATCH (u:User {email:$user_email})-[r:READS]->(b:Blog {link:$blog_link}) "
+            "MATCH (u:User {email:$user_email})-[r:BOOKMARK]->(b:Blog {link:$blog_link}) "
             "DELETE r "
             "RETURN u, b"
         )
@@ -359,7 +360,7 @@ class App:
                 return []
 
             query = (
-                "MATCH (u:User {email: $user_email})-[r:READS]->(b:Blog) "
+                "MATCH (u:User {email: $user_email})-[r:BOOKMARK]->(b:Blog) "
                 "RETURN b.title, b.link, b.author, ID(b)"
             )
             result = session.run(query, user_email=user_email)
@@ -374,7 +375,18 @@ class App:
             ]
             return user_blogs
 
-
+    def isBlogBookmarked(self, user_email, blog_id):
+        with self.driver.session(database="neo4j") as session:
+            if not self.check_user_exists(user_email):
+                print("User does not exist")
+                return False
+            query = (
+                "MATCH (u:User {email: $user_email})-[r:BOOKMARK]->(b:Blog) "
+                "WHERE ID(b) = $blog_id "
+                "RETURN r"
+            )
+            result = session.run(query, user_email=user_email, blog_id=int(blog_id))
+            return result.peek()
         
     def isBlogLiked(self, user_email, blog_id):
         with self.driver.session(database="neo4j") as session:
