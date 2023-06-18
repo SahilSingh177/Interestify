@@ -11,9 +11,9 @@ CORS(app, origins=['http://localhost:3000'])
 sg = None
 initialized = False
 
-DATABASE_URL = "neo4j+s://58ad0a3e.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "TrU2Lb35p2JaTVKag7sn-RPD-BQtCCP0eBZMyhwXFY4"
+PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
 SENDGRID_API_KEY = "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"
 
 uri = DATABASE_URL
@@ -194,6 +194,18 @@ def deleteBookmark():
         return jsonify({"result":"success"}),200
     except Exception as e:
         return jsonify(error=str(e)), 500
+    
+
+@app.route('/isArticleBookmarked', methods=['GET'])
+def is_article_bookmarked():
+    args = request.args
+    email = args['email']
+    blog_id = args['blog_id']
+    ans = database.isBlogBookmarked(email,blog_id)
+    if ans:
+        return jsonify({"message": True})
+    else:
+        return jsonify({"message": False})
     
 
 @app.route('/addLike',methods=['GET'])

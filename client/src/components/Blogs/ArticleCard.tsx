@@ -115,6 +115,19 @@ const ArticleCard: React.FC<Props> = ({
         console.error(error);
       }
     };
+    const fetchHasBookmarked = async () => {
+      if (!auth.currentUser?.email) return;
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:5000/isArticleBookmarked?email=${auth.currentUser?.email}&blog_id=${articleId}`
+          );
+          const bodyData = await response.json();
+          setIsBookMarked(bodyData.message);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+    fetchHasBookmarked(); 
     fetchHasLiked();
   }, [articleId]);
 
