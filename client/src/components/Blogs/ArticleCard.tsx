@@ -45,8 +45,8 @@ const ArticleCard: React.FC<Props> = ({
   Likes,
 }: Props) => {
   const Router = useRouter();
+  const [isLoading,setIsLoading]=useState<boolean>(false);
   const [hasLiked, setHasLiked] = useState<boolean>(false);
-  const [isLiked, setIsLiked] = useState<boolean>(hasLiked);
   const [isBookMarked, setIsBookMarked] = useState<boolean>(false);
   const [likes, setLikes] = useState<number>(Likes);
 
@@ -81,11 +81,10 @@ const ArticleCard: React.FC<Props> = ({
     if (!auth.currentUser?.email) return;
     try {
       const response = await fetch(
-        `http://127.0.0.1:5000/likeArticle?email=${auth.currentUser?.email}&blog_id=${articleId}`,
-        { next: { revalidate: 60 } }
+        `http://127.0.0.1:5000/likeArticle?email=${auth.currentUser?.email}&blog_id=${articleId}`
       );
-      const bodyData = await response.json();
-      setLikes(bodyData.total_likes);
+      setLikes(likes+1);
+      setHasLiked(true);
     } catch (error) {
       console.error(error);
     }
@@ -94,12 +93,10 @@ const ArticleCard: React.FC<Props> = ({
   const dislikeArticle = async (articleId: string) => {
     if (!auth.currentUser?.email) return;
     try {
-      const response = await fetch(
-        `http://127.0.0.1:5000/dislikeArticle?email=${auth.currentUser?.email}&blog_id=${articleId}`,
-        { next: { revalidate: 60 } }
-      );
-      const bodyData = await response.json();
-      setLikes(bodyData.total_likes);
+      await fetch(`http://127.0.0.1:5000/dislikeArticle?email=${auth.currentUser?.email}&blog_id=${articleId}`
+);
+      setLikes(likes-1);
+      setHasLiked(false);
     } catch (error) {
       console.error(error);
     }
@@ -113,18 +110,13 @@ const ArticleCard: React.FC<Props> = ({
           `http://127.0.0.1:5000/isArticleLiked?email=${auth.currentUser?.email}&blog_id=${articleId}`
         );
         const bodyData = await response.json();
-        console.log(bodyData);
-        setHasLiked(bodyData);
+        setHasLiked(bodyData.message);
       } catch (error) {
         console.error(error);
       }
     };
     fetchHasLiked();
   }, [articleId]);
-
-  useEffect(() => {
-    setIsLiked(hasLiked);
-  }, [hasLiked]);
 
   return (
     <>
@@ -152,9 +144,9 @@ const ArticleCard: React.FC<Props> = ({
             <HStack spacing={4} width="full">
               <HStack spacing={1}>
                 <Icon
-                  as={isLiked ? FaThumbsUp : FaRegThumbsUp}
+                  as={hasLiked ? FaThumbsUp : FaRegThumbsUp}
                   onClick={() => {
-                    if (isLiked) {
+                    if (hasLiked) {
                       dislikeArticle(articleId);
                     } else {
                       likeArticle(articleId);
