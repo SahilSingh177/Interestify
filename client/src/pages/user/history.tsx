@@ -21,7 +21,6 @@ const history = () => {
     try {
       let response = await fetch(
         `http://127.0.0.1:5000/history?email=${email}`,
-        { next: { revalidate: 60 } }
       );
       const bodyData = await response.json();
       const filteredData = bodyData.data;

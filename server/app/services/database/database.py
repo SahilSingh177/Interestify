@@ -11,9 +11,9 @@ from .read_article import read_article
 
 # load_dotenv()
 
-DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://58ad0a3e.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
+PASSWORD = "TrU2Lb35p2JaTVKag7sn-RPD-BQtCCP0eBZMyhwXFY4"
 print(USER)
 
 class App:
@@ -306,11 +306,9 @@ class App:
             if not self.check_blog_exists(blog_link):
                 print("Blog does not exist")
                 return False
-            result = session.execute_write(
-                self._user_to_blog, user_email, blog_link)
+            result = session.write_transaction(self._user_to_blog, user_email, blog_link)
             for record in result:
-                print("Added User: {u} to Blog: {b}"
-                    .format(u=record['u'], b=record['b']))
+                print("Added User: {u} to Blog: {b}".format(u=record['u'], b=record['b']))
             return True
 
     @staticmethod
@@ -320,13 +318,11 @@ class App:
             "MERGE (u)-[r:READS]->(b) "
             "RETURN u, b"
         )
-        result = tx.run(query, user_email = user_email, blog_link = blog_link)
+        result = tx.run(query, user_email=user_email, blog_link=blog_link)
         try:
-            return [{"u": record["u"]["email"], "b": record["b"]["title"]}
-                    for record in result]
+            return [{"u": record["u"]["email"], "b": record["b"]["title"]} for record in result]
         except Neo4jError as exception:
-            logging.error("{query} raised an error: \n {exception}".format(
-                query=query, exception=exception))
+            logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
             raise
 
     def delete_user_to_blog(self, user_email, blog_link):
@@ -337,47 +333,48 @@ class App:
             if not self.check_blog_exists(blog_link):
                 print("Blog does not exist")
                 return False
-            result = session.execute_write(
-                self._user_to_blog, user_email, blog_link)
+            result = session.write_transaction(self._delete_user_to_blog, user_email, blog_link)
             for record in result:
-                print("Deleted User: {u} to Blog: {b}"
-                    .format(u=record['u'], b=record['b']))
+                print("Deleted User: {u} from Blog: {b}".format(u=record['u'], b=record['b']))
             return True
 
     @staticmethod
     def _delete_user_to_blog(tx, user_email, blog_link):
         query = (
-            "MATCH (u:User {email:$user_email}), (b:Blog{link:$blog_link}) "
+            "MATCH (u:User {email:$user_email})-[r:READS]->(b:Blog {link:$blog_link}) "
             "DELETE r "
             "RETURN u, b"
         )
-        result = tx.run(query, user_email = user_email, blog_link = blog_link)
+        result = tx.run(query, user_email=user_email, blog_link=blog_link)
         try:
-            return [{"u": record["u"]["email"], "b": record["b"]["title"]}
-                    for record in result]
+            return [{"u": record["u"]["email"], "b": record["b"]["title"]} for record in result]
         except Neo4jError as exception:
-            logging.error("{query} raised an error: \n {exception}".format(
-                query=query, exception=exception))
+            logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
             raise
 
     def get_user_blogs(self, user_email):
-        print("hello")
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
                 print("User does not exist")
                 return []
 
             query = (
-                "MATCH (u:User {email: $user_email})--(b:Blog) "
-                "RETURN b.title, b.link, b.author , ID(b) "
+                "MATCH (u:User {email: $user_email})-[r:READS]->(b:Blog) "
+                "RETURN b.title, b.link, b.author, ID(b)"
             )
             result = session.run(query, user_email=user_email)
             user_blogs = [
-                {"title": record["b.title"], "link": record["b.link"],"author": record["b.author"] , "id":record["ID(b)"]}
+                {
+                    "title": record["b.title"],
+                    "link": record["b.link"],
+                    "author": record["b.author"],
+                    "id": record["ID(b)"]
+                }
                 for record in result
             ]
-            
             return user_blogs
+
+
         
     def isBlogLiked(self, user_email, blog_id):
         with self.driver.session(database="neo4j") as session:
