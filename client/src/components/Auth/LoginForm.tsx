@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { Button, Flex, Input, Text, FormLabel } from "@chakra-ui/react";
-import { useAuthState, useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { auth } from '../../firebase/clientApp';
 import Redirect from "./Redirect";
 import ShowAlert from "../Alert/Alert";
-import { authState } from "@/atoms/userAtom";
-import { useSetRecoilState, useRecoilValue } from "recoil";
 
 const LoginForm = () => {
-  const setUserState = useSetRecoilState(authState);
   const [loginForm, setLoginForm] = useState({
     email: "",
     password: "",
@@ -23,17 +20,6 @@ const LoginForm = () => {
   ] = useSignInWithEmailAndPassword(auth);
   
   const Router = useRouter();
-  const userInfo = useRecoilValue(authState);
-  const [_, loadingAuthState, loadingAuthError] = useAuthState(auth);
-
-  useEffect(() => {
-    setUserState((prevState) => ({
-      ...prevState,
-      isLoggedIn: true
-    }));
-    if (user?.user) console.log(user?.user.displayName);
-  }, [loadingAuthState])
-  
   
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -44,10 +30,9 @@ const LoginForm = () => {
       console.log(error);
       return;
     }
-    if(!loadingAuthState){
-      setLoginForm({ email: "", password: "" });
-      Router.push("http://localhost:3000/welcome/categories");
-    }
+
+    setLoginForm({ email: "", password: "" });
+    Router.push("http://localhost:3000/welcome/categories");
   };
   
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {

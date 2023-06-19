@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import {
   Spacer,
@@ -22,7 +22,7 @@ import {
 import { getRandomColour } from "@/Handlers/getRandomColour";
 import { toggleBookmark } from "@/Handlers/toggleBookmark";
 import { toggleLike } from "@/Handlers/toggleLike";
-import { auth } from "@/firebase/clientApp";
+import { AuthContext } from "@/Providers/AuthProvider";
 
 type Props = {
   articleId: string;
@@ -45,14 +45,14 @@ const ArticleCard: React.FC<Props> = ({
   ArticleLink,
   Likes,
 }: Props) => {
+  const currentUser = useContext(AuthContext);
   const Router = useRouter();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasLiked, setHasLiked] = useState<boolean>(false);
   const [isBookMarked, setIsBookMarked] = useState<boolean>(false);
   const [likes, setLikes] = useState<number>(Likes);
 
   const handleBookmark = async () => {
-    if (!auth.currentUser?.email) return;
+    if (!currentUser) return;
     try{
       setIsBookMarked(!isBookMarked);
       await toggleBookmark(isBookMarked, ArticleLink);
@@ -62,7 +62,7 @@ const ArticleCard: React.FC<Props> = ({
   };
 
   const handleLike = async () => {
-    if (!auth.currentUser?.email) return;
+    if (!currentUser) return;
     try {
       setHasLiked(!hasLiked);
       hasLiked?setLikes(likes-1):setLikes(likes+1);
@@ -73,14 +73,14 @@ const ArticleCard: React.FC<Props> = ({
   };
 
   const updateBlogList = async () => {
-    if (!auth.currentUser?.email) return;
+    if (!currentUser) return;
     await fetch("http://127.0.0.1:5000/registerBlog", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: auth.currentUser?.email,
+        email: currentUser.email,
         blog_id: articleId,
       }),
     });
@@ -89,23 +89,23 @@ const ArticleCard: React.FC<Props> = ({
 
   useEffect(() => {
     const fetchHasLiked = async () => {
-      if (!auth.currentUser?.email) return;
+      if (!currentUser) return;
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/isArticleLiked?email=${auth.currentUser?.email}&blog_id=${articleId}`
+          `http://127.0.0.1:5000/isArticleLiked?email=${currentUser.email}&blog_id=${articleId}`
         );
         const bodyData = await response.json();
+        console.log(bodyData)
         setHasLiked(bodyData.message);
       } catch (error) {
         console.error(error);
       }
     };
     const fetchHasBookmarked = async () => {
-      if (!auth.currentUser?.email) return;
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/isArticleBookmarked?email=${auth.currentUser?.email}&blog_id=${articleId}`
-          );
+          `http://127.0.0.1:5000/isArticleBookmarked?email=${currentUser.email}&blog_id=${articleId}`
+        );
           const bodyData = await response.json();
           setIsBookMarked(bodyData.message);
         } catch (error) {

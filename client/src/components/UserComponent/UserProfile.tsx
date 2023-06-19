@@ -1,5 +1,5 @@
-import React from 'react';
-import { auth } from '@/firebase/clientApp';
+import React,{useContext} from 'react';
+import { AuthContext } from '@/Providers/AuthProvider';
 import {
     Flex, VStack, HStack, Card, CardBody, Stack, Heading, Text, Image, Divider, CardFooter, TagLabel,
     Tag, TagCloseButton, Button
@@ -52,10 +52,11 @@ import OptionsMenu from './OptionsMenu';
 import { getRandomColour } from '@/Handlers/getRandomColour';
 
 const UserProfile: React.FC = () => {
-    let imageURL = auth.currentUser?.photoURL || undefined;
+    const currentUser = useContext(AuthContext);
+    let imageURL = currentUser.photoURL || undefined;
     if (!imageURL) imageURL = '/assets/default_profile_photo.png'
-    let displayName = auth.currentUser?.displayName;
-    let userEmail = auth.currentUser?.email;
+    let displayName = currentUser.displayName;
+    let userEmail = currentUser.email;
     return (
         <Flex>
             <OptionsMenu></OptionsMenu>

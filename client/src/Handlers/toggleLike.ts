@@ -1,18 +1,20 @@
-import { auth } from '@/firebase/clientApp'
+import { useContext } from 'react';
+import { AuthContext } from '@/Providers/AuthProvider';
 export const toggleLike = async (
     hasLiked: boolean,
     articleId: string,
 ) => {
-    if (!auth.currentUser?.email) return;
+    const currentUser = useContext(AuthContext);
+    if (!currentUser.email) return;
     try {
         if (hasLiked) {
             await fetch(
-                `http://127.0.0.1:5000/dislikeArticle?email=${auth.currentUser?.email}&blog_id=${articleId}`
+                `http://127.0.0.1:5000/dislikeArticle?email=${currentUser.email}&blog_id=${articleId}`
             );
         }
         else {
             await fetch(
-                `http://127.0.0.1:5000/likeArticle?email=${auth.currentUser?.email}&blog_id=${articleId}`
+                `http://127.0.0.1:5000/likeArticle?email=${currentUser.email}&blog_id=${articleId}`
             );
         }
     }

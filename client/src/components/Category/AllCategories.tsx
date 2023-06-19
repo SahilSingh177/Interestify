@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { Box, Flex, Icon } from '@chakra-ui/react'
 import CategoryCard from '@/components/Category/CategoryCard'
 import { categoriesData } from '@/Handlers/CategoriesData'
 import { useRouter } from 'next/router'
 import { FaArrowCircleRight } from 'react-icons/fa'
-import { auth } from '@/firebase/clientApp'
+import { AuthContext } from '@/Providers/AuthProvider'
 
 type Props = {}
 
 const AllCategories = (props: Props) => {
+  const currentUser = useContext(AuthContext);
   const Router = useRouter();
   const [clickedCategories, setClickedCategories] = useState<string[]>([])
 
@@ -21,8 +22,8 @@ const AllCategories = (props: Props) => {
   };
 
   const submitCategories = async () => {
-    const email = auth.currentUser?.email;
-    console.log(email)
+    const email = currentUser.email;
+    console.log(email);
     if (email && clickedCategories.length >= 5 && clickedCategories.length >= 5) {
       const payload = {
         email: email,
@@ -36,7 +37,7 @@ const AllCategories = (props: Props) => {
         body: JSON.stringify(payload)
       });
       console.log("success")
-      Router.push('/');
+      Router.push('http://localhost:3000/welcome/register_mail');
     }
   };
 

@@ -1,9 +1,9 @@
-import React, {useState} from "react";
+import React, {useState, useContext} from "react";
 import { useRouter } from "next/router";
+import { AuthContext } from "@/Providers/AuthProvider";
 import {
   Card,
   CardBody,
-  CardFooter,
   Icon,
   Tag,
   VStack,
@@ -11,13 +11,9 @@ import {
   Spacer,
   Heading,
   Text,
-  Flex,
-  Box,
 } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/react";
-import { faDeleteLeft } from "@fortawesome/free-solid-svg-icons";
 import { FaTrash } from "react-icons/fa";
-import { auth } from "@/firebase/clientApp";
 
 type Props = {
   articleId: string;
@@ -38,12 +34,13 @@ const HistoryCard = ({
   date,
   rid,
 }: Props) => {
+  const currentUser = useContext(AuthContext);
   const Router = useRouter();
   const handleClick = (articleId: string) => {
     Router.push(`/article/${articleId}`);
   };
   const [isDeleted, setIsDeleted] = useState<boolean>(false)
-  const email = auth.currentUser?.email;
+  const email = currentUser?.email;
   const deleteHistory = async () => {
     try {
       let response = await fetch(

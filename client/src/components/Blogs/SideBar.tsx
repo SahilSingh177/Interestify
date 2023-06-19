@@ -1,16 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Flex, Stack, Text, Button, Divider, Center, Badge } from '@chakra-ui/react';
-import { authState } from '@/atoms/userAtom';
-import { useRecoilValue } from 'recoil';
+import { AuthContext } from '@/Providers/AuthProvider';
 import { categoriesData } from '@/Handlers/CategoriesData'; 
-// display top categories later
 
 type Props = {};
 
 const Sidebar: React.FC<Props> = () => {
+  const currentUser = useContext(AuthContext);
   const Router = useRouter();
-  const isLoggedIn = useRecoilValue(authState).isLoggedIn;
 
   const [isFixed, setIsFixed] = useState(false);
 
@@ -18,7 +16,7 @@ const Sidebar: React.FC<Props> = () => {
     const handleScroll = () => {
       const scrollHeight = window.scrollY;
       const windowHeight = window.innerHeight;
-      const calculatedHeight = isLoggedIn ? 0 : 0.5 * windowHeight + 80;
+      const calculatedHeight = currentUser ? 0 : 0.5 * windowHeight + 80;
 
       setIsFixed(scrollHeight > calculatedHeight);
     };

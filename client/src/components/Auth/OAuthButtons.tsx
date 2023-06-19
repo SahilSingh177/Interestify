@@ -1,11 +1,9 @@
-import { Button, Flex, Image, Text, Avatar } from '@chakra-ui/react';
 import React from 'react';
+import { Button, Avatar } from '@chakra-ui/react';
 import { auth } from '@/firebase/clientApp';
-import { useAuthState, useSignInWithGoogle } from 'react-firebase-hooks/auth';
+import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
 import { useSignInWithFacebook } from 'react-firebase-hooks/auth';
 import { useRouter } from 'next/router';
-import { authState } from '@/atoms/userAtom';
-import { useSetRecoilState } from "recoil";
 
 type Props = {
   imageSrc: string;
@@ -13,56 +11,31 @@ type Props = {
 };
 
 const OauthButtons = ({ imageSrc, providerName }: Props) => {
-  const setUserState = useSetRecoilState(authState);
   const [signInWithGoogle, guser, gloading, gerror] = useSignInWithGoogle(auth);
   const [signInWithFacebook, fuser, floading, ferror] = useSignInWithFacebook(auth);
-  const [_, loadingAuthState, loadingAuthError] = useAuthState(auth);
 
   const Router = useRouter();
 
-  const waitForCurrentUser = () => {
-    while(loadingAuthState){
-      if(loadingAuthError){
-        console.log("Couldn't set auth state")
-        return;
-      }
-    }
-    setUserState((prevState) => ({
-      ...prevState,
-      isLoggedIn: true,
-      currentUser: guser?.user,
-    }));
-    if(guser?.user)console.log(guser?.user.displayName);
-    // if(guser?.user)console.log(guser?.user.photoURL);
-
-  };
-
   const onSubmit = async () => {
-    if (providerName === "Google") {
-      await signInWithGoogle();
-    } else {
-      await signInWithFacebook();
-    }
-  
+    providerName === "Google" ? await signInWithGoogle() : await signInWithFacebook();
     if (gerror) {
       console.log(gerror);
       return;
     }
-    if (ferror){
+    if (ferror) {
       console.log(ferror);
       return;
     }
-    else {
-      await fetch("http://127.0.0.1:5000/registerUser", {
+
+    await fetch("http://127.0.0.1:5000/registerUser", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email: auth.currentUser?.email , username : auth.currentUser?.displayName}),
-    });
-      waitForCurrentUser();
-      Router.push("/select-preferences");
-    }
+      body: JSON.stringify({ email: auth.currentUser?.email, username: auth.currentUser?.displayName }),
+    })
+
+    Router.push("http://localhost:3000/welcome/categories");
   };
 
   return (
