@@ -45,8 +45,12 @@ const Category = ({ category, data }: Props & { data: Article[] }) => {
 
 export async function getServerSideProps({ query }: GetServerSidePropsContext<{ category: string }>) {
   try {
+    const startTime = new Date().getTime();
     const resp = await fetch(`http://127.0.0.1:5000/getTopArticlesfor?category=${query?.category_name}`);
     const filteredResp = await resp.json();
+    const endTime = new Date().getTime(); // Record end time
+    const executionTime = endTime - startTime; // Calculate execution time
+    console.log('getServerSideProps execution time:', executionTime, 'ms');
     return {
       props: {
         data: filteredResp,

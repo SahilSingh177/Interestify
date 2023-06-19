@@ -201,7 +201,8 @@ def fetch_new_articles(executor, shutdown_event):
                     pdf_link = article_data["pdf_link"]
                     backend_category = article_data["backend_category"]
                     app = App(uri, user, password)
-                    app.create_blog(title, link, authors, pdf_link, backend_category)
+                    # if app.create_blog(title, link, authors, pdf_link, backend_category)==False:
+                    #     break
                     print("New article found:", title)
         time.sleep(3600)
 

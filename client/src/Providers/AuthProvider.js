@@ -14,14 +14,19 @@ const AuthProvider = ({ children }) => {
       setCurrentUser(user);
       console.log("PROVIDER:");
       console.log(user);
+
+      if (user && user.email) {
+        localStorage.setItem('email', user.email);
+      }
     }
   }, [loading, user]);
 
   if (loading) {
-    // Return a loading indicator or component while loading is true
-    return <Flex flexDirection='column' alignItems='center' justifyContent='center' height='100vh' width="100vw">
-      <iframe src="/assets/dragon.gif" style={{ border: 'none', width: 'auto', height: '60vh' }}></iframe>
-    </Flex>
+    return (
+      <Flex flexDirection='column' alignItems='center' justifyContent='center' height='100vh' width="100vw">
+        <iframe src="/assets/dragon.gif" style={{ border: 'none', width: 'auto', height: '60vh' }}></iframe>
+      </Flex>
+    );
   }
 
   return (
