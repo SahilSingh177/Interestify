@@ -12,9 +12,9 @@ from .read_article import read_article
 # load_dotenv()
 
 
-DATABASE_URL = "neo4j+s://58ad0a3e.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "TrU2Lb35p2JaTVKag7sn-RPD-BQtCCP0eBZMyhwXFY4"
+PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
 print(USER)
 
 class App:
@@ -558,7 +558,7 @@ class App:
 
     def get_blogs_by_category_and_limit(self, category_name, limit):
         with self.driver.session(database="neo4j") as session:
-            result = session.read_transaction(self._get_blogs_by_category_and_limit, category_name, limit)
+            result = session.execute_read(self._get_blogs_by_category_and_limit, category_name, limit)
             if result:
                 print("Success")
                 return result
@@ -569,9 +569,12 @@ class App:
     @staticmethod
     def _get_blogs_by_category_and_limit(tx, category_name, limit):
         query = (
-        "MATCH (b:Blog)-[:IN_CATEGORY]->(:Category {name:$category_name}) "
-        "RETURN b.author AS author, b.title AS title, b.link AS link "
-        "ORDER BY b.likes DESC LIMIT $limit"
+            "MATCH (b:Blog)-[:BELONGS_TO]->(:Category {name:$category_name})  "
+            "WITH b "
+            "MATCH (:User)-[r:LIKES]->(b) "
+            "WITH b, COUNT(r) AS likecount "
+            "RETURN b.title as title,b.author as author,b.link as link "
+            "ORDER BY likecount DESC LIMIT $limit"
         )
         result = tx.run(query, category_name=category_name, limit=limit)
         try:
@@ -815,4 +818,5 @@ if __name__ == "__main__":
     # app.add_likes_to_blog("sahilsingh1221177@gmail.com",30)
     # app.remove_likes_from_blog("sahilsingh1221177@gmail.com",30)
     # app.get_blogs_by_likes("Physics")
+    # app.get_blogs_by_category_and_limit("Engineering",2)
     app.close()
