@@ -27,7 +27,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import AuthorCard from '../Author/AuthorCard';
-import { bookmarkArticle } from '@/Handlers/bookmarkArticle';
+import { toggleBookmark } from '@/Handlers/toggleBookmark';
+import { auth } from '@/firebase/clientApp';
+import { toggleLike } from '@/Handlers/toggleLike';
 // import { PDFDocumentProxy } from 'pdfjs-dist';
 
 
@@ -73,21 +75,26 @@ const Article: React.FC<Props> = ({ Content, Author, Category, Title, ReadingTim
 
 
   const Router = useRouter();
-  const [isLiked, setIsLiked] = useState<boolean>(false); //liked or not should be fetched from backend
+  const [hasLiked, setHasLiked] = useState<boolean>(false); //liked or not should be fetched from backend
   const [isBookMarked, setIsBookMarked] = useState<boolean>(false);
 
   const handleBookmark = async () => {
-    const updatedIsBookmarked = await bookmarkArticle(isBookMarked, ArticleLink);
-    setIsBookMarked(updatedIsBookmarked);
+    if (!auth.currentUser?.email) return;
+    try{
+      setIsBookMarked(!isBookMarked);
+      await toggleBookmark(isBookMarked, ArticleLink);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const likeArticle = () => {
-    setIsLiked(!isLiked);
-    if (isLiked) {
-      const articleLink = Router.asPath;
-      console.log("Liked: ")
-      console.log(articleLink);
-      //Backend request
+  const handleLike = async () => {
+    if (!auth.currentUser?.email) return;
+    try {
+      setHasLiked(!hasLiked);
+      await toggleLike(hasLiked,ArticleLink);
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -107,7 +114,7 @@ const Article: React.FC<Props> = ({ Content, Author, Category, Title, ReadingTim
       <Divider bg="gray.400" borderColor="gray.600" />
 
       <HStack spacing={5} paddingLeft={5} paddingRight={5} width="100%">
-        <FontAwesomeIcon icon={isLiked ? solidThumbsUp : regularThumbsup} size='lg' cursor='pointer' onClick={likeArticle} />
+        <FontAwesomeIcon icon={hasLiked ? solidThumbsUp : regularThumbsup} size='lg' cursor='pointer' onClick={handleLike} />
         <FontAwesomeIcon icon={regularComment} size='lg' cursor='pointer' />
         <Spacer />
         <FontAwesomeIcon icon={isBookMarked ? solidBookMark : regularBookmark} onClick={handleBookmark} size='lg' cursor='pointer'/>
@@ -131,7 +138,7 @@ const Article: React.FC<Props> = ({ Content, Author, Category, Title, ReadingTim
 
       <Divider bg="gray.400" borderColor="gray.600" />
       <HStack spacing={5} paddingLeft={5} paddingRight={5} width="100%">
-        <FontAwesomeIcon icon={isLiked ? solidThumbsUp : regularThumbsup} size='lg' cursor='pointer' onClick={likeArticle} />
+        <FontAwesomeIcon icon={hasLiked ? solidThumbsUp : regularThumbsup} size='lg' cursor='pointer' onClick={handleLike} />
         <FontAwesomeIcon icon={regularComment} size='lg' cursor='pointer' />
         <Spacer />
         <FontAwesomeIcon icon={isBookMarked ? solidBookMark : regularBookmark} onClick={handleBookmark} size='lg' cursor='pointer' />

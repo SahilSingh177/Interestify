@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { Flex, Stack, Text, Button, Divider, Center, Badge } from '@chakra-ui/react';
 import { authState } from '@/atoms/userAtom';
 import { useRecoilValue } from 'recoil';
@@ -8,6 +9,7 @@ import { categoriesData } from '@/Handlers/CategoriesData';
 type Props = {};
 
 const Sidebar: React.FC<Props> = () => {
+  const Router = useRouter();
   const isLoggedIn = useRecoilValue(authState).isLoggedIn;
 
   const [isFixed, setIsFixed] = useState(false);
@@ -43,7 +45,8 @@ const Sidebar: React.FC<Props> = () => {
         </Text>
         <Flex flexWrap="wrap" justifyContent="center">
           {categoriesData.slice(0, 10).map((category, id) => {
-            return (<Badge key={id} marginLeft={5} marginBottom={5} padding={2} borderRadius={20} fontWeight="light" bg="gray.100" cursor="pointer">{category}</Badge>);
+            return (
+            <Badge onClick={()=>Router.push(`http://localhost:3000/category/${category}`)} key={id} marginLeft={5} marginBottom={5} padding={2} borderRadius={20} fontWeight="light" bg="gray.100" cursor="pointer">{category}</Badge>);
           })}
         </Flex>
         <Center>

@@ -20,7 +20,8 @@ import {
   FaThumbsUp,
 } from "react-icons/fa";
 import { getRandomColour } from "@/Handlers/getRandomColour";
-import { bookmarkArticle } from "@/Handlers/bookmarkArticle";
+import { toggleBookmark } from "@/Handlers/toggleBookmark";
+import { toggleLike } from "@/Handlers/toggleLike";
 import { auth } from "@/firebase/clientApp";
 
 type Props = {
@@ -45,20 +46,33 @@ const ArticleCard: React.FC<Props> = ({
   Likes,
 }: Props) => {
   const Router = useRouter();
-  const [isLoading,setIsLoading]=useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasLiked, setHasLiked] = useState<boolean>(false);
   const [isBookMarked, setIsBookMarked] = useState<boolean>(false);
   const [likes, setLikes] = useState<number>(Likes);
 
   const handleBookmark = async () => {
-    const updatedIsBookmarked = await bookmarkArticle(
-      isBookMarked,
-      ArticleLink
-    );
-    setIsBookMarked(updatedIsBookmarked);
+    if (!auth.currentUser?.email) return;
+    try{
+      setIsBookMarked(!isBookMarked);
+      await toggleBookmark(isBookMarked, ArticleLink);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const updateBlogList = async (articleId: string) => {
+  const handleLike = async () => {
+    if (!auth.currentUser?.email) return;
+    try {
+      setHasLiked(!hasLiked);
+      hasLiked?setLikes(likes-1):setLikes(likes+1);
+      await toggleLike(hasLiked,articleId);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const updateBlogList = async () => {
     if (!auth.currentUser?.email) return;
     await fetch("http://127.0.0.1:5000/registerBlog", {
       method: "POST",
@@ -72,35 +86,6 @@ const ArticleCard: React.FC<Props> = ({
     });
   };
 
-  const handleClick = (articleId: string) => {
-    Router.push(`/article/${articleId}`);
-    updateBlogList(articleId);
-  };
-
-  const likeArticle = async (articleId: string) => {
-    if (!auth.currentUser?.email) return;
-    try {
-      const response = await fetch(
-        `http://127.0.0.1:5000/likeArticle?email=${auth.currentUser?.email}&blog_id=${articleId}`
-      );
-      setLikes(likes+1);
-      setHasLiked(true);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const dislikeArticle = async (articleId: string) => {
-    if (!auth.currentUser?.email) return;
-    try {
-      await fetch(`http://127.0.0.1:5000/dislikeArticle?email=${auth.currentUser?.email}&blog_id=${articleId}`
-);
-      setLikes(likes-1);
-      setHasLiked(false);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   useEffect(() => {
     const fetchHasLiked = async () => {
@@ -129,7 +114,7 @@ const ArticleCard: React.FC<Props> = ({
         cursor="pointer"
       >
         <VStack width="full">
-          <CardBody width="full" onClick={() => handleClick(articleId)}>
+          <CardBody width="full" onClick={() => Router.push(`/article/${articleId}`)}>
             <HStack>
               <Heading size="md" width="90%">
                 {Title ? Title : "Title"}
@@ -145,13 +130,7 @@ const ArticleCard: React.FC<Props> = ({
               <HStack spacing={1}>
                 <Icon
                   as={hasLiked ? FaThumbsUp : FaRegThumbsUp}
-                  onClick={() => {
-                    if (hasLiked) {
-                      dislikeArticle(articleId);
-                    } else {
-                      likeArticle(articleId);
-                    }
-                  }}
+                  onClick={() => { handleLike() }}
                 />
                 <Text fontSize="sm" color="gray.500">
                   {likes}

@@ -46,7 +46,7 @@ const LoginForm = () => {
     }
     if(!loadingAuthState){
       setLoginForm({ email: "", password: "" });
-      Router.push("/select-preferences");
+      Router.push("http://localhost:3000/welcome/categories");
     }
   };
   

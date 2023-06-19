@@ -1,17 +1,13 @@
 import React from 'react'
-import { Stack, InputGroup, InputLeftElement, Input, Icon, Heading } from '@chakra-ui/react'
-import AllCategories from '@/components/Category/AllCategories'
-
+import { Flex, Icon, Input, InputGroup, InputLeftElement } from '@chakra-ui/react'
 import { FaSearch } from 'react-icons/fa'
 
 type Props = {}
 
-const categories = (props: Props) => {
-    
+const search_category = (props: Props) => {
     return (
-        <Stack alignItems="center" justifyContent="center">
-            <Heading marginTop="5vh">SELECT YOUR FAVOURITE CATEGORIES</Heading>
-            <InputGroup width="60vw" margin="5vh 5vw">
+        <Flex height={`calc(100vh - 80px)`} width={`calc(100vw - 12px)`}>
+            <InputGroup width="60vw" margin="5vh 5vw" maxHeight='-moz-min-content'>
                 <InputLeftElement
                     pointerEvents="none"
                     display="flex"
@@ -31,9 +27,8 @@ const categories = (props: Props) => {
                     placeholder="Search Categories"
                 />
             </InputGroup>
-            <AllCategories />
-        </Stack>
+        </Flex>
     )
 }
 
-export default categories
+export default search_category
