@@ -1,6 +1,6 @@
 import { auth } from '@/firebase/clientApp'
 
-export const bookmarkArticle = async (
+export const toggleBookmark = async (
     isBookMarked: boolean,
     ArticleLink: string
 ) => {

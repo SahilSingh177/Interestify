@@ -3,7 +3,8 @@ import { useRouter } from 'next/router';
 import { Card, CardBody, CardFooter, Icon, Tag, VStack, HStack, Spacer, Heading, Text, Link } from '@chakra-ui/react';
 import { FaBookmark } from 'react-icons/fa';
 import { getRandomColour } from '@/Handlers/getRandomColour';
-import { bookmarkArticle } from '@/Handlers/bookmarkArticle';
+import { toggleBookmark } from '@/Handlers/toggleBookmark';
+import { auth } from '@/firebase/clientApp';
 
 type Props = {
   author: string;
@@ -17,8 +18,13 @@ const BookmarkCard = ({ author, article_id, link, title }: Props) => {
   const [isBookMarked, setIsBookMarked] = useState<boolean>(true);
 
   const handleBookmark = async () => {
-    const updatedIsBookmarked = await bookmarkArticle(isBookMarked, link);
-    setIsBookMarked(updatedIsBookmarked);
+    if (!auth.currentUser?.email) return;
+    try{
+      setIsBookMarked(!isBookMarked);
+      await toggleBookmark(isBookMarked, article_id);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return isBookMarked ? (
