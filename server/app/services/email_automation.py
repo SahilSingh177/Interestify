@@ -13,7 +13,7 @@ database = App(DATABASE_URL, USER, PASSWORD)
 def send_email(recipient_email, subject, html_template):
     # Email configuration
     sender_email = 'sahilsingh1221177@gmail.com'
-    sender_password = 'shntcrranvcttymv'
+    sender_password = ''
     smtp_server = 'smtp.gmail.com'
     smtp_port = 587
 
