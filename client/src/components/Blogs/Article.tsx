@@ -56,10 +56,31 @@ const Article: React.FC<Props> = ({
 
   useEffect(() => {
     const startTime = Date.now();
+
+    const updateCategoryTime = async ({ timeSpent }: { timeSpent: number }) => {
+      try {
+        await fetch('http://127.0.0.1:5000/addBrowsingTime', {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            "user_email": currentUser.email,
+            "category_name": Category,
+            "browsing_time": timeSpent
+          }),
+        });
+      } catch (error) {
+        console.error("Error updating category time:", error);
+      }
+    };
+
     return () => {
       const endTime = Date.now();
       const duration = endTime - startTime;
       console.log(`Time spent on page: ${duration} milliseconds`);
+      updateCategoryTime({ timeSpent: duration });
+      console.log('yayyyy')
     };
   }, []);
 
@@ -90,7 +111,7 @@ const Article: React.FC<Props> = ({
 
       setArticleProgress(progress);
     };
-    
+
     const fetchHasLiked = async () => {
       if (!currentUser) return;
       try {
@@ -107,7 +128,7 @@ const Article: React.FC<Props> = ({
       try {
         const response = await fetch(
           `http://127.0.0.1:5000/isArticleBookmarked?email=${currentUser.email}&blog_id=${ArticleId}`
-          );
+        );
         const bodyData = await response.json();
         console.log(bodyData);
         setIsBookMarked(bodyData.message);

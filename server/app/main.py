@@ -185,6 +185,15 @@ def addBookmark():
     except Exception as e:
         return jsonify(error=str(e)), 500
     
+@app.route('/addBrowsingTime', methods=['POST'])
+def addBrowsingTime():
+    data = request.json
+    user_email = data['user_email']
+    category_name = data['category_name']
+    browsing_time = data['browsing_time']
+    result = database.user_to_category_browsing(user_email, category_name, browsing_time);
+    return jsonify({"result": "success"}), 200
+    
 @app.route('/deleteBookmark',methods=['GET'])
 def deleteBookmark():
     email = request.args.get('email')
@@ -244,14 +253,20 @@ def getBookMarks():
 @app.route('/getArticle',methods=['GET'])    
 def getArticle():
     try:
+        print("A")
         article_id = request.args.get('article_id')
+        print(article_id)
+        print("B")
         # print(type(article_id))
         article_id = int(article_id)
         if article_id is None:
             return jsonify(error='ID parameter is missing'), 400
-        data = database.get_blog_by_id(article_id)
-        print(data)
-        return jsonify(data=data), 200
+        
+        article_data = database.get_blog_by_id(article_id)
+        category = database.get_category_by_blog(article_id)
+        # print(category)
+        article_data[0]["category"]=category
+        return jsonify(data=article_data), 200
     except Exception as e:
         return jsonify(error=str(e)), 500
     

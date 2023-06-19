@@ -292,7 +292,9 @@ class App:
                 "MATCH (b:Blog) WHERE ID(b)=$article_id "
                 "RETURN b.author AS author, b.title AS title, b.link AS link, b.download_link AS pdf_link, b.summary AS summary, b.read_time as read_time, ID(b) AS id, b.text as text"
             )
+            print("here")
             result = session.run(query, article_id=article_id)
+            print(result)
             return [
                 {"author": record["author"], "title": record["title"], "link": record["link"], "pdf_link": record["pdf_link"], "summary": record["summary"], "read_time":record["read_time"], "id":record["id"], "text":record["text"]}
                 for record in result
