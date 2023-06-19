@@ -69,9 +69,13 @@ const ArticlePage = ({ articleData }: { articleData: ArticleData }) => {
 
 export async function getServerSideProps({ params }: GetServerSidePropsContext<Params>) {
   try {
+    const startTime = new Date().getTime()
     const article_id = params?.article_id;
     const response = await fetch(`http://127.0.0.1:5000/getArticle?article_id=${article_id}`);
     const data = await response.json();
+    const endTime = new Date().getTime(); // Record end time
+    const executionTime = endTime - startTime; // Calculate execution time
+    console.log('getServerSideProps execution time:', executionTime, 'ms');
     const filteredData = data.data[0];
 
     const formattedData = {

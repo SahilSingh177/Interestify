@@ -89,19 +89,25 @@ const ArticleCard: React.FC<Props> = ({
 
 
   useEffect(() => {
+    
     const fetchHasLiked = async () => {
       if (!currentUser) return;
       try {
+        const startTime = new Date().getTime();
         const response = await fetch(
           `http://127.0.0.1:5000/isArticleLiked?email=${currentUser.email}&blog_id=${articleId}`
         );
         const bodyData = await response.json();
         setHasLiked(bodyData.message);
+        const endTime = new Date().getTime(); // Record end time
+        const executionTime = endTime - startTime; 
+        console.log('likes execution time:', executionTime, 'ms');
       } catch (error) {
         console.error(error);
       }
     };
     const fetchHasBookmarked = async () => {
+      if (!currentUser) return;
       try {
         const response = await fetch(
           `http://127.0.0.1:5000/isArticleBookmarked?email=${currentUser.email}&blog_id=${articleId}`
@@ -115,6 +121,8 @@ const ArticleCard: React.FC<Props> = ({
       };
     fetchHasBookmarked(); 
     fetchHasLiked();
+// Calculate execution time
+    
   }, [articleId]);
 
   return (

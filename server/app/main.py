@@ -11,9 +11,9 @@ CORS(app, origins=['http://localhost:3000'])
 sg = None
 initialized = False
 
-DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://58ad0a3e.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
+PASSWORD = "TrU2Lb35p2JaTVKag7sn-RPD-BQtCCP0eBZMyhwXFY4"
 SENDGRID_API_KEY = "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"
 
 uri = DATABASE_URL
@@ -82,7 +82,8 @@ def update_preferences():
 
 @app.route('/getTopArticles', methods=['GET'])
 def get_top_articles():
-    data = database.get_blogs_by_likes()
+    page = request.args.get('page', default=1, type=int)
+    data = database.get_blogs_by_likes(page=page)
     resp = []
     for article_data in data:
         link = article_data['link']
@@ -93,8 +94,6 @@ def get_top_articles():
         summary = article_data['summary']
         time = article_data['read_time']
         id = article_data['id']
-        # print(data)
-
         resp.append({
             "link": link,
             "title": title,
@@ -107,6 +106,7 @@ def get_top_articles():
         })
     print(resp)
     return jsonify(resp)
+
 
 @app.route('/likeArticle', methods=['GET'])
 def like_article():
@@ -197,7 +197,7 @@ def deleteBookmark():
     
 
 @app.route('/isArticleBookmarked', methods=['GET'])
-def isArticleBookmarked():
+def is_article_bookmarked():
     args = request.args
     email = args['email']
     blog_id = args['blog_id']
