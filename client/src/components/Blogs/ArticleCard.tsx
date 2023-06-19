@@ -45,6 +45,7 @@ const ArticleCard: React.FC<Props> = ({
   ArticleLink,
   Likes,
 }: Props) => {
+  console.log(articleId)
   const currentUser = useContext(AuthContext);
   const Router = useRouter();
   const [hasLiked, setHasLiked] = useState<boolean>(false);
@@ -55,7 +56,7 @@ const ArticleCard: React.FC<Props> = ({
     if (!currentUser) return;
     try{
       setIsBookMarked(!isBookMarked);
-      await toggleBookmark(isBookMarked, ArticleLink);
+      await toggleBookmark(isBookMarked, ArticleLink, currentUser);
     } catch (error) {
       console.error(error);
     }
@@ -66,7 +67,7 @@ const ArticleCard: React.FC<Props> = ({
     try {
       setHasLiked(!hasLiked);
       hasLiked?setLikes(likes-1):setLikes(likes+1);
-      await toggleLike(hasLiked,articleId);
+      await toggleLike(hasLiked,articleId, currentUser);
     } catch (error) {
       console.error(error);
     }
@@ -106,6 +107,7 @@ const ArticleCard: React.FC<Props> = ({
           `http://127.0.0.1:5000/isArticleBookmarked?email=${currentUser.email}&blog_id=${articleId}`
         );
           const bodyData = await response.json();
+          console.log(bodyData);
           setIsBookMarked(bodyData.message);
         } catch (error) {
           console.error(error);
