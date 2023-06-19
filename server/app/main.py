@@ -197,7 +197,7 @@ def deleteBookmark():
     
 
 @app.route('/isArticleBookmarked', methods=['GET'])
-def is_article_bookmarked():
+def isArticleBookmarked():
     args = request.args
     email = args['email']
     blog_id = args['blog_id']

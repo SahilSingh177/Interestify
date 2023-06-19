@@ -81,7 +81,7 @@ const Article: React.FC<Props> = ({ Content, Author, Category, Title, ReadingTim
     if (!currentUser) return;
     try{
       setIsBookMarked(!isBookMarked);
-      await toggleBookmark(isBookMarked, ArticleLink);
+      await toggleBookmark(isBookMarked, ArticleLink, currentUser);
     } catch (error) {
       console.error(error);
     }
@@ -91,7 +91,7 @@ const Article: React.FC<Props> = ({ Content, Author, Category, Title, ReadingTim
     if (!currentUser) return;
     try {
       setHasLiked(!hasLiked);
-      await toggleLike(hasLiked,ArticleLink);
+      await toggleLike(hasLiked,ArticleLink, currentUser);
     } catch (error) {
       console.error(error);
     }

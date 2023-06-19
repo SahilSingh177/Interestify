@@ -22,7 +22,7 @@ const BookmarkCard = ({ author, article_id, link, title }: Props) => {
     if (!currentUser) return;
     try{
       setIsBookMarked(!isBookMarked);
-      await toggleBookmark(isBookMarked, article_id);
+      await toggleBookmark(isBookMarked, article_id, currentUser);
     } catch (error) {
       console.error(error);
     }
