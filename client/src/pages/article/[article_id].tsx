@@ -83,7 +83,7 @@ export async function getServerSideProps({ params }: GetServerSidePropsContext<P
     const formattedData = {
       Text: filteredData['text'],
       Author: filteredData['author'],
-      Category: "filteredData['category']",
+      Category: filteredData['category'],
       Title: filteredData['title'],
       Summary: filteredData['summary'],
       ReadingTime: filteredData['read_time'],
