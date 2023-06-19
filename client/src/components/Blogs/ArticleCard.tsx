@@ -45,7 +45,6 @@ const ArticleCard: React.FC<Props> = ({
   ArticleLink,
   Likes,
 }: Props) => {
-  console.log(articleId)
   const currentUser = useContext(AuthContext);
   const Router = useRouter();
   const [hasLiked, setHasLiked] = useState<boolean>(false);
@@ -56,7 +55,7 @@ const ArticleCard: React.FC<Props> = ({
     if (!currentUser) return;
     try{
       setIsBookMarked(!isBookMarked);
-      await toggleBookmark(isBookMarked, ArticleLink, currentUser);
+      await toggleBookmark(isBookMarked, articleId, currentUser);
     } catch (error) {
       console.error(error);
     }
@@ -66,25 +65,11 @@ const ArticleCard: React.FC<Props> = ({
     if (!currentUser) return;
     try {
       setHasLiked(!hasLiked);
-      hasLiked?setLikes(likes-1):setLikes(likes+1);
-      await toggleLike(hasLiked,articleId, currentUser);
+      hasLiked ? setLikes(likes - 1) : setLikes(likes + 1);
+      await toggleLike(hasLiked, articleId, currentUser);
     } catch (error) {
       console.error(error);
     }
-  };
-
-  const updateBlogList = async () => {
-    if (!currentUser) return;
-    await fetch("http://127.0.0.1:5000/registerBlog", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: currentUser.email,
-        blog_id: articleId,
-      }),
-    });
   };
 
 
@@ -112,14 +97,14 @@ const ArticleCard: React.FC<Props> = ({
         const response = await fetch(
           `http://127.0.0.1:5000/isArticleBookmarked?email=${currentUser.email}&blog_id=${articleId}`
         );
-          const bodyData = await response.json();
-          console.log(bodyData);
-          setIsBookMarked(bodyData.message);
-        } catch (error) {
-          console.error(error);
-        }
-      };
-    fetchHasBookmarked(); 
+        const bodyData = await response.json();
+        console.log(bodyData);
+        setIsBookMarked(bodyData.message);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchHasBookmarked();
     fetchHasLiked();
 // Calculate execution time
     
@@ -152,7 +137,9 @@ const ArticleCard: React.FC<Props> = ({
               <HStack spacing={1}>
                 <Icon
                   as={hasLiked ? FaThumbsUp : FaRegThumbsUp}
-                  onClick={() => { handleLike() }}
+                  onClick={() => {
+                    handleLike();
+                  }}
                 />
                 <Text fontSize="sm" color="gray.500">
                   {likes}
