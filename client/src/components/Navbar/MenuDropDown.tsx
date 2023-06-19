@@ -1,7 +1,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import {Box, Menu, MenuButton, MenuList, MenuItem, MenuDivider} from '@chakra-ui/react'
-import { FaUser, FaChartLine, FaRegBookmark, FaRegClock, FaSignOutAlt} from "react-icons/fa";
+import { FaUser, FaRegBookmark, FaRegClock, FaSignOutAlt} from "react-icons/fa";
 import DisplayPhoto from './DisplayPhoto'
 type Props = {
   handleSignOut:any

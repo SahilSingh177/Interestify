@@ -1,16 +1,14 @@
 import React from "react";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import { AuthContext } from "@/Providers/AuthProvider";
 import { useRouter } from "next/router";
-import { Box, Flex, Image, Text, Button, Divider, Stack } from "@chakra-ui/react";
+import { Flex, Image } from "@chakra-ui/react";
 import AuthButtons from "./AuthButtons";
-import Banner from "./Banner";
 import Link from 'next/link';
-import { authState } from "@/atoms/userAtom";
-import { useRecoilValue } from "recoil";
 import SearchBar from "./SearchBar";
 
 const Navbar: React.FC = () => {
-  const isLoggedIn = useRecoilValue(authState).isLoggedIn;
+  const currentUser = useContext(AuthContext);
   const router = useRouter();
   const [scrollPosition, setScrollPosition] = useState(0);
   const [isScrolledPastThreshold, setIsScrolledPastThreshold] = useState(false);
@@ -32,7 +30,7 @@ const Navbar: React.FC = () => {
 
   return (
     <Flex
-      bg={isHomePage && !isLoggedIn && !isScrolledPastThreshold ? "#ffdf00" : "white"}
+      bg={isHomePage && !currentUser && !isScrolledPastThreshold ? "#ffdf00" : "white"}
       position="fixed"
       width="100vw"
       maxWidth="100vw"

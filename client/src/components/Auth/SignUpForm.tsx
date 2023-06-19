@@ -4,73 +4,61 @@ import { useAuthState, useCreateUserWithEmailAndPassword, useUpdateProfile } fro
 import { auth } from '../../firebase/clientApp';
 import Redirect from "./Redirect";
 import ShowAlert from "../Alert/Alert";
-import { useSetRecoilState } from "recoil";
-import { authState } from '../../atoms/userAtom'
 import { useRouter } from "next/router";
 
 const SignupForm = () => {
   const Router = useRouter();
-  const setUserState = useSetRecoilState(authState);
   const [signupForm, setSignupForm] = useState({
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
-  
+
   const [
     createUserWithEmailAndPassword,
     user,
     loading,
     error,
   ] = useCreateUserWithEmailAndPassword(auth);
-  
+
   const [updateProfile, updating, ProfileError] = useUpdateProfile(auth);
-  const [_, loadingAuthState, loadingAuthError] = useAuthState(auth);
-  
-  useEffect(() => {
-    setUserState((prevState) => ({
-      ...prevState,
-      isLoggedIn: true
-    }));
-    if (user?.user) console.log(user?.user.displayName);
-  }, [loadingAuthState])
-  
+
+
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-  
+
     // handle password validation (e.g., check length, match, etc.)
     // if (signupForm.password !== signupForm.confirmPassword)
-    
-  
+
+
     await createUserWithEmailAndPassword(signupForm.email, signupForm.password);
     await updateProfile({ displayName: signupForm.username });
     await updateProfile({ photoURL: '/assets/default_profile_photo.png' });
-  
+
     if (error) {
       console.log(error);
       return;
     }
-    if(!loadingAuthState){
-      await fetch("http://127.0.0.1:5000/registerUser", {
+    await fetch("http://127.0.0.1:5000/registerUser", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email: signupForm.email , username : signupForm.username}),
+      body: JSON.stringify({ email: signupForm.email, username: signupForm.username }),
     });
-      setSignupForm({username:"", email: "", password: "",confirmPassword:""});
-      Router.push("/select-preferences");
-    }
+    setSignupForm({ username: "", email: "", password: "", confirmPassword: "" });
+    Router.push("/select-preferences");
+
   };
-  
+
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSignupForm((prev) => ({
       ...prev,
       [event.target.name]: event.target.value,
     }));
   };
-  
+
 
   return (
     <Flex width="50vw" padding="5vw 10vw">
@@ -130,8 +118,6 @@ const SignupForm = () => {
           Sign Up
         </Button>
         <Redirect view="signup"></Redirect>
-        {/* //Already here . Click to Signin
-      //Implement with Recoil */}
       </form>
 
       {error && (

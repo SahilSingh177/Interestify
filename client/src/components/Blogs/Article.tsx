@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import {
   Flex,
@@ -28,9 +28,8 @@ import {
 
 import AuthorCard from '../Author/AuthorCard';
 import { toggleBookmark } from '@/Handlers/toggleBookmark';
-import { auth } from '@/firebase/clientApp';
+import { AuthContext } from '@/Providers/AuthProvider';
 import { toggleLike } from '@/Handlers/toggleLike';
-// import { PDFDocumentProxy } from 'pdfjs-dist';
 
 
 type Props = {
@@ -45,7 +44,7 @@ type Props = {
 }
 
 const Article: React.FC<Props> = ({ Content, Author, Category, Title, ReadingTime, PDFLink, ArticleLink }: Props) => {
-  console.log("PDF", PDFLink)
+  const currentUser = useContext(AuthContext);
   const [articleProgress, setArticleProgress] = useState<number>(0);
 
   useEffect(() => {
@@ -79,7 +78,7 @@ const Article: React.FC<Props> = ({ Content, Author, Category, Title, ReadingTim
   const [isBookMarked, setIsBookMarked] = useState<boolean>(false);
 
   const handleBookmark = async () => {
-    if (!auth.currentUser?.email) return;
+    if (!currentUser) return;
     try{
       setIsBookMarked(!isBookMarked);
       await toggleBookmark(isBookMarked, ArticleLink);
@@ -89,7 +88,7 @@ const Article: React.FC<Props> = ({ Content, Author, Category, Title, ReadingTim
   };
 
   const handleLike = async () => {
-    if (!auth.currentUser?.email) return;
+    if (!currentUser) return;
     try {
       setHasLiked(!hasLiked);
       await toggleLike(hasLiked,ArticleLink);

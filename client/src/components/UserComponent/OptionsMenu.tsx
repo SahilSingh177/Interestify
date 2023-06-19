@@ -1,14 +1,15 @@
-import React from 'react';
-import { auth } from '@/firebase/clientApp';
-import { VStack, Icon, Card, CardBody, Image, Stack, HStack, Heading, CardFooter, Button, Text } from '@chakra-ui/react';
+import React,{useContext} from 'react';
+import { AuthContext } from "@/Providers/AuthProvider";
+import { VStack, Icon, HStack, Text } from '@chakra-ui/react';
 import {FaUser, FaClock, FaBookmark} from "react-icons/fa";
 import Link from 'next/link';
 import 'chart.js/auto';
 
 const OptionsMenu: React.FC = () => {
-    let imageURL = auth.currentUser?.photoURL || undefined;
+    const currentUser = useContext(AuthContext);
+    let imageURL = currentUser.photoURL || undefined;
     if (!imageURL) imageURL = '/assets/default_profile_photo.png'
-    let displayName = auth.currentUser?.displayName;
+    let displayName = currentUser.displayName;
     return (
         <VStack minWidth="25vw" marginTop="10vh" paddingLeft="5vw" alignItems="flex-start" justifyContent="flex-start" spacing={10}>
             <HStack alignItems="center" justifyContent="center" spacing={4}>

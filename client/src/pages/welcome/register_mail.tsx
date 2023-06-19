@@ -35,7 +35,7 @@ const register_mail = (props: Props) => {
             </Box>
             <Button variant="danger" size="lg" borderRadius="7" bg="red.500" onClick={() => Router.push('/')}>Register</Button>
             <Text marginTop="3" color="gray.600" fontSize="md" fontWeight="bold">You can unsubscribe anytime.</Text>
-            <Icon cursor="pointer" boxSize="5vw" as={FaArrowCircleRight} position="fixed" bottom="2vw" right="2vw"></Icon>
+            <Icon onClick={() => Router.push('/')} cursor="pointer" boxSize="5vw" as={FaArrowCircleRight} position="fixed" bottom="2vw" right="2vw"></Icon>
         </Stack>
     )
 }

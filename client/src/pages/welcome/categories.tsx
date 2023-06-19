@@ -4,9 +4,7 @@ import AllCategories from '@/components/Category/AllCategories'
 
 import { FaSearch } from 'react-icons/fa'
 
-type Props = {}
-
-const categories = (props: Props) => {
+const categories = () => {
     
     return (
         <Stack alignItems="center" justifyContent="center">

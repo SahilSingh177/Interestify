@@ -1,10 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { VStack, Heading, Box, Flex, Badge } from '@chakra-ui/react';
-import ArticleCard from './ArticleCard';
 
-type Props = {};
-
-const ArticleRecommendations = (props: Props) => {
+const ArticleRecommendations = () => {
     const [scrollPosition, setScrollPosition] = useState(0);
     const [isScrolledPastThreshold, setIsScrolledPastThreshold] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);

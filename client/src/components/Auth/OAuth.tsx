@@ -1,5 +1,5 @@
 import React from 'react'
-import { Stack, Box, Text, Center } from '@chakra-ui/react'
+import { Stack, Text, Center } from '@chakra-ui/react'
 import OauthButtons from './OAuthButtons'
 
 type Props = {
