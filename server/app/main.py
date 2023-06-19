@@ -178,9 +178,9 @@ def get_top_articles_by_category():
 @app.route('/addBookmark',methods=['GET'])
 def addBookmark():
     email = request.args.get('email')
-    link = request.args.get('link')
+    blog_id = request.args.get('id')
     try:
-        database.user_to_blog(email,link)
+        database.user_to_blog(email,blog_id)
         return jsonify({"result":"success"}),200
     except Exception as e:
         return jsonify(error=str(e)), 500
@@ -188,9 +188,9 @@ def addBookmark():
 @app.route('/deleteBookmark',methods=['GET'])
 def deleteBookmark():
     email = request.args.get('email')
-    link = request.args.get('link')
+    id = request.args.get('id')
     try:
-        database.delete_user_to_blog(email,link)
+        database.delete_user_to_blog(email,id)
         return jsonify({"result":"success"}),200
     except Exception as e:
         return jsonify(error=str(e)), 500

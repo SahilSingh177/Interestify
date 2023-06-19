@@ -16,6 +16,7 @@ interface ArticleData {
   ReadingTime: string;
   PDFLink: string;
   ArticleLink: string;
+  ArticleId: string;
 }
 
 // Define the type for params
@@ -51,6 +52,7 @@ const ArticlePage = ({ articleData }: { articleData: ArticleData }) => {
 
       {articleData && (
         <Article
+          ArticleId= {articleData.ArticleId}
           Content={articleData.Text}
           Author={articleData.Author}
           Category={articleData.Category || "Unknown"}
@@ -86,7 +88,8 @@ export async function getServerSideProps({ params }: GetServerSidePropsContext<P
       Summary: filteredData['summary'],
       ReadingTime: filteredData['read_time'],
       PDFLink: filteredData['pdf_link'],
-      ArticleLink: filteredData['link']
+      ArticleLink: filteredData['link'],
+      ArticleId: filteredData['id']
     };
     
     return {

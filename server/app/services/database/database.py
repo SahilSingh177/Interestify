@@ -299,54 +299,49 @@ class App:
             ]   
             # create seprate
 
-    def user_to_blog(self, user_email, blog_link):
+    def user_to_blog(self, user_email, blog_id):
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
                 print("User does not exist")
                 return False
-            if not self.check_blog_exists(blog_link):
-                print("Blog does not exist")
-                return False
-            result = session.write_transaction(self._user_to_blog, user_email, blog_link)
+            result = session.write_transaction(self._user_to_blog, user_email, blog_id)
             for record in result:
                 print("Added User: {u} to Blog: {b}".format(u=record['u'], b=record['b']))
             return True
 
     @staticmethod
-    def _user_to_blog(tx, user_email, blog_link):
+    def _user_to_blog(tx, user_email, blog_id):
         query = (
-            "MATCH (u:User {email:$user_email}), (b:Blog{link:$blog_link}) "
+            "MATCH (u:User {email:$user_email}), (b:Blog) "
+            "WHERE ID(b)=$blog_id "
             "MERGE (u)-[r:BOOKMARK]->(b) "
             "RETURN u, b"
         )
-        result = tx.run(query, user_email=user_email, blog_link=blog_link)
+        result = tx.run(query, user_email=user_email, blog_id=int(blog_id))
         try:
             return [{"u": record["u"]["email"], "b": record["b"]["title"]} for record in result]
         except Neo4jError as exception:
             logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
             raise
 
-    def delete_user_to_blog(self, user_email, blog_link):
+    def delete_user_to_blog(self, user_email, blog_id):
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
                 print("User does not exist")
                 return False
-            if not self.check_blog_exists(blog_link):
-                print("Blog does not exist")
-                return False
-            result = session.write_transaction(self._delete_user_to_blog, user_email, blog_link)
+            result = session.write_transaction(self._delete_user_to_blog, user_email, blog_id)
             for record in result:
                 print("Deleted User: {u} from Blog: {b}".format(u=record['u'], b=record['b']))
             return True
 
     @staticmethod
-    def _delete_user_to_blog(tx, user_email, blog_link):
+    def _delete_user_to_blog(tx, user_email, blog_id):
         query = (
-            "MATCH (u:User {email:$user_email})-[r:BOOKMARK]->(b:Blog {link:$blog_link}) "
+            "MATCH (u:User {email:$user_email})-[r:BOOKMARK]->(b:Blog) WHERE ID(b)=$blog_id "
             "DELETE r "
             "RETURN u, b"
         )
-        result = tx.run(query, user_email=user_email, blog_link=blog_link)
+        result = tx.run(query, user_email=user_email, blog_id=int(blog_id))
         try:
             return [{"u": record["u"]["email"], "b": record["b"]["title"]} for record in result]
         except Neo4jError as exception:

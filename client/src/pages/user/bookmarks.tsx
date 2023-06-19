@@ -9,7 +9,7 @@ type Props = {}
 const bookmarks = (props: Props) => {
     interface BookmarkedArticles {
         author: string;
-        article_id: string,
+        id: string,
         link: string;
         title: string,
     }
@@ -51,7 +51,7 @@ const bookmarks = (props: Props) => {
                     size='xl' />
                 }
         {data && data.map((article,id)=>
-            <BookmarkCard key={id} article_id={article.article_id} link={article.link} title={article.title}
+            <BookmarkCard key={id} article_id={article.id} link={article.link} title={article.title}
             author={article.author}></BookmarkCard>
         )}
     </Stack>
