@@ -95,7 +95,6 @@ const ArticleCard: React.FC<Props> = ({
           `http://127.0.0.1:5000/isArticleLiked?email=${currentUser.email}&blog_id=${articleId}`
         );
         const bodyData = await response.json();
-        console.log(bodyData)
         setHasLiked(bodyData.message);
       } catch (error) {
         console.error(error);
