@@ -78,15 +78,11 @@ const ArticleCard: React.FC<Props> = ({
     const fetchHasLiked = async () => {
       if (!currentUser) return;
       try {
-        const startTime = new Date().getTime();
         const response = await fetch(
           `http://127.0.0.1:5000/isArticleLiked?email=${currentUser.email}&blog_id=${articleId}`
         );
         const bodyData = await response.json();
         setHasLiked(bodyData.message);
-        const endTime = new Date().getTime(); // Record end time
-        const executionTime = endTime - startTime; 
-        console.log('likes execution time:', executionTime, 'ms');
       } catch (error) {
         console.error(error);
       }
@@ -98,7 +94,6 @@ const ArticleCard: React.FC<Props> = ({
           `http://127.0.0.1:5000/isArticleBookmarked?email=${currentUser.email}&blog_id=${articleId}`
         );
         const bodyData = await response.json();
-        console.log(bodyData);
         setIsBookMarked(bodyData.message);
       } catch (error) {
         console.error(error);

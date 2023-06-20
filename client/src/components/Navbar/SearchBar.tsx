@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { AuthContext } from "@/Providers/AuthProvider";
 import { Input, InputGroup, InputLeftElement, Icon } from '@chakra-ui/react'
 import { FaSearch } from 'react-icons/fa'
-import SearchModal from '../SearchComponent/SearchModal';
+import SearchModal from '../Modals/SearchModal';
 
 const SearchBar = () => {
     const router = useRouter();
