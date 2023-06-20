@@ -33,7 +33,7 @@ const SearchModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void
 
     return (
         <>
-            <Modal size='xl' isOpen={isOpen} onClose={onClose}>
+            <Modal size='2xl' isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalBody>
@@ -49,8 +49,8 @@ const SearchModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void
                     {
                         searchResults.length > 0 &&
                         // <ModalFooter>
-                            <VStack width='full' maxHeight='70vh' overflowY='scroll' paddingBottom='5vh'>
-                                <Divider></Divider>
+                            <VStack width='full'  maxHeight='70vh' overflowY='scroll' paddingBottom='5vh'>
+                                <Divider marginBottom={5}></Divider>
                                 {searchResults.map((searchResult, id) => {
                                     
                                     return <HStack width='90%' cursor='pointer' fontWeight='medium' _hover={{ bg: 'teal.400', color: 'white' }} borderRadius="md" key={id} bg='gray.100' padding={5}>

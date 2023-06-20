@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/react";
 import { FaTrash } from "react-icons/fa";
+import Skeleton from 'react-loading-skeleton'
 
 type Props = {
   articleId: string;

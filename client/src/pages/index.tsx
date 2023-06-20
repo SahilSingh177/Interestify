@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Stack, Flex, Divider } from '@chakra-ui/react';
+import { Stack, Flex, Divider, Skeleton } from '@chakra-ui/react';
 import Banner from '@/components/Navbar/Banner';
 import ArticleCard from '@/components/Articles/ArticleCard';
 import SideBar from '@/components/Articles/SideBar';
@@ -42,35 +42,40 @@ const Index = () => {
 
   useEffect(() => {
     fetchData();
-  }, []); 
+  }, []);
 
   return (
     <>
       <Stack>
         <Banner></Banner>
         <Flex
-          flexDirection={{ lg: 'row', md: 'column', sm: 'column' }}
+          flexDirection={{ lg: 'row', base:'column' }}
           marginTop='10vh'
           width={`calc(100vw - 12px)`}
-          justifyContent='space-evenly'
+          justifyContent={{ lg : 'space-evenly', base:'column'}}
+          alignItems={{ lg : 'flex-start', base:'center'}}
           minHeight={`calc(100vh-80px)`}
         >
           <Flex
             minHeight='full'
             flexDirection='column'
-            justifyContent={{ lg: 'flex-start', md: 'center' }}
-            width={{ lg: '55vw', md: `calc(80vw - 12px)` }}
+            width={{ lg: '55vw', base: `calc(90vw - 12px)`}}
             overflowX='hidden'
           >
             {
-              isLoading && <Spinner
-              margin='auto'
-              thickness='4px'
-              speed='0.65s'
-              emptyColor='gray.200'
-              color='blue.500'
-              size='xl'
-            />
+              isLoading && <Stack height="full">
+                {[...Array(3)].map((_, index) => (
+                  <Skeleton
+                    key={index}
+                    borderRadius={8}
+                    marginBottom={5}
+                    endColor="gray.200"
+                    startColor="gray.100"
+                    width={{ lg: '55vw', base: `calc(90vw - 12px)`}}
+                    height="30vh"
+                  />
+                ))}
+              </Stack>
             }
             {data.length > 0 && (
               <InfiniteScroll
@@ -79,14 +84,14 @@ const Index = () => {
                 hasMore={hasMoreData}
                 loader={
                   <Flex flexDirection='column' alignItems='center' justifyContent='center' height='30vh' width="full">
-                <Spinner
-                  margin='auto'
-                  thickness='4px'
-                  speed='0.65s'
-                  emptyColor='gray.200'
-                  color='blue.500'
-                  size='xl'
-                /></Flex>
+                    <Spinner
+                      margin='auto'
+                      thickness='4px'
+                      speed='0.65s'
+                      emptyColor='gray.200'
+                      color='blue.500'
+                      size='xl'
+                    /></Flex>
                 }
               >
                 {data.map((articleInfo, id) => (

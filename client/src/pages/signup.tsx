@@ -6,7 +6,7 @@ import SignupForm from '@/components/Auth/SignUpForm';
 
 const signup = () => {
   return (
-    <Flex flexDirection="row" height={`calc(100vh - 60px)`} justifyContent="center" bgImage="/assets/auth_bg.avif">
+    <Flex flexDirection="row" height='90vh' justifyContent="center" bgImage="/assets/auth_bg.avif" backgroundSize='cover'>
       <OAuth view="signup"></OAuth>
       <AuthDivider></AuthDivider>
       <SignupForm></SignupForm>

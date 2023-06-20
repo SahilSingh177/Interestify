@@ -11,6 +11,7 @@ import {
   CardFooter,
   Icon,
   Tag,
+  Stack,
 } from "@chakra-ui/react";
 import {
   FaBookmark,
@@ -117,16 +118,16 @@ const ArticleCard: React.FC<Props> = ({
         <VStack width="full">
           <CardBody width="full" onClick={() => Router.push(`/article/${articleId}`)}>
             <HStack>
-              <Heading size="md" width="90%">
+              <Heading size="lg" width="90%">
                 {Title ? Title : "Title"}
               </Heading>
               <Tag size="sm" variant="solid" colorScheme={getRandomColour()}>
                 {Category ? Category : "Unknown"}
               </Tag>
             </HStack>
-            <Text py="2">{Summary ? Summary : "Summary"}</Text>
+            <Text py="2" fontSize={{md:'md',base:'sm'}}>{Summary ? Summary : "Summary"}</Text>
           </CardBody>
-          <CardFooter width="full" marginTop={2}>
+          <CardFooter width="full" paddingTop={0}>
             <HStack spacing={4} width="full">
               <HStack spacing={1}>
                 <Icon
@@ -161,5 +162,4 @@ const ArticleCard: React.FC<Props> = ({
   );
 };
 
-export const revalidate = false;
 export default ArticleCard;

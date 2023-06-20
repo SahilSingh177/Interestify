@@ -2,12 +2,13 @@ import React from "react";
 import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from "@/Providers/AuthProvider";
 import { useRouter } from "next/router";
-import { Flex, Image } from "@chakra-ui/react";
+import { Flex, Image, useBreakpointValue } from "@chakra-ui/react";
 import AuthButtons from "./AuthButtons";
 import Link from 'next/link';
 import SearchBar from "./SearchBar";
 
 const Navbar: React.FC = () => {
+  const transformScale = useBreakpointValue({ base: 'scale(1.3)', md: 'scale(0.9)', sm: 'scale(0.7)' });
   const currentUser = useContext(AuthContext);
   const router = useRouter();
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -18,7 +19,7 @@ const Navbar: React.FC = () => {
     const handleScroll = () => {
       const currentPosition = window.pageYOffset;
       setScrollPosition(currentPosition);
-      setIsScrolledPastThreshold(currentPosition > 80 + (window.innerHeight * 0.50));
+      setIsScrolledPastThreshold(currentPosition >  window.innerHeight * 0.6);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -34,7 +35,7 @@ const Navbar: React.FC = () => {
       position="fixed"
       width="100vw"
       maxWidth="100vw"
-      height="80px"
+      height="10vh "
       padding="10px 5vw"
       zIndex="200"
       justifyContent="space-between"
@@ -43,7 +44,7 @@ const Navbar: React.FC = () => {
       overflowY="hidden"
     >
       <Link href="/">
-        <Image src="/assets/logo-no-background.svg" height="80px" transform="scale(1.3)"></Image>
+        <Image src="/assets/logo-no-background.svg" height="80px" transform={transformScale}></Image>
 
       </Link>
         <SearchBar></SearchBar>
