@@ -5,10 +5,10 @@ import { auth } from '@/firebase/clientApp';
 
 const DisplayPhoto = forwardRef<BoxProps, 'div'>((props, ref) => {
   const currentUser = useContext(AuthContext);
-  let imageURL = currentUser.photoURL || undefined;
+  let imageURL = currentUser?.photoURL || undefined;
   if (!imageURL) imageURL = '/assets/default_profile_photo.png'
   
-  return <Box ref={ref} {...props}><Avatar src={imageURL} cursor="pointer" /></Box>;
+  return <Box  ref={ref} {...props}><Avatar src={imageURL} cursor="pointer" /></Box>;
 });
 
 export default DisplayPhoto;

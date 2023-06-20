@@ -6,7 +6,7 @@ import LoginForm from '@/components/Auth/LoginForm';
 
 const Login = () => {
   return (
-    <Flex flexDirection="row" height={`calc(100vh - 80px)`} justifyContent="center" bgImage="/assets/auth_bg.avif">
+    <Flex flexDirection="row" height='90vh' justifyContent="center" bgImage="/assets/auth_bg.avif" backgroundSize='cover'>
       <OAuth view="login"></OAuth>
       <AuthDivider></AuthDivider>
       <LoginForm></LoginForm>

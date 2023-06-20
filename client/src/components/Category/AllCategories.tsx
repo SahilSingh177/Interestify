@@ -6,9 +6,8 @@ import { useRouter } from 'next/router'
 import { FaArrowCircleRight } from 'react-icons/fa'
 import { AuthContext } from '@/Providers/AuthProvider'
 
-type Props = {}
 
-const AllCategories = (props: Props) => {
+const AllCategories = () => {
   const currentUser = useContext(AuthContext);
   const Router = useRouter();
   const [clickedCategories, setClickedCategories] = useState<string[]>([])
@@ -22,7 +21,7 @@ const AllCategories = (props: Props) => {
   };
 
   const submitCategories = async () => {
-    const email = currentUser.email;
+    const email = currentUser?.email;
     console.log(email);
     if (email && clickedCategories.length >= 5 && clickedCategories.length >= 5) {
       Router.push('http://localhost:3000/welcome/register_mail');

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Heading, Stack, VStack } from "@chakra-ui/react";
+import { Heading, Skeleton, Stack, VStack } from "@chakra-ui/react";
 import HistoryCard from "@/components/User/HistoryCard";
 import { auth } from '@/firebase/clientApp';
 
 const History = () => {
-  interface HistoryArticle {
+  interface PreviousArticle {
     id: string;
     author: string;
     category: string;
@@ -14,9 +14,8 @@ const History = () => {
     rid: string;
   }
 
-  const [data, setData] = useState<HistoryArticle[] | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  
+  const [data, setData] = useState<PreviousArticle[] | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState<Boolean>(true);
   const email = auth.currentUser?.email;
 
   const fetchData = async () => {
@@ -24,6 +23,7 @@ const History = () => {
       let response = await fetch(`http://127.0.0.1:5000/history?email=${email}`);
       const bodyData = await response.json();
       const filteredData = bodyData.data;
+      console.log(filteredData);
       setData(filteredData);
     } catch (error) {
       console.error(error);
@@ -37,14 +37,29 @@ const History = () => {
 
   return (
     <Stack
-      width="calc(100vw - 12px)"
-      minHeight="100vh"
+      width={`calc(100vw - 12px)`}
+      minHeight={`calc(100vw - 12px)`}
       bg="gray.50"
       alignItems="center"
       margin="auto"
       paddingTop="5vh"
     >
       <Heading marginBottom="5vh">HISTORY</Heading>
+      {isLoading &&
+        <Stack height="full">
+          {[...Array(3)].map((_, index) => (
+            <Skeleton
+              key={index}
+              borderRadius={8}
+              marginBottom={5}
+              endColor="gray.200"
+              startColor="gray.100"
+              width="80vw"
+              height="18vh"
+            />
+          ))}
+        </Stack>
+      }
       {data &&
         data.map((article, id) => (
           <HistoryCard

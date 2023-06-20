@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Stack, Heading, Spinner } from '@chakra-ui/react';
+import { Stack, Heading, Skeleton } from '@chakra-ui/react';
 import BookmarkCard from '@/components/User/BookmarkCard';
 import { auth } from '@/firebase/clientApp';
 
@@ -33,11 +33,23 @@ const Bookmarks = () => {
   }, [auth.currentUser]);
 
   return (
-    <Stack width="calc(100vw - 12px)" minHeight="100vh" bg="gray.50" alignItems="center" margin="auto" paddingTop="5vh">
+    <Stack width="calc(100vw - 12px)" minHeight={`calc(100vh - 80px)`} bg="gray.50" alignItems="center" margin="auto" paddingTop="5vh">
       <Heading marginBottom="5vh">BOOKMARKS</Heading>
-      {isLoading && (
-        <Spinner margin='auto' thickness='4px' speed='0.65s' emptyColor='gray.200' color='blue.500' size='xl' />
-      )}
+      {isLoading &&
+        <Stack height="full">
+          {[...Array(3)].map((_, index) => (
+            <Skeleton
+              key={index}
+              borderRadius={8}
+              marginBottom={5}
+              endColor="gray.200"
+              startColor="gray.100"
+              width="80vw"
+              height="18vh"
+            />
+          ))}
+        </Stack>
+      }
       {data &&
         data.map((article, id) => (
           <BookmarkCard key={id} article_id={article.id} link={article.link} title={article.title} author={article.author} />

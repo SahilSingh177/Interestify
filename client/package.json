@@ -36,6 +36,7 @@
     "react-firebase-hooks": "^5.1.1",
     "react-icons": "^4.9.0",
     "react-infinite-scroll-component": "^6.1.0",
+    "react-loading-skeleton": "^3.3.1",
     "swr": "^2.1.5",
     "textract": "^2.5.0",
     "typescript": "5.1.3"

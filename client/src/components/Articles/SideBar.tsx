@@ -23,7 +23,7 @@ const Sidebar: React.FC<Props> = () => {
     const handleScroll = () => {
       const scrollHeight = window.scrollY;
       const windowHeight = window.innerHeight;
-      const calculatedHeight = currentUser ? 0 : 0.5 * windowHeight + 80;
+      const calculatedHeight =  !currentUser ? 0.63 * windowHeight : 0.03 * windowHeight;
 
       setIsFixed(scrollHeight > calculatedHeight);
     };
@@ -36,20 +36,20 @@ const Sidebar: React.FC<Props> = () => {
 
   return (
     <Flex
-      marginTop="3vh"
-      width={{ lg: "30vw", md: `calc(100vw - 12px)`, sm: `calc(100vw - 12px)` }}
+      marginTop='3vh'
+      width={{ lg: "30vw", base: `calc(100vw - 12px)`}}
       flexDirection="column"
       alignItems="center"
-      justifyContent={{ lg: "flex-start", md: "center", sm: "center" }}
+      justifyContent={{ lg: "flex-start", base: "center" }}
     >
       <Flex width="30vw" height={0} />
       <Stack
         spacing="1vh"
-        position={{ lg: isFixed ? 'fixed' : 'static', md: "static" }}
-        top={isFixed ? 'calc(100px + 10vh)' : 'auto'}
+        position={{ lg: isFixed ? 'fixed' : 'static', base: "static" }}
+        top={isFixed ? '20vh' : 'auto'}
         right="auto"
         left="auto"
-        width={{ lg: "30vw", md: `calc(90vw - 12px)`, sm: `calc(90vw - 12px)` }}
+        width={{ lg: "30vw", base: `calc(90vw - 12px)` }}
       >
         <Text fontWeight="medium" fontSize="2xl" marginBottom={5} textAlign="center">
           Discover more of what matters to you

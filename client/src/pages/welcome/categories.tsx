@@ -7,7 +7,7 @@ const categories = () => {
     
     return (
         <Stack alignItems="center" justifyContent="center">
-            <Heading marginTop="5vh">SELECT YOUR FAVOURITE CATEGORIES</Heading>
+            <Heading marginTop="5vh" textAlign='center'>SELECT YOUR FAVOURITE CATEGORIES</Heading>
             <InputGroup width="60vw" margin="5vh 5vw">
                 <InputLeftElement
                     pointerEvents="none"

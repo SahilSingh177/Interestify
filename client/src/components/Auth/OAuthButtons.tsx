@@ -39,9 +39,9 @@ const OauthButtons = ({ imageSrc, providerName }: Props) => {
   };
 
   return (
-    <Button variant="oauth" mb={2} width="20vw" height="10vh" fontSize="md"
+    <Button variant="oauth" mb={2} height="10vh" fontSize={{lg:"lg",md:"md",sm:"sm",base:'x-small'}}
       onClick={onSubmit}>
-      <Avatar src={imageSrc} size="sm" mr={4} />
+      <Avatar src={imageSrc} size={{base:"xs",md:'sm'}} mr={4} />
       Login with {providerName}
     </Button>
   );
