@@ -175,6 +175,20 @@ def get_top_articles_by_category():
     data = database.get_blogs_by_likes(category)
     return jsonify(data)
 
+@app.route('/getRecentArticlesfor', methods=['GET'])
+def get_recent_articles_by_category():
+    args = request.args
+    category = args.get('category')
+    data = database.get_recent_blogs(category)
+    return jsonify(data)
+
+@app.route('/getHotArticlesfor', methods=['GET'])
+def get_hot_articles_by_category():
+    args = request.args
+    category = args.get('category')
+    data = database.get_hot_blogs(category)
+    return jsonify(data)
+
 @app.route('/addBookmark',methods=['GET'])
 def addBookmark():
     email = request.args.get('email')

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 import os
 from typing import Optional
@@ -584,7 +584,7 @@ class App:
 
     def get_recent_blogs(self, category_name: Optional[str] = None, limit: int = 10, page: int = 1, page_limit: int = 5):
         with self.driver.session(database="neo4j") as session:
-            result = session.read_transaction(
+            result = session.execute_read(
                 self._get_recent_blogs,
                 category_name,
                 limit,
@@ -592,7 +592,6 @@ class App:
                 page_limit
             )
             print("Success")
-            print(result)
             return result
 
     @staticmethod
@@ -653,7 +652,7 @@ class App:
     def get_hot_blogs(self, category_name: Optional[str] = None, limit: int = 10, page: int = 1, page_limit: int = 5):
         #Fetch most liked blogs in last 7 days
         with self.driver.session(database="neo4j") as session:
-            result = session.read_transaction(
+            result = session.execute_read(
                 self._get_hot_blogs,
                 category_name,
                 limit,
@@ -661,7 +660,6 @@ class App:
                 page_limit
             )
             print("Success")
-            print(result)
             return result
         
     @staticmethod
@@ -679,13 +677,15 @@ class App:
                 "MATCH (b:Blog)-[:BELONGS_TO]->(c:Category{name:$category_name}) "
                 "WITH b "
                 "MATCH (:User)-[r:LIKES]->(b) "
-                "WHERE datetime() - datetime(r.createdAt) < duration('P7D') "
+                "WHERE date(b.created_at) > date($time) "
                 "WITH b, COUNT(r) AS likecount "
                 "RETURN b.title as title,b.author as author,b.link as link "
                 "ORDER BY likecount DESC LIMIT $limit"
             )
             result = tx.run(
                 query,
+                time = datetime.now()-timedelta(days=7),
+                limit = limit,
                 category_name=category_name,
                 skip_count=skip_count,
                 page_limit=page_limit
@@ -695,17 +695,75 @@ class App:
                 "MATCH (b:Blog) "
                 "WITH b "
                 "MATCH (:User)-[r:LIKES]->(b) "
-                "WHERE datetime() - datetime(r.createdAt) < duration('P7D') "
+                "WHERE date(b.created_at) > date($time) "
                 "WITH b, COUNT(r) AS likecount "
                 "RETURN b.title as title,b.author as author,b.link as link "
                 "ORDER BY likecount DESC LIMIT $limit"
             )
             result = tx.run(
                 query,
+                time = datetime.now()-timedelta(days=7),
                 skip_count=skip_count,
-                page_limit=page_limit
+                page_limit=page_limit,
+                limit = limit
             )
 
+        try:
+            return [
+                {
+                    "author": record["author"],
+                    "title": record["title"],
+                    "link": record["link"]
+                }
+                for record in result
+            ]
+        except Neo4jError as exception:
+            logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
+            raise
+
+    def get_recent_blogs(self, category_name: Optional[str] = None, limit: int = 10, page: int = 1, page_limit: int = 5):
+        with self.driver.session(database="neo4j") as session:
+            result = session.read_transaction(
+                self._get_recent_blogs,
+                category_name,
+                limit,
+                page,
+                page_limit
+            )
+            print("Success")
+            print(result)
+            return result
+        
+    @staticmethod
+    def _get_recent_blogs(
+        tx,
+        category_name: Optional[str] = None,
+        limit: int = 10,
+        page: int = 1,
+        page_limit: int = 5
+    ):
+        if category_name:
+            query = (
+                "MATCH (b:Blog)-[:BELONGS_TO]->(c:Category{name:$category_name}) "
+                "RETURN b.title as title,b.author as author,b.link as link "
+                "ORDER BY b.created_at DESC LIMIT $limit"
+            )
+            result = tx.run(
+                query,
+                category_name=category_name,
+                limit=limit
+            )
+        else:
+            query = (
+                "MATCH (b:Blog) "
+                "RETURN b.title as title,b.author as author,b.link as link "
+                "ORDER BY b.created_at DESC LIMIT $limit"
+            )
+            result = tx.run(
+                query,
+                limit=limit
+            )
+        
         try:
             return [
                 {
@@ -983,4 +1041,6 @@ if __name__ == "__main__":
     # app.get_blogs_by_likes("Physics")
     # app.get_blogs_by_category_and_limit("Engineering",2)
     # app.find_all_categories_for_user("sahilsinghh1221177@gmail.com")
+    app.get_hot_blogs("Environment")
+    # print(datetime.now()-timedelta(days=7))
     app.close()
