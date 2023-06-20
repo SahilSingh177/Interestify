@@ -58,15 +58,15 @@ const Article: React.FC<Props> = ({
 
     const updateCategoryTime = async ({ timeSpent }: { timeSpent: number }) => {
       try {
-        await fetch('http://127.0.0.1:5000/addBrowsingTime', {
+        await fetch('http://127.0.0.1:5000/updateCategoryScore', {
           method: 'POST',
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            "user_email": currentUser?.email,
+            "email": currentUser?.email,
             "category_name": Category,
-            "browsing_time": timeSpent
+            "duration": timeSpent
           }),
         });
       } catch (error) {

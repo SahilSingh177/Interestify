@@ -1,20 +1,19 @@
 from datetime import datetime
 from flask import Flask, request, jsonify
-from sendgrid import SendGridAPIClient
 from services.database.database import App
 from services.springer import start_scraping_thread
 import dotenv
 from flask_cors import CORS
+import services.user_preference as user_preference
 
 app = Flask(__name__)
 CORS(app, origins=['http://localhost:3000'])
 sg = None
 initialized = False
 
-DATABASE_URL = "neo4j+s://58ad0a3e.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "TrU2Lb35p2JaTVKag7sn-RPD-BQtCCP0eBZMyhwXFY4"
-SENDGRID_API_KEY = "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"
+PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
 
 uri = DATABASE_URL
 user = USER
@@ -28,9 +27,7 @@ def initialize():
     if not initialized:
         app.logger.info("Starting scraping thread...")
         start_scraping_thread()
-        sg = SendGridAPIClient(api_key=SENDGRID_API_KEY)  # mail service
         initialized = True
-
 
 @app.route('/registerUser', methods=['POST'])
 def register_user():
@@ -42,16 +39,6 @@ def register_user():
     database.create_user(email, username)
     # create_user function
     return jsonify({"message": "User registered successfully"})
-
-@app.route('/search', methods=['POST'])
-def search():
-    data = request.json
-    print(data)
-    text = data['text']
-    print(text)
-    results = database.search(text)
-    return jsonify(results)
-
 
 @app.route('/registerUserPreferences', methods=['POST'])
 def register_user_preferences():
@@ -76,7 +63,6 @@ def register_blog():
         return jsonify({"message": "Blog registered successfully"})
     else:
         return jsonify({"message": res})
-    
 
 @app.route('/updatePreferences', methods=['POST'])
 def update_preferences():
@@ -88,6 +74,15 @@ def update_preferences():
         database.user_to_category(email,update_preference)
     # user_to_category update
     return jsonify({"message": "User preferences updated successfully"})
+
+@app.route('/search', methods=['POST'])
+def search():
+    data = request.json
+    print(data)
+    text = data['text']
+    print(text)
+    results = database.search(text)
+    return jsonify(results)
 
 @app.route('/getTopArticles', methods=['GET'])
 def get_top_articles():
@@ -115,42 +110,6 @@ def get_top_articles():
         })
     print(resp)
     return jsonify(resp)
-
-
-@app.route('/likeArticle', methods=['GET'])
-def like_article():
-    args = request.args
-    email = args['email']
-    blog_id = args['blog_id']
-    ans = database.add_likes_to_blog(email,blog_id)
-    if ans:
-        return jsonify({"total_likes": ans[0]["likecount"]})
-    else:
-        return jsonify({"message": "Article already liked"})
-
-@app.route('/dislikeArticle', methods=['GET']) 
-def dislike_article():
-    args = request.args
-    email = args['email']
-    blog_id = args['blog_id']
-    ans = database.remove_likes_from_blog(email,blog_id)
-    # print(ans)
-    if ans:
-        return jsonify({"total_likes": ans[0]["likecount"]})
-    else:
-        return jsonify({"message": "Article already disliked"})
-
-
-@app.route('/isArticleLiked', methods=['GET'])
-def is_article_liked():
-    args = request.args
-    email = args['email']
-    blog_id = args['blog_id']
-    ans = database.isBlogLiked(email,blog_id)
-    if ans:
-        return jsonify({"message": True})
-    else:
-        return jsonify({"message": False})
 
 @app.route('/getTopArticlesPerUser', methods=['GET'])
 def get_top_articles_per_user():
@@ -202,6 +161,60 @@ def get_hot_articles_by_category():
     data = database.get_hot_blogs(category,page=page)
     return jsonify(data)
 
+@app.route('/getArticle',methods=['GET'])    
+def getArticle():
+    try:
+        print("A")
+        article_id = request.args.get('article_id')
+        print(article_id)
+        print("B")
+        # print(type(article_id))
+        article_id = int(article_id)
+        if article_id is None:
+            return jsonify(error='ID parameter is missing'), 400
+        
+        article_data = database.get_blog_by_id(article_id)
+        category = database.get_category_by_blog(article_id)
+        # print(category)
+        article_data[0]["category"]=category
+        return jsonify(data=article_data), 200
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+
+@app.route('/likeArticle', methods=['GET'])
+def like_article():
+    args = request.args
+    email = args['email']
+    blog_id = args['blog_id']
+    ans = database.add_likes_to_blog(email,blog_id)
+    if ans:
+        return jsonify({"total_likes": ans[0]["likecount"]})
+    else:
+        return jsonify({"message": "Article already liked"})
+
+@app.route('/dislikeArticle', methods=['GET']) 
+def dislike_article():
+    args = request.args
+    email = args['email']
+    blog_id = args['blog_id']
+    ans = database.remove_likes_from_blog(email,blog_id)
+    # print(ans)
+    if ans:
+        return jsonify({"total_likes": ans[0]["likecount"]})
+    else:
+        return jsonify({"message": "Article already disliked"})
+
+@app.route('/isArticleLiked', methods=['GET'])
+def is_article_liked():
+    args = request.args
+    email = args['email']
+    blog_id = args['blog_id']
+    ans = database.isBlogLiked(email,blog_id)
+    if ans:
+        return jsonify({"message": True})
+    else:
+        return jsonify({"message": False})
+
 @app.route('/addBookmark',methods=['GET'])
 def addBookmark():
     email = request.args.get('email')
@@ -211,16 +224,7 @@ def addBookmark():
         return jsonify({"result":"success"}),200
     except Exception as e:
         return jsonify(error=str(e)), 500
-    
-@app.route('/addBrowsingTime', methods=['POST'])
-def addBrowsingTime():
-    data = request.json
-    user_email = data['user_email']
-    category_name = data['category_name']
-    browsing_time = data['browsing_time']
-    result = database.user_to_category_browsing(user_email, category_name, browsing_time);
-    return jsonify({"result": "success"}), 200
-    
+
 @app.route('/deleteBookmark',methods=['GET'])
 def deleteBookmark():
     email = request.args.get('email')
@@ -230,7 +234,6 @@ def deleteBookmark():
         return jsonify({"result":"success"}),200
     except Exception as e:
         return jsonify(error=str(e)), 500
-    
 
 @app.route('/isArticleBookmarked', methods=['GET'])
 def is_article_bookmarked():
@@ -242,7 +245,6 @@ def is_article_bookmarked():
         return jsonify({"message": True})
     else:
         return jsonify({"message": False})
-    
 
 @app.route('/addLike',methods=['GET'])
 def addLike():
@@ -253,7 +255,7 @@ def addLike():
         return jsonify({"result":"success"}),200
     except Exception as e:
         return jsonify(error=str(e)), 500
-    
+
 @app.route('/deleteLike',methods=['GET'])
 def deleteLike():
     email = request.args.get('email')
@@ -277,26 +279,16 @@ def getBookMarks():
     except Exception as e:
         return jsonify(error=str(e)), 500
 
-@app.route('/getArticle',methods=['GET'])    
-def getArticle():
-    try:
-        print("A")
-        article_id = request.args.get('article_id')
-        print(article_id)
-        print("B")
-        # print(type(article_id))
-        article_id = int(article_id)
-        if article_id is None:
-            return jsonify(error='ID parameter is missing'), 400
-        
-        article_data = database.get_blog_by_id(article_id)
-        category = database.get_category_by_blog(article_id)
-        # print(category)
-        article_data[0]["category"]=category
-        return jsonify(data=article_data), 200
-    except Exception as e:
-        return jsonify(error=str(e)), 500
-    
+@app.route('/updateCategoryScore', methods=['POST'])
+def updateCategoryScore():
+    data = request.json
+    user_email = data['email']
+    category_name = data['category_name']
+    duration = data['duration']
+    database.user_to_category_browsing(user_email, category_name, duration, datetime.now())
+    user_preference.publish_score(user_email)
+    return jsonify({"result": "success"}), 200
+
 @app.route('/history',methods=['GET'])
 def get_history():
     args = request.args
