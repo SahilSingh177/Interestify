@@ -1,9 +1,11 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Flex, Box, Button, Text, Stack, Divider, Image } from '@chakra-ui/react'
 import { AuthContext } from '@/Providers/AuthProvider'
 
 const Banner: React.FC = () => {
+
   const currentUser = useContext(AuthContext);
+  
   return (
     <Flex flexDirection="column" width={`calc(100vw - 12px)`} overflowX="hidden">
       {!currentUser && <Flex flexDirection="row" height="60vh" bg="#ffdf00" marginTop="0" alignItems="center">

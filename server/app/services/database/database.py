@@ -113,6 +113,23 @@ class App:
                 query=query, exception=exception))
             raise
 
+    def search(self, text):
+        with self.driver.session(database="neo4j") as session:
+            # return self._search(session, text)
+            result = session.execute_write(
+                self._search,text)
+            return result
+    @staticmethod
+    def _search(tx, text):
+        query = (
+            'CALL db.index.fulltext.queryNodes("BlogName", $searchTerm) YIELD node, score '
+            'RETURN node.title AS title, ID(node) as id '
+            'LIMIT 10 '
+        )
+        result = tx.run(query, searchTerm=text)
+        formatted_result = [(record["title"], record["id"]) for record in result]
+        return formatted_result
+
     def create_blog(self, blog_title, blog_link, blog_author, download_link, category_name):
         with self.driver.session(database="neo4j") as session:
             if self.check_blog_exists(blog_link):
