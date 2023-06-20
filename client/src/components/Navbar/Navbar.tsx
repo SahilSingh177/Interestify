@@ -43,10 +43,6 @@ const Navbar: React.FC = () => {
       overflowY="hidden"
     >
       <Link href="/">
-        {/* <Text fontWeight="extrabold" fontSize="5xl">
-          Interestify
-        </Text> */}
-        {/* <Icon></Icon> */}
         <Image src="/assets/logo-no-background.svg" height="80px" transform="scale(1.3)"></Image>
 
       </Link>

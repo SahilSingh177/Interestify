@@ -25,6 +25,7 @@ const AllCategories = (props: Props) => {
     const email = currentUser.email;
     console.log(email);
     if (email && clickedCategories.length >= 5 && clickedCategories.length >= 5) {
+      Router.push('http://localhost:3000/welcome/register_mail');
       const payload = {
         email: email,
         updated_preferences: clickedCategories
@@ -36,8 +37,6 @@ const AllCategories = (props: Props) => {
         },
         body: JSON.stringify(payload)
       });
-      console.log("success")
-      Router.push('http://localhost:3000/welcome/register_mail');
     }
   };
 
@@ -51,7 +50,7 @@ const AllCategories = (props: Props) => {
         {categoriesData.map((categoryName, id) => <CategoryCard key={id} categoryName={categoryName}
           onClickHandler={handleCategoryClick}></CategoryCard>)}
       </Flex>
-      <Icon onClick={()=>submitCategories()} cursor="pointer" boxSize="5vw" as={FaArrowCircleRight} position="fixed" bottom="2vw" right="2vw"></Icon>
+      <Icon onClick={() => submitCategories()} cursor="pointer" boxSize="5vw" as={FaArrowCircleRight} position="fixed" bottom="2vw" right="2vw"></Icon>
     </Box>
   )
 }

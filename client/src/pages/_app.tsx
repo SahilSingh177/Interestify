@@ -1,8 +1,6 @@
 import Router, { useRouter } from "next/router";
 import { ChakraProvider } from '@chakra-ui/react'
 import type { AppProps } from 'next/app'
-
-//INTERNAL IMPORTS
 import { theme } from '../chakra/theme'
 import Layout from '../components/Layout/Layout'
 import '../firebase/clientApp'

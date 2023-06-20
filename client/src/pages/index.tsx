@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Stack, Flex, Divider } from '@chakra-ui/react';
 import Banner from '@/components/Navbar/Banner';
-import ArticleCard from '@/components/Blogs/ArticleCard';
-import SideBar from '@/components/Blogs/SideBar';
+import ArticleCard from '@/components/Articles/ArticleCard';
+import SideBar from '@/components/Articles/SideBar';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Spinner } from '@chakra-ui/react'
 
@@ -42,7 +42,7 @@ const Index = () => {
 
   useEffect(() => {
     fetchData();
-  }, []); // Fetch initial data only once when the component mounts
+  }, []); 
 
   return (
     <>
