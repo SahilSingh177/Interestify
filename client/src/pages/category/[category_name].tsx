@@ -66,36 +66,10 @@ const Category = ({ category, initialData }: { category: string } & { initialDat
             <Tab>Hot</Tab>
           </TabList>
         </Tabs>
-        {data.length>0 && <InfiniteScroll
-          dataLength={data.length}
-          next={fetchData}
-          hasMore={hasMoreData}
-          loader={
-            <Flex flexDirection='column' alignItems='center' justifyContent='center' height='30vh' width="full">
-              <Spinner
-                margin='auto'
-                thickness='4px'
-                speed='0.65s'
-                emptyColor='gray.200'
-                color='blue.500'
-                size='xl'
-              /></Flex>
-          }
-        >
-          {data.map((articleInfo, id) => (
-            <ArticleCard
-              articleId={articleInfo.id}
-              Author={articleInfo.author}
-              Category={articleInfo.category}
-              Title={articleInfo.title}
-              Summary={articleInfo.summary}
-              ReadingTime={articleInfo.time}
-              ArticleLink={articleInfo.link}
-              Likes={articleInfo.likes}
-              key={id}
-            ></ArticleCard>
-          ))}
-        </InfiniteScroll>}
+        {data && data.map((articleInfo, id) =>
+          <ArticleCard articleId={articleInfo.id} Author={articleInfo.author} Category={articleInfo.category} Title={articleInfo.title} Summary={articleInfo.summary} ReadingTime={articleInfo.time} ArticleLink={articleInfo.link} Likes={articleInfo.likes}
+            key={id}></ArticleCard>)
+        }
       </Flex>
       <Divider orientation='vertical' borderColor='black' bg="black" size="5px"></Divider>
       <Sidebar></Sidebar>
