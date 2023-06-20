@@ -27,7 +27,6 @@ def read_article(link):
 
     article = pageData
     summary = co.summarize(text=article,length='short') 
-    print(summary)
     read_time = readtime.of_text(article)
     data = [pageData, summary, read_time]
     pdf_file.close()
@@ -35,5 +34,3 @@ def read_article(link):
 
     return data
 
-summary_data = read_article("https://link.springer.com/content/pdf/10.1007/s42757-022-0154-6.pdf?pdf=button")
-print(summary_data[1])  # Printing the summary
