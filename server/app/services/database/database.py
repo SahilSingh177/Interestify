@@ -143,14 +143,14 @@ class App:
     @staticmethod
     def _create_blog(tx, blog_title, blog_link, blog_author, read_time, download_link, summary, text, category_name):
         query = (
-            "CREATE (b:Blog { title: $blog_title, link: $blog_link, author: $blog_author, read_time: $read_time, download_link: $download_link, summary: $summary, text: $text, created_at: timestamp() }) "
+            "CREATE (b:Blog { title: $blog_title, link: $blog_link, author: $blog_author, read_time: $read_time, download_link: $download_link, summary: $summary, text: $text, created_at: $created_at }) "
             "WITH b "
             "MATCH (c:Category) WHERE c.name = $category_name "
             "MERGE (b)-[:BELONGS_TO]->(c) "
             "RETURN b"
 
         )
-        result = tx.run(query, blog_title = blog_title, blog_link = blog_link, blog_author = blog_author,read_time=read_time ,download_link = download_link, summary = summary, text = text, category_name = category_name)
+        result = tx.run(query, blog_title = blog_title, blog_link = blog_link, blog_author = blog_author,read_time=read_time ,download_link = download_link, summary = summary, text = text, category_name = category_name, created_at = datetime.now())
         try:
             return [{"b": record["b"]["title"]}
                     for record in result]
