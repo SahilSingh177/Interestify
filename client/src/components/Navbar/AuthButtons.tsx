@@ -9,7 +9,7 @@ import { AuthContext } from "@/Providers/AuthProvider";
 
 const AuthButtons = () => {
   const currentUser = useContext(AuthContext);
-  const [signOut, loading, error] = useSignOut(auth);
+  const [signOut] = useSignOut(auth);
 
   const handleSignOut = async () => {
     await signOut();

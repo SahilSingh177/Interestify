@@ -1,7 +1,19 @@
 import React, { useState, useContext } from 'react';
 import { useRouter } from 'next/router';
 import { AuthContext } from '@/Providers/AuthProvider';
-import { Card, CardBody, CardFooter, Icon, Tag, VStack, HStack, Spacer, Heading, Text, Link } from '@chakra-ui/react';
+import {
+  Card,
+  CardBody,
+  CardFooter,
+  Icon,
+  Tag,
+  VStack,
+  HStack,
+  Spacer,
+  Heading,
+  Text,
+  Link,
+} from '@chakra-ui/react';
 import { FaBookmark } from 'react-icons/fa';
 import { getRandomColour } from '@/Handlers/getRandomColour';
 import { toggleBookmark } from '@/Handlers/toggleBookmark';
@@ -15,12 +27,11 @@ type Props = {
 
 const BookmarkCard = ({ author, article_id, link, title }: Props) => {
   const currentUser = useContext(AuthContext);
-  const router = useRouter();
   const [isBookMarked, setIsBookMarked] = useState<boolean>(true);
 
   const handleBookmark = async () => {
     if (!currentUser) return;
-    try{
+    try {
       setIsBookMarked(!isBookMarked);
       await toggleBookmark(isBookMarked, article_id, currentUser);
     } catch (error) {

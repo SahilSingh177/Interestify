@@ -1,7 +1,6 @@
 import React from 'react'
 import { Stack, InputGroup, InputLeftElement, Input, Icon, Heading } from '@chakra-ui/react'
 import AllCategories from '@/components/Category/AllCategories'
-
 import { FaSearch } from 'react-icons/fa'
 
 const categories = () => {

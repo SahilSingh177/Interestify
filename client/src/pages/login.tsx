@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flex, Box, Divider, Text, Stack } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import OAuth from '@/components/Auth/OAuth';
 import AuthDivider from '@/components/Auth/AuthDivider';
 import LoginForm from '@/components/Auth/LoginForm';

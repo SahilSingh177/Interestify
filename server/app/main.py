@@ -190,7 +190,7 @@ def get_recent_articles_by_category():
     category = args.get('category')
     page = args.get('page')
     page = int(page)
-    data = database.get_recent_blogs(category)
+    data = database.get_recent_blogs(category,page=page)
     return jsonify(data)
 
 @app.route('/getHotArticlesfor', methods=['GET'])
@@ -199,7 +199,7 @@ def get_hot_articles_by_category():
     category = args.get('category')
     page = args.get('page')
     page = int(page)
-    data = database.get_hot_blogs(category)
+    data = database.get_hot_blogs(category,page=page)
     return jsonify(data)
 
 @app.route('/addBookmark',methods=['GET'])

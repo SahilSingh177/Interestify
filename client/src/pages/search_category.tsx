@@ -2,9 +2,7 @@ import React from 'react'
 import { Flex, Icon, Input, InputGroup, InputLeftElement } from '@chakra-ui/react'
 import { FaSearch } from 'react-icons/fa'
 
-type Props = {}
-
-const search_category = (props: Props) => {
+const search_category = () => {
     return (
         <Flex height={`calc(100vh - 80px)`} width={`calc(100vw - 12px)`}>
             <InputGroup width="60vw" margin="5vh 5vw" maxHeight='-moz-min-content'>
