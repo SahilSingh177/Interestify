@@ -18,6 +18,7 @@ const AuthProvider = ({ children }) => {
       if (user && user.email) {
         localStorage.setItem('email', user.email);
       }
+      
     }
   }, [loading, user]);
 

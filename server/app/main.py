@@ -43,6 +43,15 @@ def register_user():
     # create_user function
     return jsonify({"message": "User registered successfully"})
 
+@app.route('/search', methods=['POST'])
+def search():
+    data = request.json
+    print(data)
+    text = data['text']
+    print(text)
+    results = database.search(text)
+    return jsonify(results)
+
 
 @app.route('/registerUserPreferences', methods=['POST'])
 def register_user_preferences():
@@ -169,10 +178,10 @@ def get_top_articles_per_user():
 @app.route('/getTopArticlesfor', methods=['GET'])
 def get_top_articles_by_category():
     args = request.args
-    print("here")
     category = args.get('category')
-    print(category)
-    data = database.get_blogs_by_likes(category)
+    page = args.get('page')
+    page = int(page)
+    data = database.get_blogs_by_likes(category_name=category,page=page)
     return jsonify(data)
 
 @app.route('/addBookmark',methods=['GET'])

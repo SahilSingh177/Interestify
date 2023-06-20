@@ -104,8 +104,7 @@ const ArticleCard: React.FC<Props> = ({
         console.error(error);
       }
     };
-    fetchHasBookmarked();
-    fetchHasLiked();
+    Promise.all([fetchHasLiked(), fetchHasBookmarked()]);
 // Calculate execution time
     
   }, [articleId]);
