@@ -44,7 +44,7 @@ const Sidebar: React.FC<Props> = () => {
         <Flex flexWrap="wrap" justifyContent="center">
           {categoriesData.slice(0, 10).map((category, id) => {
             return (
-            <Badge onClick={()=>Router.push(`http://localhost:3000/category/${category}`)} key={id} marginLeft={5} marginBottom={5} padding={2} borderRadius={20} fontWeight="light" bg="gray.100" cursor="pointer">{category}</Badge>);
+            <Badge onClick={()=>Router.push(`http://localhost:3000/category/${category}/best`)} key={id} marginLeft={5} marginBottom={5} padding={2} borderRadius={20} fontWeight="light" bg="gray.100" cursor="pointer">{category}</Badge>);
           })}
         </Flex>
         <Center>

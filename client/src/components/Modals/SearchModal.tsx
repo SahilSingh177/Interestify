@@ -49,7 +49,7 @@ const SearchModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void
                     {
                         searchResults.length > 0 &&
                         // <ModalFooter>
-                            <VStack width='full' maxHeight='80vh' overflowY='scroll' paddingBottom='5vh'>
+                            <VStack width='full' maxHeight='70vh' overflowY='scroll' paddingBottom='5vh'>
                                 <Divider></Divider>
                                 {searchResults.map((searchResult, id) => {
                                     
