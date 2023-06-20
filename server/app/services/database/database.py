@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import logging
 import os
 from typing import Optional
@@ -12,9 +13,9 @@ from .read_article import read_article
 # load_dotenv()
 
 
-DATABASE_URL = "neo4j+s://58ad0a3e.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "TrU2Lb35p2JaTVKag7sn-RPD-BQtCCP0eBZMyhwXFY4"
+PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
 print(USER)
 
 class App:
@@ -159,14 +160,14 @@ class App:
     @staticmethod
     def _create_blog(tx, blog_title, blog_link, blog_author, read_time, download_link, summary, text, category_name):
         query = (
-            "CREATE (b:Blog { title: $blog_title, link: $blog_link, author: $blog_author, read_time: $read_time, download_link: $download_link, summary: $summary, text: $text }) "
+            "CREATE (b:Blog { title: $blog_title, link: $blog_link, author: $blog_author, read_time: $read_time, download_link: $download_link, summary: $summary, text: $text, created_at: $created_at }) "
             "WITH b "
             "MATCH (c:Category) WHERE c.name = $category_name "
             "MERGE (b)-[:BELONGS_TO]->(c) "
             "RETURN b"
 
         )
-        result = tx.run(query, blog_title = blog_title, blog_link = blog_link, blog_author = blog_author,read_time=read_time ,download_link = download_link, summary = summary, text = text, category_name = category_name)
+        result = tx.run(query, blog_title = blog_title, blog_link = blog_link, blog_author = blog_author,read_time=read_time ,download_link = download_link, summary = summary, text = text, category_name = category_name, created_at = datetime.now())
         try:
             return [{"b": record["b"]["title"]}
                     for record in result]
@@ -270,6 +271,32 @@ class App:
             logging.error("{query} raised an error: \n {exception}".format(
                 query=query, exception=exception))
             raise
+
+    def find_all_categories_for_user(self, user_email):
+        with self.driver.session(database="neo4j") as session:
+            if not self.check_user_exists(user_email):
+                print("User does not exist")
+                return False
+            result = session.execute_read(
+                self._find_all_categories_for_user, user_email)
+            return result
+        
+    @staticmethod
+    def _find_all_categories_for_user(tx, user_email):
+        query = (
+            "MATCH (u:User {email:$user_email})-[r:BROWSED]->(c:Category) "
+            "RETURN c.name as name"
+        )
+        result = tx.run(query, user_email = user_email)
+        try:
+            return [{"name": record["c"]["name"]}
+                    for record in result]
+        # Capture any errors along with the query and data for traceability
+        except Neo4jError as exception:
+            logging.error("{query} raised an error: \n {exception}".format(
+                query=query, exception=exception))
+            raise
+        
 
     def user_to_category_browsing(self, user_email, category_name, browsing_time):
         with self.driver.session(database="neo4j") as session:
@@ -572,10 +599,204 @@ class App:
             logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
             raise
 
+    def get_recent_blogs(self, category_name: Optional[str] = None, limit: int = 10, page: int = 1, page_limit: int = 5):
+        with self.driver.session(database="neo4j") as session:
+            result = session.execute_read(
+                self._get_recent_blogs,
+                category_name,
+                limit,
+                page,
+                page_limit
+            )
+            print("Success")
+            return result
+
+    @staticmethod
+    def _get_recent_blogs(
+        tx,
+        category_name: Optional[str] = None,
+        limit: int = 10,
+        page: int = 1,
+        page_limit: int = 5
+    ):
+        skip_count = (page - 1) * page_limit
+        # print(skip_count)
+        if category_name:
+            query = (
+                "MATCH (b:Blog)-[:BELONGS_TO]->(c:Category{name:$category_name}) "
+                "RETURN b.title AS title, b.author AS author, b.link AS link, b.download_link AS download_link, b.summary AS summary, b.read_time AS read_time, ID(b) AS id "
+                "ORDER BY b.createdAt DESC "
+                "SKIP $skip_count "
+                "LIMIT $page_limit"
+            )
+            result = tx.run(
+                query,
+                category_name=category_name,
+                skip_count=skip_count,
+                page_limit=page_limit
+            )
+        else:
+            query = (
+                "MATCH (b:Blog) "
+                "RETURN b.title AS title, b.author AS author, b.link AS link, b.download_link AS download_link, b.summary AS summary, b.read_time AS read_time, ID(b) AS id "
+                "ORDER BY b.createdAt DESC "
+                "SKIP $skip_count "
+                "LIMIT $page_limit"
+            )
+            result = tx.run(
+                query,
+                skip_count=skip_count,
+                page_limit=page_limit
+            )
+
+        try:
+            return [
+                {
+                    "author": record["author"],
+                    "title": record["title"],
+                    "link": record["link"],
+                    "pdf_link": record["download_link"],
+                    "summary": record["summary"],
+                    "read_time": record["read_time"],
+                    "id": record["id"]
+                }
+                for record in result
+            ]
+        except Neo4jError as exception:
+            logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
+            raise
+
+    def get_hot_blogs(self, category_name: Optional[str] = None, limit: int = 10, page: int = 1, page_limit: int = 5):
+        #Fetch most liked blogs in last 7 days
+        with self.driver.session(database="neo4j") as session:
+            result = session.execute_read(
+                self._get_hot_blogs,
+                category_name,
+                limit,
+                page,
+                page_limit
+            )
+            print("Success")
+            return result
+        
+    @staticmethod
+    def _get_hot_blogs(
+        tx,
+        category_name: Optional[str] = None,
+        limit: int = 10,
+        page: int = 1,
+        page_limit: int = 5
+    ):
+        skip_count = (page - 1) * page_limit
+        # print(skip_count)
+        if category_name:
+            query = (
+                "MATCH (b:Blog)-[:BELONGS_TO]->(c:Category{name:$category_name}) "
+                "WITH b "
+                "MATCH (:User)-[r:LIKES]->(b) "
+                "WHERE date(b.created_at) > date($time) "
+                "WITH b, COUNT(r) AS likecount "
+                "RETURN b.title as title,b.author as author,b.link as link "
+                "ORDER BY likecount DESC LIMIT $limit"
+            )
+            result = tx.run(
+                query,
+                time = datetime.now()-timedelta(days=7),
+                limit = limit,
+                category_name=category_name,
+                skip_count=skip_count,
+                page_limit=page_limit
+            )
+        else:
+            query = (
+                "MATCH (b:Blog) "
+                "WITH b "
+                "MATCH (:User)-[r:LIKES]->(b) "
+                "WHERE date(b.created_at) > date($time) "
+                "WITH b, COUNT(r) AS likecount "
+                "RETURN b.title as title,b.author as author,b.link as link "
+                "ORDER BY likecount DESC LIMIT $limit"
+            )
+            result = tx.run(
+                query,
+                time = datetime.now()-timedelta(days=7),
+                skip_count=skip_count,
+                page_limit=page_limit,
+                limit = limit
+            )
+
+        try:
+            return [
+                {
+                    "author": record["author"],
+                    "title": record["title"],
+                    "link": record["link"]
+                }
+                for record in result
+            ]
+        except Neo4jError as exception:
+            logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
+            raise
+
+    def get_recent_blogs(self, category_name: Optional[str] = None, limit: int = 10, page: int = 1, page_limit: int = 5):
+        with self.driver.session(database="neo4j") as session:
+            result = session.read_transaction(
+                self._get_recent_blogs,
+                category_name,
+                limit,
+                page,
+                page_limit
+            )
+            print("Success")
+            print(result)
+            return result
+        
+    @staticmethod
+    def _get_recent_blogs(
+        tx,
+        category_name: Optional[str] = None,
+        limit: int = 10,
+        page: int = 1,
+        page_limit: int = 5
+    ):
+        if category_name:
+            query = (
+                "MATCH (b:Blog)-[:BELONGS_TO]->(c:Category{name:$category_name}) "
+                "RETURN b.title as title,b.author as author,b.link as link "
+                "ORDER BY b.created_at DESC LIMIT $limit"
+            )
+            result = tx.run(
+                query,
+                category_name=category_name,
+                limit=limit
+            )
+        else:
+            query = (
+                "MATCH (b:Blog) "
+                "RETURN b.title as title,b.author as author,b.link as link "
+                "ORDER BY b.created_at DESC LIMIT $limit"
+            )
+            result = tx.run(
+                query,
+                limit=limit
+            )
+        
+        try:
+            return [
+                {
+                    "author": record["author"],
+                    "title": record["title"],
+                    "link": record["link"]
+                }
+                for record in result
+            ]
+        except Neo4jError as exception:
+            logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
+            raise
 
     def get_blogs_by_category_and_limit(self, category_name, limit):
         with self.driver.session(database="neo4j") as session:
-            result = session.read_transaction(self._get_blogs_by_category_and_limit, category_name, limit)
+            result = session.execute_read(self._get_blogs_by_category_and_limit, category_name, limit)
             if result:
                 print("Success")
                 return result
@@ -586,9 +807,12 @@ class App:
     @staticmethod
     def _get_blogs_by_category_and_limit(tx, category_name, limit):
         query = (
-        "MATCH (b:Blog)-[:IN_CATEGORY]->(:Category {name:$category_name}) "
-        "RETURN b.author AS author, b.title AS title, b.link AS link "
-        "ORDER BY b.likes DESC LIMIT $limit"
+            "MATCH (b:Blog)-[:BELONGS_TO]->(:Category {name:$category_name})  "
+            "WITH b "
+            "MATCH (:User)-[r:LIKES]->(b) "
+            "WITH b, COUNT(r) AS likecount "
+            "RETURN b.title as title,b.author as author,b.link as link "
+            "ORDER BY likecount DESC LIMIT $limit"
         )
         result = tx.run(query, category_name=category_name, limit=limit)
         try:
@@ -711,10 +935,10 @@ class App:
             "MATCH (u:User {email: $user_email}),(b:Blog) "
             "WHERE ID(b) = $blog_id "
             "CREATE (u)-[r:READS]->(b) "
-            "SET r.time = datetime() "
+            "SET r.time = $time "
             "RETURN b.title AS title, b.link AS link, r.time AS time, b.author AS author"
         )
-        result = tx.run(query, user_email=user_email, blog_id=blog_id)
+        result = tx.run(query, user_email=user_email, blog_id=blog_id, time = datetime.now())
         try:
             return result
         except Neo4jError as exception:
@@ -832,4 +1056,8 @@ if __name__ == "__main__":
     # app.add_likes_to_blog("sahilsingh1221177@gmail.com",30)
     # app.remove_likes_from_blog("sahilsingh1221177@gmail.com",30)
     # app.get_blogs_by_likes("Physics")
+    # app.get_blogs_by_category_and_limit("Engineering",2)
+    # app.find_all_categories_for_user("sahilsinghh1221177@gmail.com")
+    app.get_hot_blogs("Environment")
+    # print(datetime.now()-timedelta(days=7))
     app.close()

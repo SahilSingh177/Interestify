@@ -11,9 +11,9 @@ CORS(app, origins=['http://localhost:3000'])
 sg = None
 initialized = False
 
-DATABASE_URL = "neo4j+s://58ad0a3e.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "TrU2Lb35p2JaTVKag7sn-RPD-BQtCCP0eBZMyhwXFY4"
+PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
 SENDGRID_API_KEY = "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"
 
 uri = DATABASE_URL
@@ -182,6 +182,20 @@ def get_top_articles_by_category():
     page = args.get('page')
     page = int(page)
     data = database.get_blogs_by_likes(category_name=category,page=page)
+    return jsonify(data)
+
+@app.route('/getRecentArticlesfor', methods=['GET'])
+def get_recent_articles_by_category():
+    args = request.args
+    category = args.get('category')
+    data = database.get_recent_blogs(category)
+    return jsonify(data)
+
+@app.route('/getHotArticlesfor', methods=['GET'])
+def get_hot_articles_by_category():
+    args = request.args
+    category = args.get('category')
+    data = database.get_hot_blogs(category)
     return jsonify(data)
 
 @app.route('/addBookmark',methods=['GET'])
