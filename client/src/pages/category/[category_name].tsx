@@ -33,7 +33,7 @@ const Category = ({ category, data }: Props & { data: Article[] }) => {
           </TabList>
         </Tabs>
         {data && data.map((articleInfo, id) =>
-          <ArticleCard articleId={articleInfo.id} Author={articleInfo.author} Category={articleInfo.category} Title={articleInfo.title} Summary={articleInfo.summary} ReadingTime={articleInfo.time} ArticleLink={articleInfo.link} Likes={articleInfo.likes}
+          <ArticleCard articleId={articleInfo.id} Author={articleInfo.author} Category={category} Title={articleInfo.title} Summary={articleInfo.summary} ReadingTime={articleInfo.time} ArticleLink={articleInfo.link} Likes={articleInfo.likes}
             key={id}></ArticleCard>)
         }
       </Flex>
