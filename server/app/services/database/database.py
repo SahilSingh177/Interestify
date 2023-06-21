@@ -431,6 +431,68 @@ class App:
             logging.error("{query} raised an error: \n {exception}".format(
                 query=query, exception=exception))
             raise  
+
+    def get_category_score(self, user_email):
+        with self.driver.session(database="neo4j") as session:
+            query = (
+                "MATCH (u:User{email:$email})-[r:BROWSES]->(c:Category) "
+                "RETURN r.score as score, c.name as category_name, u.email as user_email "
+            )
+            result = session.run(query, email=user_email)
+            return [
+                {"score": record["score"], "category_name": record["category_name"], "user_email": record["user_email"]}
+                for record in result
+            ]
+        
+    def get_most_liked_not_read_blogs_by_category_score_limit(self, user_email, category_name, skip, limit):
+        with self.driver.session(database="neo4j") as session:
+            query = (
+                "MATCH (u:User{email:$email})-[r:BROWSES]->(c:Category{name:$category_name}) "
+                "MATCH (b:Blog)-[r2:BELONGS_TO]->(c:Category) "
+                "WHERE NOT (u)-[:READS]->(b) "
+                "WITH b, r2, r.score as score, c.name as category_name "
+                "MATCH (u2:User)-[r3:LIKES]->(b) "
+                "WITH b, score, category_name,COUNT(r3) as likes "
+                "RETURN b.author AS author, b.title AS title, b.link AS link, b.summary AS summary, b.read_time as read_time, ID(b) AS id, score, category_name,likes "
+                "ORDER BY likes DESC "
+                "SKIP $skip "
+                "LIMIT $limit "
+                "UNION "
+                "MATCH (u:User{email:$email})-[r:BROWSES]->(c:Category{name:$category_name}) "
+                "MATCH (b:Blog)-[r2:BELONGS_TO]->(c:Category) "
+                "WHERE NOT (u)-[:READS]->(b) "
+                "WITH b, r2, r.score as score, c.name as category_name "
+                "WHERE NOT (u:User)-[r:LIKES]->(b) "
+                "RETURN b.author AS author, b.title AS title, b.link AS link, b.summary AS summary, b.read_time as read_time, ID(b) AS id, score, category_name,0 as likes "
+                "ORDER BY id DESC "
+                "SKIP $skip "
+                "LIMIT $limit"
+            )
+            result = session.run(query, email=user_email, category_name=category_name,skip = skip, limit=limit)
+            return [
+                {"author": record["author"], "title": record["title"], "link": record["link"], "category_name":record["category_name"], "summary": record["summary"], "time":record["read_time"], "id":record["id"], "likes":record["likes"]}
+                for record in result
+            ]
+
+    def top_blogs_by_email(self, user_email,page:int=1,limit:int=10):
+        skip = (page-1)*limit
+        res= []
+        ans = self.get_category_score(user_email)
+        for i in ans:
+            val = self.get_most_liked_not_read_blogs_by_category_score_limit(user_email,i["category_name"],skip,int(i["score"]*limit))
+            for j in val:
+                temp = {
+                    "category":j["category_name"],
+                    "title":j["title"],
+                    "link":j["link"],
+                    "summary":j["summary"],
+                    "time":j["time"],
+                    "id":j["id"],
+                    "likes":j["likes"],
+                    "author":j["author"]
+                }
+                res.append(temp)
+        return res
     
     def get_blog_by_id(self, article_id):
         with self.driver.session(database="neo4j") as session:
@@ -637,7 +699,6 @@ class App:
     def _get_blogs_by_likes(
         tx,
         category_name: Optional[str] = None,
-        limit: int = 10,
         page: int = 1,
         page_limit: int = 5
     ):
@@ -1069,6 +1130,7 @@ class App:
             logging.error("{query} raised an error: \n {exception}".format(
                 query=query, exception=exception))
             raise
+
 if __name__ == "__main__":
     # Aura queries use an encrypted connection using the "neo4j+s" URI scheme
     uri = DATABASE_URL

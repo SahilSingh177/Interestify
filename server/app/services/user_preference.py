@@ -7,21 +7,23 @@
 # PASSWORD = "TrU2Lb35p2JaTVKag7sn-RPD-BQtCCP0eBZMyhwXFY4"
 # database = App(DATABASE_URL, USER, PASSWORD)
 
-# def find_score(user_data,email):
-#     session_data = []
-#     for data in user_data:
-#         # for each session_time and session_date, create a session_entry
-#         for i in range(len(data['session_time'])):
-#             original = str(data['session_date'][i])
-#             fixed_datetime = original[:-3]  # Remove the last three digits
-#             parsed_datetime = datetime.fromisoformat(fixed_datetime)
-#             formatted_datetime = parsed_datetime.strftime('%Y-%m-%d %H:%M:%S')
-#             session_entry = {
-#                 'category': data['category_name'],
-#                 'duration': data['session_time'][i],
-#                 'timestamp': formatted_datetime,
-#             }
-#             session_data.append(session_entry)
+def find_score(user_data,email):
+    session_data = []
+    for data in user_data:
+        # for each session_time and session_date, create a session_entry
+        if data['session_time'] == None:
+            continue
+        for i in range(len(data['session_time'])):
+            original = str(data['session_date'][i])
+            fixed_datetime = original[:-3]  # Remove the last three digits
+            parsed_datetime = datetime.fromisoformat(fixed_datetime)
+            formatted_datetime = parsed_datetime.strftime('%Y-%m-%d %H:%M:%S')
+            session_entry = {
+                'category': data['category_name'],
+                'duration': data['session_time'][i],
+                'timestamp': formatted_datetime,
+            }
+            session_data.append(session_entry)
 
 #     if len(session_data) > 0:
 #         df = pd.DataFrame(session_data)

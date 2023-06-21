@@ -106,8 +106,10 @@ def update_preferences():
     email = data['email']
     category_preferences = data['updated_preferences']
     database.delete_user_to_category(email)
+    total_categories = len(category_preferences)
     for update_preference in category_preferences:
         database.user_to_category(email,update_preference)
+        database.set_category_score(email,update_preference,1/total_categories)
     # user_to_category update
     return jsonify({"message": "User preferences updated successfully"})
 
@@ -122,30 +124,37 @@ def update_preferences():
 
 @app.route('/getTopArticles', methods=['GET'])
 def get_top_articles():
-    page = request.args.get('page', default=1, type=int)
-    data = database.get_blogs_by_likes(page=page)
-    resp = []
-    for article_data in data:
-        link = article_data['link']
-        title = article_data['title']
-        category = database.get_category_by_blog(article_data['id'])
-        likes = article_data['likes']
-        author = article_data['author']
-        summary = article_data['summary']
-        time = article_data['read_time']
-        id = article_data['id']
-        resp.append({
-            "link": link,
-            "title": title,
-            "category": category,
-            "author": author,
-            "summary": summary,
-            "time": time,
-            "id": id,
-            "likes": likes,
-        })
-    print(resp)
-    return jsonify(resp)
+    args = request.args
+    email = args.get('email')
+    page = args.get('page', default=1, type=int)
+    if email:
+        resp = database.top_blogs_by_email(email,page=page)
+        print(resp)
+        return jsonify(resp)
+    else:    
+        data = database.get_blogs_by_likes(page=page)
+        resp = []
+        for article_data in data:
+            link = article_data['link']
+            title = article_data['title']
+            category = database.get_category_by_blog(article_data['id'])
+            likes = article_data['likes']
+            author = article_data['author']
+            summary = article_data['summary']
+            time = article_data['read_time']
+            id = article_data['id']
+            resp.append({
+                "link": link,
+                "title": title,
+                "category": category,
+                "author": author,
+                "summary": summary,
+                "time": time,
+                "id": id,
+                "likes": likes,
+            })
+        print(resp)
+        return jsonify(resp)
 
 @app.route('/getTopArticlesPerUser', methods=['GET'])
 def get_top_articles_per_user():

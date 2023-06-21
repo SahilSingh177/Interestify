@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Stack, Flex, Divider, Skeleton } from '@chakra-ui/react';
-import Banner from '@/components/Navbar/Banner';
-import ArticleCard from '@/components/Articles/ArticleCard';
-import SideBar from '@/components/Articles/SideBar';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { Spinner } from '@chakra-ui/react'
-import { useRouter } from 'next/router';
+import React, { useEffect, useState } from "react";
+import { Stack, Flex, Divider, Skeleton } from "@chakra-ui/react";
+import Banner from "@/components/Navbar/Banner";
+import ArticleCard from "@/components/Articles/ArticleCard";
+import SideBar from "@/components/Articles/SideBar";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { Spinner } from "@chakra-ui/react";
+import { auth } from "@/firebase/clientApp";
 
 interface Article {
   id: string;
@@ -20,7 +20,6 @@ interface Article {
 }
 
 const Index = () => {
-  const Router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [data, setData] = useState<Article[]>([]);
   const [hasMoreData, setHasMoreData] = useState<boolean>(true);
@@ -28,8 +27,17 @@ const Index = () => {
 
   const fetchData = async () => {
     try {
-      // const jsonData = useSWR(`http://127.0.0.1:5000/getTopArticles?page=${page}`,fetcher);
-      const response = await fetch(`http://127.0.0.1:5000/getTopArticles?page=${page}`);
+      const email = auth.currentUser?.email;
+      let response;
+      if (!email) {
+        response = await fetch(
+          `http://127.0.0.1:5000/getTopArticles?page=${page}`
+        );
+      } else {
+        response = await fetch(
+          `http://127.0.0.1:5000/getTopArticles?email=${email}&page=${page}`
+        );
+      }
       const jsonData = await response.json();
       if (jsonData.length === 0) {
         setHasMoreData(false);
@@ -39,7 +47,7 @@ const Index = () => {
       setPage((prevPage) => prevPage + 1);
       setIsLoading(false);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -52,21 +60,21 @@ const Index = () => {
       <Stack>
         <Banner></Banner>
         <Flex
-          flexDirection={{ lg: 'row', base: 'column' }}
-          marginTop='10vh'
+          flexDirection={{ lg: "row", base: "column" }}
+          marginTop="10vh"
           width={`calc(100vw - 12px)`}
-          justifyContent={{ lg: 'space-evenly', base: 'column' }}
-          alignItems={{ lg: 'flex-start', base: 'center' }}
+          justifyContent={{ lg: "space-evenly", base: "column" }}
+          alignItems={{ lg: "flex-start", base: "center" }}
           minHeight={`calc(100vh-80px)`}
         >
           <Flex
-            minHeight='full'
-            flexDirection='column'
-            width={{ lg: '55vw', base: `calc(90vw - 12px)` }}
-            overflowX='hidden'
+            minHeight="full"
+            flexDirection="column"
+            width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
+            overflowX="hidden"
           >
-            {
-              isLoading && <Stack height="full">
+            {isLoading && (
+              <Stack height="full">
                 {[...Array(3)].map((_, index) => (
                   <Skeleton
                     key={index}
@@ -74,27 +82,34 @@ const Index = () => {
                     marginBottom={5}
                     endColor="gray.200"
                     startColor="gray.100"
-                    width={{ lg: '55vw', base: `calc(90vw - 12px)` }}
+                    width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
                     height="30vh"
                   />
                 ))}
               </Stack>
-            }
+            )}
             {data.length > 0 && (
               <InfiniteScroll
                 dataLength={data.length}
                 next={fetchData}
                 hasMore={hasMoreData}
                 loader={
-                  <Flex flexDirection='column' alignItems='center' justifyContent='center' height='30vh' width="full">
+                  <Flex
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    height="30vh"
+                    width="full"
+                  >
                     <Spinner
-                      margin='auto'
-                      thickness='4px'
-                      speed='0.65s'
-                      emptyColor='gray.200'
-                      color='blue.500'
-                      size='xl'
-                    /></Flex>
+                      margin="auto"
+                      thickness="4px"
+                      speed="0.65s"
+                      emptyColor="gray.200"
+                      color="blue.500"
+                      size="xl"
+                    />
+                  </Flex>
                 }
               >
                 {data.map((articleInfo, id) => (
@@ -113,7 +128,12 @@ const Index = () => {
               </InfiniteScroll>
             )}
           </Flex>
-          <Divider orientation='vertical' borderColor='black' bg='black' size='5px'></Divider>
+          <Divider
+            orientation="vertical"
+            borderColor="black"
+            bg="black"
+            size="5px"
+          ></Divider>
           <SideBar></SideBar>
         </Flex>
       </Stack>
