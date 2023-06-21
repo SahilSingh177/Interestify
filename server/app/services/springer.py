@@ -6,9 +6,9 @@ import threading
 import atexit
 from .database.database import App
 
-DATABASE_URL = "neo4j+s://58ad0a3e.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "TrU2Lb35p2JaTVKag7sn-RPD-BQtCCP0eBZMyhwXFY4"
+PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
 
 uri = DATABASE_URL
 user = USER
@@ -127,9 +127,10 @@ def fetch_articles(page, current_category):
         if article.find("span", class_="authors") :
             article_authors = article.find("span", class_="authors").find_all("a")
             authors = [author.get_text() for author in article_authors]
-        article_title = article.find("a", class_="title").get_text()
-
-        article_link = article.find("h2").find("a")
+        if article.find("a", class_="title") :
+            article_title = article.find("a", class_="title").get_text()
+        if article.find("h2") :
+            article_link = article.find("h2").find("a")
         article_url = root_url + article_link.get("href") if article_link else None
         index = category.index(current_category)
         back_category = backend_category[index]
