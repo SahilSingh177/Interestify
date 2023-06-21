@@ -1,5 +1,6 @@
-import React from 'react';
-import { Flex, VStack, HStack, useMediaQuery, Stack, Box } from '@chakra-ui/react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
+import { AuthContext } from '@/Providers/AuthProvider';
+import { Box, Flex, Heading } from '@chakra-ui/react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -22,6 +23,13 @@ export const options = {
   responsive: true,
   plugins: {
     title: {
+      display: true,
+      text: 'Activity', 
+    },
+    tooltip: {
+      enabled: false
+    },
+    legend: {
       display: false
     },
   },
@@ -30,48 +38,71 @@ export const options = {
       grid: {
         display: false
       },
+      title: {
+        display: true,
+        text: 'Categories',
+      },
     },
     y: {
       grid: {
         display: false
       },
+      title: {
+        display: true,
+        text: 'Time', 
+      },
     },
   },
 };
 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-
-export const data = {
-  labels,
-  datasets: [
-    {
-      data: [50, 60, 30, 2, 56, 69, 12],
-      backgroundColor: "RGBA(0, 0, 0, 0.80)",
-    }
-  ],
-};
-
-import OptionsMenu from '@/components/User/OptionsMenu';
-import EditCategories from '@/components/User/EditCategories';
-import UserCard from '@/components/User/UserCard';
-
 const Profile = () => {
-  const [isLargerThanMd] = useMediaQuery("(min-width: 48em)");
+  const colours = ["#faf0e6", "#e6f0fa", "#c7ded9", "#a4c7bf", "	#46637b"];
+  const getRandomColour = () => {
+    const randomIndex = Math.floor(Math.random() * colours.length);
+    return colours[randomIndex];
+  };
+  const [labels, setLabels] = useState<string[]>([]);
+  const [labelData, setLabelData] = useState<number[]>([]);
+  const [barColors, setBarColors] = useState<string[]>([]);
+
+  const data = {
+    labels,
+    datasets: [
+      {
+        data: labelData,
+        backgroundColor: barColors,
+      }
+    ],
+  };
+
+  const currentUser = useContext(AuthContext);
+  let stringArray: string[] = [];
+  let dataArray: number[] = [];
+
+  const fetchData = async () => {
+    const resp = await fetch(`http://127.0.0.1:5000/getCategoryData?email=${currentUser?.email}`);
+    const data = await resp.json();
+    for (const categoryData of data) {
+      stringArray.push(categoryData['category_name']);
+      dataArray.push(categoryData['duration']);
+    }
+    setLabels(stringArray);
+    setLabelData(dataArray);
+    setBarColors(Array.from({ length: dataArray.length }, () => getRandomColour()));
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [currentUser?.email]);
+
   return (
-    <Flex>
-      {isLargerThanMd && <OptionsMenu></OptionsMenu>}
-      <Stack direction={['column', 'column', 'column', 'row']} minHeight='90vh' overflow="hidden" justifyContent='space-around' alignItems='center'>
-        <VStack width={["100vw", "100vw", "75vw", "35vw"]} height='full' paddingTop='5vh' justifyContent={['space-around']}>
-          <UserCard />
-          <Flex flexGrow={1} padding={['10%','10%','0','0']} alignItems='center' justifyContent='center' height='-moz-max-content' width='100%'>
-          <Bar width="full" options={options} data={data} />
-          </Flex>
-        </VStack>
-        <EditCategories />
-      </Stack>
+    <Flex bg='gray.50' height='100vh' flexDirection='column' width={`(100vw - 12px)`} alignItems='center' justifyContent='space-around' padding='5vh 5vw' maxHeight='90vh'>
+      <Heading>YOUR ACTIVITY</Heading>
+      <Bar  options={options} data={data}  style={{
+      maxHeight: '80vh' 
+    }} />
     </Flex>
   );
 };
-
 
 export default Profile;

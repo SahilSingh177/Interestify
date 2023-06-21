@@ -48,8 +48,7 @@ const SignupForm = () => {
       body: JSON.stringify({ email: signupForm.email, username: signupForm.username }),
     });
     setSignupForm({ username: "", email: "", password: "", confirmPassword: "" });
-    Router.push("/select-preferences");
-
+    Router.push("http://localhost:3000/welcome/categories");
   };
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
