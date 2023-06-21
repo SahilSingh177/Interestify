@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flex, VStack, HStack } from '@chakra-ui/react';
+import { Flex, VStack, HStack, useMediaQuery, Stack, Box } from '@chakra-ui/react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -56,18 +56,22 @@ import EditCategories from '@/components/User/EditCategories';
 import UserCard from '@/components/User/UserCard';
 
 const Profile = () => {
+  const [isLargerThanMd] = useMediaQuery("(min-width: 48em)");
   return (
     <Flex>
-      <OptionsMenu></OptionsMenu>
-      <HStack height={'calc(90vh - 80px'} overflow="hidden" justifyContent='space-between' alignItems='center'>
-        <VStack width="35vw" height={`calc(90vh - 12px)`} paddingBottom={0}>
+      {isLargerThanMd && <OptionsMenu></OptionsMenu>}
+      <Stack direction={['column', 'column', 'column', 'row']} minHeight='90vh' overflow="hidden" justifyContent='space-around' alignItems='center'>
+        <VStack width={["100vw", "100vw", "75vw", "35vw"]} height='full' paddingTop='5vh' justifyContent={['space-around']}>
           <UserCard />
+          <Flex flexGrow={1} padding={['10%','10%','0','0']} alignItems='center' justifyContent='center' height='-moz-max-content' width='100%'>
           <Bar width="full" options={options} data={data} />
+          </Flex>
         </VStack>
         <EditCategories />
-      </HStack>
+      </Stack>
     </Flex>
   );
 };
+
 
 export default Profile;

@@ -5,6 +5,7 @@ import ArticleCard from '@/components/Articles/ArticleCard';
 import SideBar from '@/components/Articles/SideBar';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Spinner } from '@chakra-ui/react'
+import SignOutModal from '@/components/Modals/SignOutModal';
 
 interface Article {
   id: string;
@@ -26,6 +27,7 @@ const Index = () => {
 
   const fetchData = async () => {
     try {
+      // const jsonData = useSWR(`http://127.0.0.1:5000/getTopArticles?page=${page}`,fetcher);
       const response = await fetch(`http://127.0.0.1:5000/getTopArticles?page=${page}`);
       const jsonData = await response.json();
       if (jsonData.length === 0) {
@@ -49,17 +51,17 @@ const Index = () => {
       <Stack>
         <Banner></Banner>
         <Flex
-          flexDirection={{ lg: 'row', base:'column' }}
+          flexDirection={{ lg: 'row', base: 'column' }}
           marginTop='10vh'
           width={`calc(100vw - 12px)`}
-          justifyContent={{ lg : 'space-evenly', base:'column'}}
-          alignItems={{ lg : 'flex-start', base:'center'}}
+          justifyContent={{ lg: 'space-evenly', base: 'column' }}
+          alignItems={{ lg: 'flex-start', base: 'center' }}
           minHeight={`calc(100vh-80px)`}
         >
           <Flex
             minHeight='full'
             flexDirection='column'
-            width={{ lg: '55vw', base: `calc(90vw - 12px)`}}
+            width={{ lg: '55vw', base: `calc(90vw - 12px)` }}
             overflowX='hidden'
           >
             {
@@ -71,7 +73,7 @@ const Index = () => {
                     marginBottom={5}
                     endColor="gray.200"
                     startColor="gray.100"
-                    width={{ lg: '55vw', base: `calc(90vw - 12px)`}}
+                    width={{ lg: '55vw', base: `calc(90vw - 12px)` }}
                     height="30vh"
                   />
                 ))}

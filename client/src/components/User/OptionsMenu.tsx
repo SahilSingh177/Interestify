@@ -7,9 +7,9 @@ import 'chart.js/auto';
 
 const OptionsMenu: React.FC = () => {
     const currentUser = useContext(AuthContext);
-    let imageURL = currentUser.photoURL || undefined;
+    let imageURL = currentUser?.photoURL || undefined;
     if (!imageURL) imageURL = '/assets/default_profile_photo.png'
-    let displayName = currentUser.displayName;
+    let displayName = currentUser?.displayName;
     return (
         <VStack minWidth="25vw" marginTop="10vh" paddingLeft="5vw" alignItems="flex-start" justifyContent="flex-start" spacing={10}>
             <HStack alignItems="center" justifyContent="center" spacing={4}>
