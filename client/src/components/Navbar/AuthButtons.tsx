@@ -9,12 +9,7 @@ import { AuthContext } from "@/Providers/AuthProvider";
 
 const AuthButtons = () => {
   const currentUser = useContext(AuthContext);
-  const [signOut] = useSignOut(auth);
 
-  const handleSignOut = async () => {
-    await signOut();
-    console.log("SIGNED OUT");
-  };
 
   return (
     <>
@@ -47,7 +42,7 @@ const AuthButtons = () => {
       </Button>}
 
       {currentUser &&
-        <MenuDropDown handleSignOut={handleSignOut} />
+        <MenuDropDown/>
       }
     </>
   );

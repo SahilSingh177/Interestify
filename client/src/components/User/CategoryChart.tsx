@@ -15,7 +15,7 @@ const CategoryChart:React.FC = () => {
         ],
     };
 
-    return <Flex bg="white" maxHeight="80vh" height="80vh" width="55vw" paddingTop="5vh" paddingBottom="5vh" borderRadius={10} justifyContent="center"> <Pie data={data} redraw/></Flex>;
+    return <Flex bg="white" maxHeight="80vh" height="50%" width="55vw" paddingTop="5vh" paddingBottom="5vh" borderRadius={10} justifyContent="center"> <Pie data={data} redraw/></Flex>;
 }
 
 export default CategoryChart

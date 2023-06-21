@@ -14,7 +14,6 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/react";
 import { FaTrash } from "react-icons/fa";
-import Skeleton from 'react-loading-skeleton'
 
 type Props = {
   articleId: string;
@@ -43,6 +42,7 @@ const HistoryCard = ({
   const [isDeleted, setIsDeleted] = useState<boolean>(false)
   const email = currentUser?.email;
   const deleteHistory = async () => {
+    setIsDeleted(true);
     try {
       let response = await fetch(
         `http://127.0.0.1:5000/deletehistory?email=${email}&rid=${rid}`,
@@ -51,7 +51,6 @@ const HistoryCard = ({
       const bodyData = await response.json();
       const filteredData = bodyData.data;
       console.log(filteredData);
-      setIsDeleted(true);
     } catch (error) {
       console.error(error);
     }

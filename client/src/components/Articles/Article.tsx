@@ -12,24 +12,22 @@ import {
   Spacer,
   CircularProgress,
   CircularProgressLabel,
+  Icon,
 } from "@chakra-ui/react";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faComment as regularComment,
-  faBookmark as regularBookmark,
-  faThumbsUp as regularThumbsup,
-} from "@fortawesome/free-regular-svg-icons";
-
-import {
-  faBookmark as solidBookMark,
-  faThumbsUp as solidThumbsUp,
-} from "@fortawesome/free-solid-svg-icons";
+  FaRegComment as regularComment,
+  FaRegBookmark as regularBookmark,
+  FaRegThumbsUp as regularThumbsup,
+  FaBookmark as solidBookMark,
+  FaThumbsUp as solidThumbsUp,
+} from "react-icons/fa";
 
 import AuthorCard from "../Author/AuthorCard";
-import { toggleBookmark } from "@/Handlers/toggleBookmark";
 import { AuthContext } from "@/Providers/AuthProvider";
+import { toggleBookmark } from "@/Handlers/toggleBookmark";
 import { toggleLike } from "@/Handlers/toggleLike";
+
 
 type Props = {
   ArticleId: string;
@@ -51,6 +49,7 @@ const Article: React.FC<Props> = ({
   ReadingTime,
   ArticleId,
 }: Props) => {
+
   const currentUser = useContext(AuthContext);
   const [articleProgress, setArticleProgress] = useState<number>(0);
 
@@ -65,7 +64,7 @@ const Article: React.FC<Props> = ({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            "user_email": currentUser.email,
+            "user_email": currentUser?.email,
             "category_name": Category,
             "browsing_time": timeSpent
           }),
@@ -125,6 +124,7 @@ const Article: React.FC<Props> = ({
       }
     };
     const fetchHasBookmarked = async () => {
+      if(!currentUser) return;
       try {
         const response = await fetch(
           `http://127.0.0.1:5000/isArticleBookmarked?email=${currentUser.email}&blog_id=${ArticleId}`
@@ -176,10 +176,10 @@ const Article: React.FC<Props> = ({
       alignItems="flex-start"
       width="55vw"
       maxWidth="100vw"
-      minHeight={`calc(100vh - 80px)`}
+      minHeight='90vh'
       marginLeft="5vw"
       marginRight="5vw"
-      marginTop={`calc(80px + 5vh)`}
+      marginTop='15vh'
       bg="whiteAlpha.500"
       overflowX="hidden"
     >
@@ -209,16 +209,16 @@ const Article: React.FC<Props> = ({
       <Divider bg="gray.400" borderColor="gray.600" />
 
       <HStack spacing={5} paddingLeft={5} paddingRight={5} width="100%">
-        <FontAwesomeIcon
-          icon={hasLiked ? solidThumbsUp : regularThumbsup}
+        <Icon
+          as={hasLiked ? solidThumbsUp : regularThumbsup}
           size="lg"
           cursor="pointer"
           onClick={handleLike}
         />
-        <FontAwesomeIcon icon={regularComment} size="lg" cursor="pointer" />
+        <Icon as={regularComment} size="lg" cursor="pointer" />
         <Spacer />
-        <FontAwesomeIcon
-          icon={isBookMarked ? solidBookMark : regularBookmark}
+        <Icon
+          as={isBookMarked ? solidBookMark : regularBookmark}
           onClick={handleBookmark}
           size="lg"
           cursor="pointer"
@@ -286,16 +286,16 @@ const Article: React.FC<Props> = ({
 
       <Divider bg="gray.400" borderColor="gray.600" />
       <HStack spacing={5} paddingLeft={5} paddingRight={5} width="100%">
-        <FontAwesomeIcon
-          icon={hasLiked ? solidThumbsUp : regularThumbsup}
+        <Icon
+          as={hasLiked ? solidThumbsUp : regularThumbsup}
           size="lg"
           cursor="pointer"
           onClick={handleLike}
         />
-        <FontAwesomeIcon icon={regularComment} size="lg" cursor="pointer" />
+        <Icon as={regularComment} size="lg" cursor="pointer" />
         <Spacer />
-        <FontAwesomeIcon
-          icon={isBookMarked ? solidBookMark : regularBookmark}
+        <Icon
+          as={isBookMarked ? solidBookMark : regularBookmark}
           onClick={handleBookmark}
           size="lg"
           cursor="pointer"

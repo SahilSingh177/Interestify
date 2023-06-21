@@ -4,6 +4,7 @@ import Article from '@/components/Articles/Article';
 import ArticleRecommendations from '@/components/Articles/ArticleRecommendations';
 import { ParsedUrlQuery } from 'querystring';
 import { GetServerSidePropsContext } from 'next';
+import Router from 'next/router';
 
 interface ArticleData {
   Text: string;
@@ -63,6 +64,7 @@ const ArticlePage = ({ articleData }: { articleData: ArticleData }) => {
 
 export async function getServerSideProps({ params }: GetServerSidePropsContext<Params>) {
   try {
+    
     const articleId = params?.article_id;
     const response = await fetch(`http://127.0.0.1:5000/getArticle?article_id=${articleId}`);
     const data = await response.json();

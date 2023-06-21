@@ -18,15 +18,15 @@ const Layout = ({ children }: React.PropsWithChildren<Props>) => {
 
   return (
     <>
-      {!shouldHideNavbar && <Navbar />}
-      {!shouldHideNavbar && <Flex height="10vh"></Flex>}
-      {!shouldHideNavbar && <Divider
+        <Navbar />
+        <Flex height="10vh"></Flex>
+        <Divider
         orientation="horizontal"
         bg="black"
         borderColor="black"
         position="fixed"
         zIndex="1"
-      />}
+      />
       {children}
     </>
   )
