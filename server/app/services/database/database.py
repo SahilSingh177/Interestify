@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 import logging
+import math
 import os
+import random
 from typing import Optional
 
 from neo4j import GraphDatabase
@@ -13,9 +15,9 @@ from .read_article import read_article
 # load_dotenv()
 
 
-DATABASE_URL = "neo4j+s://58ad0a3e.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "TrU2Lb35p2JaTVKag7sn-RPD-BQtCCP0eBZMyhwXFY4"
+PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
 print(USER)
 
 class App:
@@ -474,24 +476,31 @@ class App:
                 for record in result
             ]
 
-    def top_blogs_by_email(self, user_email,page:int=1,limit:int=10):
-        skip = (page-1)*limit
-        res= []
+    def top_blogs_by_email(self, user_email, page: int = 1, limit: int = 10):
+        skip = (page - 1) * limit
+        res = []
         ans = self.get_category_score(user_email)
+        added_ids = set()  # Set to store unique IDs
+
         for i in ans:
-            val = self.get_most_liked_not_read_blogs_by_category_score_limit(user_email,i["category_name"],skip,int(i["score"]*limit))
+            val = self.get_most_liked_not_read_blogs_by_category_score_limit(
+                user_email, i["category_name"], skip, math.ceil(i["score"] * limit)
+            )
             for j in val:
-                temp = {
-                    "category":j["category_name"],
-                    "title":j["title"],
-                    "link":j["link"],
-                    "summary":j["summary"],
-                    "time":j["time"],
-                    "id":j["id"],
-                    "likes":j["likes"],
-                    "author":j["author"]
-                }
-                res.append(temp)
+                if j["id"] not in added_ids:  # Check if ID is already added
+                    temp = {
+                        "category": j["category_name"],
+                        "title": j["title"],
+                        "link": j["link"],
+                        "summary": j["summary"],
+                        "time": j["time"],
+                        "id": j["id"],
+                        "likes": j["likes"],
+                        "author": j["author"]
+                    }
+                    res.append(temp)
+                    added_ids.add(j["id"])  # Add ID to the set
+        random.shuffle(res)
         return res
     
     def get_blog_by_id(self, article_id):
@@ -566,7 +575,8 @@ class App:
 
             query = (
                 "MATCH (u:User {email: $user_email})-[r:BOOKMARK]->(b:Blog) "
-                "RETURN b.title, b.link, b.author, ID(b)"
+                "MATCH (b)-[:BELONGS_TO]->(c:Category) "
+                "RETURN b.title, b.link, b.author, ID(b), c.name AS category_name"
             )
             result = session.run(query, user_email=user_email)
             user_blogs = [
@@ -574,7 +584,8 @@ class App:
                     "title": record["b.title"],
                     "link": record["b.link"],
                     "author": record["b.author"],
-                    "id": record["ID(b)"]
+                    "id": record["ID(b)"],
+                    "category": record["category_name"],
                 }
                 for record in result
             ]
@@ -681,16 +692,10 @@ class App:
                 query=query, exception=exception))
             raise
     
-    def get_blogs_by_likes(self, category_name: Optional[str] = None, limit: int = 10, page: int = 1, page_limit: int = 5):
+    def get_blogs_by_likes(self, category_name: Optional[str], limit: int = 10, page: int = 1, page_limit: int = 5):
         print(category_name)
         with self.driver.session(database="neo4j") as session:
-            result = session.read_transaction(
-                self._get_blogs_by_likes,
-                category_name,
-                limit,
-                page,
-                page_limit
-            )
+            result = session.execute_read(self._get_blogs_by_likes, category_name, page, page_limit)
             print("Success")
             print(result)
             return result

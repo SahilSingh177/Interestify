@@ -120,7 +120,7 @@ const Category = ({
             </Tab>
           </TabList>
         </Tabs>
-        {data.length > 0 && (
+        {data && data.length > 0 && (
           <InfiniteScroll
             dataLength={data.length}
             next={fetchData}

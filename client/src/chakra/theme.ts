@@ -16,6 +16,9 @@ export const theme = extendTheme({
   fonts: {
     body: "Open Sans, sans-serif",
   },
+  icons:{
+    iconPack:'fa',
+  },
   styles: {
     global: () => ({
       body: {

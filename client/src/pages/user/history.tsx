@@ -119,7 +119,7 @@ const History = () => {
             link={article.link}
             Title={article.title}
             Author={article.author}
-            Category="Technology"
+            Category={article.category}
             date={article.date}
             rid={article.rid}
             toBeDisplayed={data?.includes(article)||false}
