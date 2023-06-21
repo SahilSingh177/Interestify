@@ -98,6 +98,17 @@ const Article: React.FC<Props> = ({
       });
     };
 
+    const getSimilarBlogs = async () => {
+      try{
+        const response = await fetch(`http://127.0.0.1:5000/getSimilarArticles?article_id=${ArticleId}`);
+        const bodyData = await response.json();
+        console.log(bodyData);
+      }
+      catch(error){
+        console.error(error);
+      }
+    };
+
 
     const handleScroll = () => {
       const windowHeight = window.innerHeight;
@@ -139,6 +150,7 @@ const Article: React.FC<Props> = ({
     fetchHasBookmarked();
     fetchHasLiked();
     updateBlogList();
+    getSimilarBlogs();
 
     window.addEventListener("scroll", handleScroll);
     return () => {

@@ -483,23 +483,26 @@ class App:
         added_ids = set()  # Set to store unique IDs
 
         for i in ans:
-            val = self.get_most_liked_not_read_blogs_by_category_score_limit(
-                user_email, i["category_name"], skip, math.ceil(i["score"] * limit)
-            )
-            for j in val:
-                if j["id"] not in added_ids:  # Check if ID is already added
-                    temp = {
-                        "category": j["category_name"],
-                        "title": j["title"],
-                        "link": j["link"],
-                        "summary": j["summary"],
-                        "time": j["time"],
-                        "id": j["id"],
-                        "likes": j["likes"],
-                        "author": j["author"]
-                    }
-                    res.append(temp)
-                    added_ids.add(j["id"])  # Add ID to the set
+            if i["score"] is None:
+                continue
+            else:
+                val = self.get_most_liked_not_read_blogs_by_category_score_limit(
+                    user_email, i["category_name"], skip, math.ceil(i["score"] * limit)
+                )
+                for j in val:
+                    if j["id"] not in added_ids:  # Check if ID is already added
+                        temp = {
+                            "category": j["category_name"],
+                            "title": j["title"],
+                            "link": j["link"],
+                            "summary": j["summary"],
+                            "time": j["time"],
+                            "id": j["id"],
+                            "likes": j["likes"],
+                            "author": j["author"]
+                        }
+                        res.append(temp)
+                        added_ids.add(j["id"])  # Add ID to the set
         random.shuffle(res)
         return res
     
@@ -814,7 +817,10 @@ class App:
         if category_name:
             query = (
                 "MATCH (b:Blog)-[:BELONGS_TO]->(c:Category{name:$category_name}) "
-                "RETURN b.title AS title, b.author AS author, b.link AS link, b.download_link AS download_link, b.summary AS summary, b.read_time AS read_time, ID(b) AS id "
+                "WITH b "
+                "MATCH (u2:User)-[r2:LIKES]->(b) "
+                "WITH b, COUNT(r2) AS likeCount "
+                "RETURN b.title AS title, b.author AS author, b.link AS link, b.download_link AS download_link, b.summary AS summary, b.read_time AS read_time, ID(b) AS id, likeCount "
                 "ORDER BY b.createdAt DESC "
                 "SKIP $skip_count "
                 "LIMIT $page_limit"
@@ -886,7 +892,7 @@ class App:
                 "MATCH (:User)-[r:LIKES]->(b) "
                 "WHERE date(b.created_at) > date($time) "
                 "WITH b, COUNT(r) AS likecount "
-                "RETURN b.title as title,b.author as author,b.link as link "
+                "RETURN b.title as title,b.author as author,b.link as link,likecount,b.summary AS summary, b.read_time AS read_time, ID(b) AS id "
                 "ORDER BY likecount DESC LIMIT $limit"
             )
             result = tx.run(
@@ -1246,5 +1252,5 @@ if __name__ == "__main__":
     # print(datetime.now()-timedelta(days=7))
     # app.user_to_category_browsing("sahilsingh1221177@gmail.com","Chemistry","400",datetime.now())
     # print(app.get_duration_and_timestamp("sahilsingh1221177@gmail.com"))
-    print(app.get_session_data("kaabil@gmail.com"))
+    # print(app.get_session_data("kaabil@gmail.com"))
     app.close()
