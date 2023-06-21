@@ -334,6 +334,14 @@ def updateCategoryScore():
     # user_preference.publish_score(user_email)
     return jsonify({"result": "success"}), 200
 
+@app.route('/getCategoryData',methods=['GET'])
+def get_category_data():
+    args = request.args
+    email = args['email']
+    data = database.get_session_data(email)
+    print(data)
+    return jsonify(data)
+
 @app.route('/history',methods=['GET'])
 def get_history():
     args = request.args
