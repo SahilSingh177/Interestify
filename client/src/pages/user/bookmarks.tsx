@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Stack, Heading, Skeleton } from '@chakra-ui/react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Stack, Heading, Skeleton, Flex } from '@chakra-ui/react';
 import BookmarkCard from '@/components/User/BookmarkCard';
 import { auth } from '@/firebase/clientApp';
+import { Player } from '@lottiefiles/react-lottie-player';
 
 const Bookmarks = () => {
+  const heightRef = useRef<HTMLHeadingElement>(null);
   interface BookmarkedArticle {
     author: string;
     id: string;
@@ -33,8 +35,8 @@ const Bookmarks = () => {
   }, [auth.currentUser]);
 
   return (
-    <Stack width="calc(100vw - 12px)" minHeight={`calc(100vh - 80px)`} bg="gray.50" alignItems="center" margin="auto" paddingTop="5vh">
-      <Heading marginBottom="5vh">BOOKMARKS</Heading>
+    <Stack width="calc(100vw - 12px)" minHeight='90vh' bg="gray.50" alignItems="center" margin="auto" paddingTop="5vh"  >
+      <Heading ref={heightRef} marginBottom="5vh">BOOKMARKS</Heading>
       {isLoading &&
         <Stack height="full">
           {[...Array(3)].map((_, index) => (
@@ -49,6 +51,15 @@ const Bookmarks = () => {
             />
           ))}
         </Stack>
+      }
+      {!isLoading && data?.length===0 &&
+        <Flex width={`calc(100vw - 12px)`} height={`calc(80vh - ${heightRef.current?.offsetHeight}px - 8px)`} flexGrow={1} alignItems='center' justifyContent='center' overflow='hidden'>
+          <Player
+            autoplay
+            loop
+            src="/empty.json"
+            style={{ height: '100%', width: '100%' }}
+          /></Flex>
       }
       {data &&
         data.map((article, id) => (
