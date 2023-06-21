@@ -13,9 +13,9 @@ from .read_article import read_article
 # load_dotenv()
 
 
-DATABASE_URL = "neo4j+s://58ad0a3e.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "TrU2Lb35p2JaTVKag7sn-RPD-BQtCCP0eBZMyhwXFY4"
+PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
 print(USER)
 
 class App:
@@ -277,7 +277,7 @@ class App:
     def _user_to_category(tx, user_email, category_name):
         query = (
             "MATCH (u:User {email:$user_email}), (c:Category {name:$category_name}) "
-            "MERGE (u)-[r:BROWSED]->(c) "
+            "MERGE (u)-[r:BROWSES]->(c) "
             "RETURN u, c"
         )
         result = tx.run(query, user_email = user_email, category_name = category_name)
@@ -302,7 +302,7 @@ class App:
     @staticmethod
     def _find_all_categories_for_user(tx, user_email):
         query = (
-            "MATCH (u:User {email:$user_email})-[r:BROWSED]->(c:Category) "
+            "MATCH (u:User {email:$user_email})-[r:BROWSES]->(c:Category) "
             "RETURN c.name as name"
         )
         result = tx.run(query, user_email = user_email)
@@ -316,7 +316,55 @@ class App:
             raise
         
 
-    def user_to_category_browsing(self, user_email, category_name, browsing_time):
+    def user_to_category_browsing(self, user_email, category_name,  session_time, session_date):
+        with self.driver.session(database="neo4j") as session:
+            if not self.check_user_exists(user_email):
+                print("User does not exist")
+                return False
+            if not self.check_category_exists(category_name):
+                print("Category does not exist")
+                return False
+            if not self.user_to_category(user_email, category_name):
+                self.user_to_category(user_email, category_name)
+            result = session.execute_write(
+                self._user_to_category_browsing, user_email, category_name, session_time,session_date)
+            for record in result:
+                print("Added User: {u} to Category: {c}"
+                      .format(u=record['u'], c=record['c']))
+            return True
+        
+    @staticmethod
+    def _user_to_category_browsing(tx, user_email, category_name, session_time,session_date):
+        query = (
+            "MATCH (u:User {email: $user_email})-[r:BROWSES]->(c:Category {name: $category_name}) "
+            "SET r.session_time = COALESCE(r.session_time, []) + [$session_time] "
+            "SET r.session_date = COALESCE(r.session_date, []) + [$session_date] "
+            "RETURN u, c"
+
+        )
+        result = tx.run(query, user_email = user_email, category_name = category_name, session_time = session_time, session_date = session_date)
+        try:
+            return [{"u": record["u"]["email"], "c": record["c"]["name"]}
+                    for record in result]
+        # Capture any errors along with the query and data for traceability
+        except Neo4jError as exception:
+            logging.error("{query} raised an error: \n {exception}".format(
+                query=query, exception=exception))
+            raise
+
+    def get_duration_and_timestamp(self, user_email):
+        with self.driver.session(database="neo4j") as session:
+            query = (
+                "MATCH (u:User{email:$email})-[r:BROWSES]->(c:Category) "
+                "RETURN r.session_time as session_time, r.session_date as session_date, c.name as category_name, u.email as user_email "
+            )
+            result = session.run(query, email=user_email)
+            return [
+                {"session_time": record["session_time"], "session_date": record["session_date"], "category_name": record["category_name"], "user_email": record["user_email"]}
+                for record in result
+            ]   
+
+    def set_category_score(self, user_email, category_name, score):
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
                 print("User does not exist")
@@ -325,28 +373,28 @@ class App:
                 print("Category does not exist")
                 return False
             result = session.execute_write(
-                self._user_to_category_browsing, user_email, category_name, browsing_time)
+                self._set_category_score, user_email, category_name, score)
             for record in result:
-                print("Added User: {u} to Category: {c} with browsing time: {t}"
-                      .format(u=record['u'], c=record['c'], t=record['t']))
+                print("Added Score: {u} to Category: {c}"
+                      .format(u=record['score'], c=record['c']))
             return True
-        
+
     @staticmethod
-    def _user_to_category_browsing(tx, user_email, category_name, browsing_time):
+    def _set_category_score(tx, user_email, category_name, score):
         query = (
-            "MATCH (u:User {email:$user_email})-[r:BROWSED]->(c:Category {name:$category_name}) "
-            "SET r.time = $browsing_time "
-            "RETURN u, c, r.time"
+            "MATCH (u:User {email: $user_email})-[r:BROWSES]->(c:Category {name: $category_name}) "
+            "SET r.score = $score "
+            "RETURN u, c,r"
         )
-        result = tx.run(query, user_email = user_email, category_name = category_name, browsing_time = browsing_time)
+        result = tx.run(query, user_email = user_email, category_name = category_name, score = score)
         try:
-            return [{"u": record["u"]["email"], "c": record["c"]["name"], "t": record["r.time"]}
+            return [{"u": record["u"]["email"], "c": record["c"]["name"], "score": record["r"]["score"]}
                     for record in result]
         # Capture any errors along with the query and data for traceability
         except Neo4jError as exception:
             logging.error("{query} raised an error: \n {exception}".format(
                 query=query, exception=exception))
-            raise
+            raise  
     
     def get_blog_by_id(self, article_id):
         with self.driver.session(database="neo4j") as session:
@@ -841,32 +889,6 @@ class App:
         except Neo4jError as exception:
             logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
             raise
-        
-    def get_categories_ordered_by_browsing_duration(self, user_email):
-        with self.driver.session(database="neo4j") as session:
-            if not self.check_user_exists(user_email):
-                print(user_email)
-                print("User does not exist")
-                return False
-            result = session.execute_write(self._get_categories_ordered_by_browsing_duration, user_email)
-            print("success")
-            return result
-
-
-    @staticmethod
-    def _get_categories_ordered_by_browsing_duration(tx, user_email):
-        query = (
-            "MATCH (u:User {email: $user_email})-[r:BROWSED]->(c:Category) "
-            "RETURN c.name AS categoryName "
-            "ORDER BY r.time DESC"
-        )
-        result = tx.run(query, user_email=user_email)
-        try:
-            return result
-        except Neo4jError as exception:
-            logging.error("{query} raised an error: \n {exception}".format(
-                query=query, exception=exception))
-            raise
 
     def get_category_by_blog(self, blog_id):
         with self.driver.session(database="neo4j") as session:
@@ -1076,6 +1098,8 @@ if __name__ == "__main__":
     # app.get_blogs_by_likes("Physics")
     # app.get_blogs_by_category_and_limit("Engineering",2)
     # app.find_all_categories_for_user("sahilsinghh1221177@gmail.com")
-    app.get_hot_blogs("Environment")
+    # app.get_hot_blogs("Environment")
     # print(datetime.now()-timedelta(days=7))
+    # app.user_to_category_browsing("sahilsingh1221177@gmail.com","Chemistry","400",datetime.now())
+    # print(app.get_duration_and_timestamp("sahilsingh1221177@gmail.com"))
     app.close()
