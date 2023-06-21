@@ -125,9 +125,9 @@ def update_preferences():
 @app.route('/getTopArticles', methods=['GET'])
 def get_top_articles():
     args = request.args
-    email = args.get('email')
+    email = args.get('email',default=None,type=str)
     page = args.get('page', default=1, type=int)
-    if email:
+    if email is not None:
         resp = database.top_blogs_by_email(email,page=page)
         print(resp)
         return jsonify(resp)

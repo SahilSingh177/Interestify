@@ -717,12 +717,10 @@ class App:
                 query=query, exception=exception))
             raise
     
-    def get_blogs_by_likes(self, category_name: Optional[str], limit: int = 10, page: int = 1, page_limit: int = 5):
-        print(category_name)
+    def get_blogs_by_likes(self, category_name: Optional[str]=None, limit: int = 10, page: int = 1, page_limit: int = 5):
         with self.driver.session(database="neo4j") as session:
             result = session.execute_read(self._get_blogs_by_likes, category_name, page, page_limit)
             print("Success")
-            print(result)
             return result
 
     @staticmethod
@@ -733,7 +731,6 @@ class App:
         page_limit: int = 5
     ):
         skip_count = (page - 1) * page_limit
-        # print(skip_count)
         if category_name:
             query = (
                 "MATCH (u:User)-[r:LIKES]->(b:Blog)-[:BELONGS_TO]->(c:Category{name:$category_name}) "
@@ -1159,6 +1156,25 @@ class App:
         except Neo4jError as exception:
             logging.error("{query} raised an error: \n {exception}".format(
                 query=query, exception=exception))
+            raise
+    
+    def get_all_blogs(self):
+        with self.driver.session(database="neo4j") as session:
+            result = session.execute_read(self._get_all_blogs)
+            print("success")
+            return result
+    
+    @staticmethod
+    def _get_all_blogs(tx):
+        query = (
+            "MATCH (b:Blog) "
+            "RETURN b.title AS title, b.link AS link, b.author AS author, b.summary AS summary, ID(b) AS id "
+        )
+        result = tx.run(query)
+        try:
+            return [{"title":record["title"],"link": record["link"], "author": record["author"], "summary": record["summary"], "id":record["id"]} for record in result]
+        except Neo4jError as exception:
+            logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
             raise
 
 if __name__ == "__main__":
