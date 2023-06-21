@@ -11,9 +11,9 @@ CORS(app, origins=['http://localhost:3000'])
 sg = None
 initialized = False
 
-DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://58ad0a3e.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
+PASSWORD = "TrU2Lb35p2JaTVKag7sn-RPD-BQtCCP0eBZMyhwXFY4"
 
 uri = DATABASE_URL
 user = USER
@@ -77,16 +77,16 @@ def searchCategory():
 
 
 @app.route('/registerUserPreferences', methods=['POST'])
-# def register_user_preferences():
-#     data = request.json
-#     email = data['email']
-#     preferences = data['preferences']
-#     # percentage = 100 / len(preferences)
-#     # save it in database
-#     for preference in preferences:
-#         database.user_to_category(email,preference)
-#     # user_to_category function
-#     return jsonify({"message": "User preferences registered successfully"})
+def register_user_preferences():
+    data = request.json
+    email = data['email']
+    preferences = data['preferences']
+    # percentage = 100 / len(preferences)
+    # save it in database
+    for preference in preferences:
+        database.user_to_category(email,preference)
+    # user_to_category function
+    return jsonify({"message": "User preferences registered successfully"})
 
 @app.route('/registerBlog', methods=['POST'])
 def register_blog():
@@ -112,15 +112,6 @@ def update_preferences():
         database.set_category_score(email,update_preference,1/total_categories)
     # user_to_category update
     return jsonify({"message": "User preferences updated successfully"})
-
-# @app.route('/search', methods=['POST'])
-# def search():
-#     data = request.json
-#     print(data)
-#     text = data['text']
-#     print(text)
-#     results = database.search(text)
-#     return jsonify(results)
 
 @app.route('/getTopArticles', methods=['GET'])
 def get_top_articles():

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Avatar } from '@chakra-ui/react';
 import { auth } from '@/firebase/clientApp';
-import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
+import { useSignInWithEmailAndPassword, useSignInWithGoogle } from 'react-firebase-hooks/auth';
 import { useSignInWithFacebook } from 'react-firebase-hooks/auth';
 import { useRouter } from 'next/router';
 
@@ -15,9 +15,10 @@ const OauthButtons = ({ imageSrc, providerName }: Props) => {
   const [signInWithFacebook, fuser, floading, ferror] = useSignInWithFacebook(auth);
 
   const Router = useRouter();
-
   const onSubmit = async () => {
-    providerName === "Google" ? await signInWithGoogle() : await signInWithFacebook();
+    const redirectRoute =
+      providerName === 'Google' ? await signInWithGoogle() : await signInWithFacebook();
+
     if (gerror) {
       console.log(gerror);
       return;
@@ -27,21 +28,28 @@ const OauthButtons = ({ imageSrc, providerName }: Props) => {
       return;
     }
 
-    await fetch("http://127.0.0.1:5000/registerUser", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email: auth.currentUser?.email, username: auth.currentUser?.displayName }),
-    })
+    // Check if the user is new
+    const isNewUser = auth.currentUser?.metadata.creationTime ===
+                      auth.currentUser?.metadata.lastSignInTime;
 
-    Router.push("http://localhost:3000/welcome/categories");
+    if (isNewUser) {
+      // User signed in for the first time
+      Router.push('/welcome/categories');
+    } else {
+      // Existing user
+      Router.push('/');
+    }
   };
 
   return (
-    <Button variant="oauth" mb={2} height="10vh" fontSize={{lg:"lg",md:"md",sm:"sm",base:'x-small'}}
-      onClick={onSubmit}>
-      <Avatar src={imageSrc} size={{base:"xs",md:'sm'}} mr={4} />
+    <Button
+      variant="oauth"
+      mb={2}
+      height="10vh"
+      fontSize={{ lg: 'lg', md: 'md', sm: 'sm', base: 'x-small' }}
+      onClick={onSubmit}
+    >
+      <Avatar src={imageSrc} size={{ base: 'xs', md: 'sm' }} mr={4} />
       Login with {providerName}
     </Button>
   );

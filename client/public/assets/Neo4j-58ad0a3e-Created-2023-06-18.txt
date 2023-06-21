@@ -4,3 +4,5 @@ NEO4J_USERNAME=neo4j
 NEO4J_PASSWORD=TrU2Lb35p2JaTVKag7sn-RPD-BQtCCP0eBZMyhwXFY4
 AURA_INSTANCEID=58ad0a3e
 AURA_INSTANCENAME=Instance01
+CREATE FULLTEXT INDEX titlesAndDescriptions FOR (n:Movie|Book) ON EACH [n.title, n.description]
+CREATE FULLTEXT INDEX CategoryName FOR (n:Category) ON EACH [n.name]

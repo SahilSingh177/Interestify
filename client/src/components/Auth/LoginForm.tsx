@@ -32,7 +32,7 @@ const LoginForm = () => {
     }
 
     setLoginForm({ email: "", password: "" });
-    Router.push("http://localhost:3000/welcome/categories");
+    Router.push("/");
   };
   
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { Box, Menu, MenuButton, MenuList, MenuItem, MenuDivider } from '@chakra-ui/react'
-import { FaUser, FaRegBookmark, FaRegClock, FaSignOutAlt } from "react-icons/fa";
+import { FaBolt, FaChartLine, FaEnvelope, FaRegBookmark, FaRegClock, FaSignOutAlt } from "react-icons/fa";
 import DisplayPhoto from './DisplayPhoto'
 import SignOutModal from '../Modals/SignOutModal';
+import ResetMailModal from '../Modals/ResetMailModal';
 type Props = {
   handleSignOut: any
 }
@@ -29,18 +30,28 @@ const MenuDropDown = () => {
     setIsModalOpen(false);
   };
 
+  const openResetModal = () => {
+    setIsResetModalOpen(true);
+  };
+
+  const closeResetModal = () => {
+    setIsResetModalOpen(false);
+  };
+
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isResetModalOpen, setIsResetModalOpen] = useState<boolean>(false);
   return (
     <Box zIndex="500" >
       <SignOutModal isOpen={isModalOpen} onClose={closeModal} ></SignOutModal>
+      <ResetMailModal isOpen={isResetModalOpen} onClose={closeResetModal} ></ResetMailModal>
       <Menu isLazy={true} strategy="fixed">
         <MenuButton
           as={DisplayPhoto}
           aria-label='Options'
         />
         <MenuList pl={2} pr={2}>
-          <MenuItem as='a' icon={<FaUser />} cursor="pointer" onClick={() => router.push('http://localhost:3000/user/profile')}>
-            Profile
+          <MenuItem as='a' icon={<FaChartLine />} cursor="pointer" onClick={() => router.push('http://localhost:3000/user/profile')}>
+            Activity
           </MenuItem>
           <MenuItem as='a' icon={<FaRegBookmark />} cursor="pointer"
             onClick={() => router.push('http://localhost:3000/user/bookmarks')}>
@@ -49,6 +60,14 @@ const MenuDropDown = () => {
           <MenuItem icon={<FaRegClock />} as='a' cursor="pointer"
             onClick={() => router.push('http://localhost:3000/user/history')}>
             History
+          </MenuItem>
+          <MenuDivider mb={0} />
+          <MenuItem as='a' icon={<FaBolt />} cursor="pointer"
+            onClick={() => router.push('http://localhost:3000/welcome/categories')}>
+            Reset Categories
+          </MenuItem >
+          <MenuItem icon={<FaEnvelope />} as='a' cursor="pointer" onClick={openResetModal}>
+            Unsubscribe
           </MenuItem>
           <MenuDivider mb={0} />
           <MenuItem icon={<FaSignOutAlt />} onClick={openModal}
