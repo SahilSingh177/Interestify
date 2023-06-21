@@ -5,10 +5,10 @@ import { categoriesData } from '@/Handlers/CategoriesData';
 const EditCategories = () => {
     
     const colours = ["red", "orange", "yellow", "teal", "cyan", "purple", "pink"];
-    const getRandomColour = useMemo(() => {
+    const getRandomColour = () => {
         const randomIndex = Math.floor(Math.random() * colours.length);
         return colours[randomIndex];
-    }, []);
+    };
 
     return (
         <VStack width={['100vw', '100vw', '75vw', `calc(40vw - 20px)`]} paddingLeft="5vw" paddingRight="5vw"
@@ -23,7 +23,7 @@ const EditCategories = () => {
                             key={id}
                             borderRadius="full"
                             variant="solid"
-                            colorScheme={getRandomColour}
+                            colorScheme={getRandomColour()}
                         >
                             <TagLabel>{category}</TagLabel>
                         </Tag>

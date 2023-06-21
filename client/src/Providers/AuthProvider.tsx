@@ -31,12 +31,12 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   if (loading) {
     return (
-      <Flex flexDirection="column" alignItems="center" justifyContent="center" height="100%" width="100%">
+      <Flex flexDirection="column" alignItems="center" justifyContent="center" height="95vh" width="100%">
         <Player
           autoplay
           loop
           src="/loading.json"
-          style={{ height: '100%', width: '100%' }}
+          style={{ height: '80%', width: '80%' }}
         />
       </Flex >
     );
