@@ -11,9 +11,9 @@ CORS(app, origins=['http://localhost:3000'])
 sg = None
 initialized = False
 
-DATABASE_URL = "neo4j+s://58ad0a3e.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "TrU2Lb35p2JaTVKag7sn-RPD-BQtCCP0eBZMyhwXFY4"
+PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
 
 uri = DATABASE_URL
 user = USER
@@ -345,7 +345,7 @@ def get_history():
         for article_data in data:
             link = article_data['link']
             title = article_data['title']
-            category = database.get_category_by_blog(article_data['link'])
+            category = database.get_category_by_blog(article_data['id'])
             author = article_data['author']
             history_time = article_data['time']
             id = article_data['id']

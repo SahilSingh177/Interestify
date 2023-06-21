@@ -24,9 +24,10 @@ type Props = {
   link: string;
   title: string;
   toBeDisplayed: boolean;
+  category: string;
 };
 
-const BookmarkCard = ({ author, article_id, link, title, toBeDisplayed }: Props) => {
+const BookmarkCard = ({ author, article_id, link, title, toBeDisplayed, category }: Props) => {
   const currentUser = useContext(AuthContext);
   const [isBookMarked, setIsBookMarked] = useState<boolean>(true);
 
@@ -56,7 +57,7 @@ const BookmarkCard = ({ author, article_id, link, title, toBeDisplayed }: Props)
             </Heading>
             <Spacer />
             <Tag size="sm" variant="solid" colorScheme={getRandomColour}>
-              Unknown
+              {category}
             </Tag>
           </HStack>
         </CardBody>
