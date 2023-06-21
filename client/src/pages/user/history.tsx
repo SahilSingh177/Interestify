@@ -32,6 +32,7 @@ const History = () => {
       const filteredData = bodyData.data;
       console.log(filteredData);
       setData(filteredData);
+      setInitialData(filteredData);
     } catch (error) {
       console.error(error);
     }
@@ -40,7 +41,7 @@ const History = () => {
 
   useEffect(() => {
     fetchData();
-  }, [data]);
+  }, []);
 
   const getSearchResults = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchText = event.target.value;
@@ -110,8 +111,8 @@ const History = () => {
             style={{ height: '100%', width: '100%' }}
           /></Flex>
       }
-      {data &&
-        data.map((article, id) => (
+      {initialData &&
+        initialData.map((article, id) => (
           <HistoryCard
             key={id}
             articleId={article.id}
@@ -121,6 +122,7 @@ const History = () => {
             Category="Technology"
             date={article.date}
             rid={article.rid}
+            toBeDisplayed={data?.includes(article)||false}
           />
         ))}
     </Stack>

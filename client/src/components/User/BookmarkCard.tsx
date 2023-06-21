@@ -23,9 +23,10 @@ type Props = {
   article_id: string;
   link: string;
   title: string;
+  toBeDisplayed: boolean;
 };
 
-const BookmarkCard = ({ author, article_id, link, title }: Props) => {
+const BookmarkCard = ({ author, article_id, link, title, toBeDisplayed }: Props) => {
   const currentUser = useContext(AuthContext);
   const [isBookMarked, setIsBookMarked] = useState<boolean>(true);
 
@@ -45,7 +46,7 @@ const BookmarkCard = ({ author, article_id, link, title }: Props) => {
     }
   };
 
-  return isBookMarked ? (
+  return isBookMarked && toBeDisplayed ? (
     <Card bg="white" direction={{ md: 'row', sm: 'column' }} overflow="hidden" size="md" marginBottom={5} cursor="pointer" width="80%">
       <VStack width="full">
         <CardBody width="full">
