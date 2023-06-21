@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect,useMemo } from "react";
 import { useRouter } from "next/router";
 import {
   Spacer,
@@ -20,7 +20,7 @@ import {
   FaRegThumbsUp,
   FaThumbsUp,
 } from "react-icons/fa";
-import { getRandomColour } from "@/Handlers/getRandomColour";
+// import { getRandomColour } from "@/Handlers/getRandomColour";
 import { toggleBookmark } from "@/Handlers/toggleBookmark";
 import { toggleLike } from "@/Handlers/toggleLike";
 import { AuthContext } from "@/Providers/AuthProvider";
@@ -51,6 +51,14 @@ const ArticleCard: React.FC<Props> = ({
   const [hasLiked, setHasLiked] = useState<boolean>(false);
   const [isBookMarked, setIsBookMarked] = useState<boolean>(false);
   const [likes, setLikes] = useState<number>(Likes);
+
+  const colours = ["red", "orange", "yellow", "teal", "cyan", "purple", "pink"];
+
+  const getRandomColour = useMemo(() => {
+    const randomIndex = Math.floor(Math.random() * colours.length);
+    return colours[randomIndex];
+  }, []);
+
 
   const handleBookmark = async () => {
     if (!currentUser) return;
@@ -121,7 +129,7 @@ const ArticleCard: React.FC<Props> = ({
               <Heading size="lg" width="90%">
                 {Title ? Title : "Title"}
               </Heading>
-              <Tag size="sm" variant="solid" colorScheme={getRandomColour()}>
+              <Tag size="sm" variant="solid" colorScheme={getRandomColour}>
                 {Category ? Category : "Unknown"}
               </Tag>
             </HStack>

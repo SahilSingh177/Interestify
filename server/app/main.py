@@ -52,6 +52,15 @@ def search():
     results = database.search(text)
     return jsonify(results)
 
+@app.route('/searchBookmark', methods=['POST'])
+def searchBookmark():
+    data = request.json
+    print(data)
+    text = data['text']
+    email = data['email']
+    results = database.searchBookmark(text=text,email=email)
+    return jsonify(results)
+
 
 @app.route('/registerUserPreferences', methods=['POST'])
 def register_user_preferences():

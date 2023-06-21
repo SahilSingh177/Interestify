@@ -1,10 +1,10 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { Stack, InputGroup, InputLeftElement, Input, Icon, Heading } from '@chakra-ui/react'
 import AllCategories from '@/components/Category/AllCategories'
 import { FaSearch } from 'react-icons/fa'
 
 const categories = () => {
-    
+    // const [searchInput]
     return (
         <Stack alignItems="center" justifyContent="center">
             <Heading marginTop="5vh" textAlign='center'>SELECT YOUR FAVOURITE CATEGORIES</Heading>
