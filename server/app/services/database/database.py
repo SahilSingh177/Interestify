@@ -503,6 +503,31 @@ class App:
         random.shuffle(res)
         return res
     
+    def get_session_data(self, user_email):
+        with self.driver.session(database="neo4j") as session:
+            query = (
+                "MATCH (u:User{email:$email})-[r:BROWSES]->(c:Category) "
+                "RETURN c.name as category_name,r.session_date as session_date,r.session_time as session_time "
+            )
+            result = session.run(query, email=user_email)
+            res = []
+            for record in result:
+                if record["session_date"] is not None:
+                    duration = 0
+                    print(record["category_name"])
+                    for i in range(len(record["session_date"])):
+                        original = str(record['session_date'][i])
+                        fixed_datetime = original[:-3] 
+                        parsed_datetime = datetime.fromisoformat(fixed_datetime)
+                        if (datetime.now() - parsed_datetime).days > 30:
+                            continue
+                        else:
+                            duration += int(record["session_time"][i])
+                    res.append({"category_name": record["category_name"], "duration": duration})
+                else:
+                    continue
+            return res
+
     def get_blog_by_id(self, article_id):
         with self.driver.session(database="neo4j") as session:
             query = (
@@ -1205,4 +1230,5 @@ if __name__ == "__main__":
     # print(datetime.now()-timedelta(days=7))
     # app.user_to_category_browsing("sahilsingh1221177@gmail.com","Chemistry","400",datetime.now())
     # print(app.get_duration_and_timestamp("sahilsingh1221177@gmail.com"))
+    print(app.get_session_data("kaabil@gmail.com"))
     app.close()
