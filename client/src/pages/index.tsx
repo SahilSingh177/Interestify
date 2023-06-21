@@ -5,7 +5,7 @@ import ArticleCard from '@/components/Articles/ArticleCard';
 import SideBar from '@/components/Articles/SideBar';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Spinner } from '@chakra-ui/react'
-import SignOutModal from '@/components/Modals/SignOutModal';
+import { useRouter } from 'next/router';
 
 interface Article {
   id: string;
@@ -20,6 +20,7 @@ interface Article {
 }
 
 const Index = () => {
+  const Router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [data, setData] = useState<Article[]>([]);
   const [hasMoreData, setHasMoreData] = useState<boolean>(true);
