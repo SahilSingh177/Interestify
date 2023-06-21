@@ -17,6 +17,10 @@ const SearchModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void
 
     const GetSearchResults = async (event: React.ChangeEvent<HTMLInputElement>) => {
         setInputText(event.target.value);
+        if(inputText.length<2){
+             setSearchResults([]);
+             return;
+        }
         const resp = await fetch('http://127.0.0.1:5000/search', {
             method: 'POST',
             headers: {
@@ -28,7 +32,6 @@ const SearchModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void
         })
         const data = await resp.json();
         setSearchResults(data);
-        console.log(data);
     }
 
     return (
