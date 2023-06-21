@@ -8,7 +8,7 @@ const EditCategories = () => {
     <VStack width={['100vw','100vw','75vw',`calc(40vw - 20px)`]} paddingLeft="5vw" paddingRight="5vw" 
     justifyContent="space-around">
         <Heading size='2xl' color='gray.700' paddingTop='2vh' paddingBottom='5vh'>Top Categories</Heading>
-    <Flex flexWrap="wrap" justifyContent='center'>
+    <Flex flexWrap="wrap" >
         {categoriesData.slice(0,10).map((category, id) => {
             return (
                 <Tag
