@@ -39,7 +39,7 @@ const Bookmarks = () => {
 
   useEffect(() => {
     fetchData();
-  }, [auth.currentUser]);
+  }, []);
 
   const getSearchResults = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchText = event.target.value;
@@ -99,8 +99,8 @@ const Bookmarks = () => {
           <Player autoplay loop src="/empty.json" style={{ height: '100%', width: '100%' }} />
         </Flex>
       )}
-      {data?.map((article, id) => (
-        <BookmarkCard key={id} article_id={article.id} link={article.link} title={article.title} author={article.author} />
+      {initialData?.map((article, id) => (
+        <BookmarkCard key={id} article_id={article.id} link={article.link} title={article.title} author={article.author} toBeDisplayed={data?.includes(article)||false} />
       ))}
     </Stack>
   );

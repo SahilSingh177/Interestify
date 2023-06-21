@@ -1,6 +1,5 @@
 import { extendTheme, type ThemeConfig } from "@chakra-ui/react";
 import { Button } from "./button";
-import { faBookmark as regularBookmark } from '@fortawesome/free-regular-svg-icons';
 
 const config: ThemeConfig = {
   initialColorMode: 'dark',
@@ -16,12 +15,6 @@ export const theme = extendTheme({
   },
   fonts: {
     body: "Open Sans, sans-serif",
-  },
-  icons:{
-    iconPack:'fa',
-    iconSet:{
-      regularBookmark,
-    }
   },
   styles: {
     global: () => ({

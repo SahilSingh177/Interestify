@@ -23,6 +23,7 @@ type Props = {
   link: string;
   date: string;
   rid: string;
+  toBeDisplayed: boolean;
 };
 
 const HistoryCard = ({
@@ -33,6 +34,7 @@ const HistoryCard = ({
   link,
   date,
   rid,
+  toBeDisplayed,
 }: Props) => {
   const currentUser = useContext(AuthContext);
   const Router = useRouter();
@@ -56,7 +58,7 @@ const HistoryCard = ({
     }
   };
   return (
-    !isDeleted?
+    !isDeleted && toBeDisplayed?
     <Card
       bg="white"
       direction={{ md: "row", sm: "column" }}
