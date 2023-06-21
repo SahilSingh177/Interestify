@@ -4,7 +4,8 @@ from services.database.database import App
 from services.springer import start_scraping_thread
 import dotenv
 from flask_cors import CORS
-# import services.user_preference as user_preference
+import services.user_preference as user_preference
+import services.similar_articles as similar_articles
 
 app = Flask(__name__)
 CORS(app, origins=['http://localhost:3000'])
@@ -81,11 +82,11 @@ def register_user_preferences():
     data = request.json
     email = data['email']
     preferences = data['preferences']
-    # percentage = 100 / len(preferences)
+    total_categories = len(preferences)
     # save it in database
     for preference in preferences:
         database.user_to_category(email,preference)
-    # user_to_category function
+        database.set_category_score(email,preference,1/total_categories)
     return jsonify({"message": "User preferences registered successfully"})
 
 @app.route('/registerBlog', methods=['POST'])
@@ -185,7 +186,7 @@ def get_recent_articles_by_category():
     category = args.get('category')
     page = args.get('page')
     page = int(page)
-    data = database.get_recent_blogs(category,page=page)
+    data = database.get_recent_blogs(category_name=category,page=page)
     return jsonify(data)
 
 @app.route('/getHotArticlesfor', methods=['GET'])
@@ -194,28 +195,29 @@ def get_hot_articles_by_category():
     category = args.get('category')
     page = args.get('page')
     page = int(page)
-    data = database.get_hot_blogs(category,page=page)
+    data = database.get_hot_blogs(category_name=category,page=page)
     return jsonify(data)
 
 @app.route('/getArticle',methods=['GET'])    
 def getArticle():
     try:
-        print("A")
         article_id = request.args.get('article_id')
-        print(article_id)
-        print("B")
-        # print(type(article_id))
         article_id = int(article_id)
         if article_id is None:
             return jsonify(error='ID parameter is missing'), 400
         
         article_data = database.get_blog_by_id(article_id)
         category = database.get_category_by_blog(article_id)
-        # print(category)
         article_data[0]["category"]=category
         return jsonify(data=article_data), 200
     except Exception as e:
         return jsonify(error=str(e)), 500
+
+@app.route('/getSimilarArticles', methods=['GET'])
+def get_similar_articles():
+    args = request.args
+    article_id = int(args['article_id'])
+    return jsonify(similar_articles.get_recommendations(article_id))
 
 @app.route('/likeArticle', methods=['GET'])
 def like_article():
@@ -322,7 +324,7 @@ def updateCategoryScore():
     category_name = data['category_name']
     duration = data['duration']
     database.user_to_category_browsing(user_email, category_name, duration, datetime.now())
-    # user_preference.publish_score(user_email)
+    user_preference.publish_score(user_email)
     return jsonify({"result": "success"}), 200
 
 @app.route('/getCategoryData',methods=['GET'])
