@@ -130,6 +130,24 @@ class App:
         result = tx.run(query, searchTerm=text)
         formatted_result = [(record["title"], record["id"]) for record in result]
         return formatted_result
+    
+    def searchBookmark(self,email,text):
+        with self.driver.session(database="neo4j") as session:
+            result = session.execute_write(self._searchBookmark,email,text)
+            return result
+
+    @staticmethod
+    def _searchBookmark(tx,email,text):
+        query =(
+            'CALL db.index.fulltext.queryNodes("BlogName", $searchTerm) YIELD node, score '
+            'MATCH (user:User)-[:BOOKMARK]->(node) '
+            'WHERE user.email = $email '
+            'RETURN node.link AS link, score '
+        )
+        result = tx.run(query,searchTerm=text,email=email)
+        formatted_result=[(record['link']) for record in result]
+        return formatted_result
+
 
     def create_blog(self, blog_title, blog_link, blog_author, download_link, category_name):
         with self.driver.session(database="neo4j") as session:

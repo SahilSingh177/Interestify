@@ -7,7 +7,19 @@ import '../firebase/clientApp'
 import { AuthProvider } from '../Providers/AuthProvider';
 
 export default function App({ Component, pageProps }: AppProps) {
+  // const router = useRouter();
 
+  // // Conditionally render different layouts based on the current page
+  // if (router.pathname === '/welcome/categories' || router.pathname==='/welcome/register_mail' ||
+  // router.pathname==='/404') {
+  //   return (
+  //     <AuthProvider>
+  //     <ChakraProvider theme={theme}>
+  //         <Component {...pageProps} />
+  //     </ChakraProvider>
+  //   </AuthProvider>
+  //   );
+  // }
   return (
     <AuthProvider>
       <ChakraProvider theme={theme}>

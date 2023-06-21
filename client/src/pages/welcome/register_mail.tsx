@@ -17,7 +17,6 @@ const RegisterMail = () => {
   return (
     <Stack
       bgImage="/assets/mail_bg.jpg"
-      marginTop="-80px"
       backgroundRepeat="none"
       backgroundSize="cover"
       height="100vh"

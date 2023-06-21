@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { AuthContext } from '@/Providers/AuthProvider';
 import {
@@ -15,7 +15,7 @@ import {
   Link,
 } from '@chakra-ui/react';
 import { FaBookmark } from 'react-icons/fa';
-import { getRandomColour } from '@/Handlers/getRandomColour';
+// import { getRandomColour } from '@/Handlers/getRandomColour';
 import { toggleBookmark } from '@/Handlers/toggleBookmark';
 
 type Props = {
@@ -28,6 +28,12 @@ type Props = {
 const BookmarkCard = ({ author, article_id, link, title }: Props) => {
   const currentUser = useContext(AuthContext);
   const [isBookMarked, setIsBookMarked] = useState<boolean>(true);
+
+  const colours = ["red", "orange", "yellow", "teal", "cyan", "purple", "pink"];
+  const getRandomColour = useMemo(() => {
+    const randomIndex = Math.floor(Math.random() * colours.length);
+    return colours[randomIndex];
+  }, []);
 
   const handleBookmark = async () => {
     if (!currentUser) return;
@@ -48,7 +54,7 @@ const BookmarkCard = ({ author, article_id, link, title }: Props) => {
               {title}
             </Heading>
             <Spacer />
-            <Tag size="sm" variant="solid" colorScheme={getRandomColour()}>
+            <Tag size="sm" variant="solid" colorScheme={getRandomColour}>
               Unknown
             </Tag>
           </HStack>
