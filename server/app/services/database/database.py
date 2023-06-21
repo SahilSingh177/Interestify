@@ -13,9 +13,9 @@ from .read_article import read_article
 # load_dotenv()
 
 
-DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://58ad0a3e.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
+PASSWORD = "TrU2Lb35p2JaTVKag7sn-RPD-BQtCCP0eBZMyhwXFY4"
 print(USER)
 
 class App:
@@ -122,6 +122,7 @@ class App:
             return result
     @staticmethod
     def _search(tx, text):
+        text+='~'
         query = (
             'CALL db.index.fulltext.queryNodes("BlogName", $searchTerm) YIELD node, score '
             'RETURN node.title AS title, ID(node) as id '
@@ -138,6 +139,7 @@ class App:
 
     @staticmethod
     def _searchBookmark(tx,email,text):
+        text+='~'
         query =(
             'CALL db.index.fulltext.queryNodes("BlogName", $searchTerm) YIELD node, score '
             'MATCH (user:User)-[:BOOKMARK]->(node) '
@@ -146,6 +148,40 @@ class App:
         )
         result = tx.run(query,searchTerm=text,email=email)
         formatted_result=[(record['link']) for record in result]
+        return formatted_result
+    
+    def searchHistory(self,email,text):
+        with self.driver.session(database="neo4j") as session:
+            result = session.execute_write(self._searchHistory,email,text)
+            return result
+
+    @staticmethod
+    def _searchHistory(tx,email,text):
+        text+='~'
+        query =(
+            'CALL db.index.fulltext.queryNodes("BlogName", $searchTerm) YIELD node, score '
+            'MATCH (user:User)-[:READS]->(node) '
+            'WHERE user.email = $email '
+            'RETURN node.link AS link, score '
+        )
+        result = tx.run(query,searchTerm=text,email=email)
+        formatted_result=[(record['link']) for record in result]
+        return formatted_result
+    
+    def searchCategory(self,text):
+        with self.driver.session(database="neo4j") as session:
+            result = session.execute_write(self._searchCategory,text)
+            return result
+
+    @staticmethod
+    def _searchCategory(tx,text):
+        text+='~'
+        query =(
+            'CALL db.index.fulltext.queryNodes("CategoryName", $searchTerm) YIELD node, score '
+            'RETURN node.name AS name, score '
+        )
+        result = tx.run(query,searchTerm=text)
+        formatted_result=[(record['name']) for record in result]
         return formatted_result
 
 

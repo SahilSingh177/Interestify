@@ -1,10 +1,13 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Flex, Heading, Skeleton, Stack, VStack } from "@chakra-ui/react";
+import React, { useEffect, useState, useRef, useContext } from "react";
+import { Flex, Heading, Icon, Input, InputGroup, InputLeftElement, Skeleton, Stack, VStack } from "@chakra-ui/react";
 import HistoryCard from "@/components/User/HistoryCard";
 import { auth } from '@/firebase/clientApp';
 import { Player } from "@lottiefiles/react-lottie-player";
+import { AuthContext } from "@/Providers/AuthProvider";
+import { FaSearch } from "react-icons/fa";
 
 const History = () => {
+  const currentUser = useContext(AuthContext);
   const heightRef = useRef<HTMLHeadingElement>(null);
   interface PreviousArticle {
     id: string;
@@ -17,7 +20,9 @@ const History = () => {
   }
 
   const [data, setData] = useState<PreviousArticle[] | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState<Boolean>(true);
+  const [initialData, setInitialData] = useState<PreviousArticle[] | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [inputText, setInputText] = useState<string>('');
   const email = auth.currentUser?.email;
 
   const fetchData = async () => {
@@ -37,6 +42,34 @@ const History = () => {
     fetchData();
   }, [data]);
 
+  const getSearchResults = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const searchText = event.target.value;
+    setInputText(searchText);
+
+    if (inputText.length < 2) {
+      setData(initialData);
+    } else {
+      try {
+        const resp = await fetch('http://127.0.0.1:5000/searchHistory', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            text: searchText,
+            email: currentUser?.email,
+          }),
+        });
+
+        const searchResults = await resp.json();
+        const filteredResults = initialData?.filter(item => searchResults.includes(item.link));
+        setData(filteredResults);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   return (
     <Stack
       width={`calc(100vw - 12px)`}
@@ -47,6 +80,12 @@ const History = () => {
       paddingTop="5vh"
     >
       <Heading marginBottom="5vh" ref={heightRef}>HISTORY</Heading>
+      <InputGroup width='70%' marginBottom={2}>
+        <InputLeftElement pointerEvents="none">
+          <Icon as={FaSearch} />
+        </InputLeftElement>
+        <Input value={inputText} onChange={getSearchResults} borderColor="gray.700" _hover={{borderColor:'gray.700'}} focusBorderColor="gray.700" type="tel" placeholder="Search History" />
+      </InputGroup>
       {isLoading &&
         <Stack height="full">
           {[...Array(3)].map((_, index) => (

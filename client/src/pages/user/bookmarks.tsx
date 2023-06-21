@@ -44,8 +44,7 @@ const Bookmarks = () => {
   const getSearchResults = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchText = event.target.value;
     setInputText(searchText);
-
-    if (inputText.length === 0) {
+    if (inputText.length < 2) {
       setData(initialData);
     } else {
       try {
@@ -78,7 +77,7 @@ const Bookmarks = () => {
         <InputLeftElement pointerEvents="none">
           <Icon as={FaSearch} />
         </InputLeftElement>
-        <Input onChange={getSearchResults} borderColor="gray.700" _hover={{borderColor:'gray.700'}} focusBorderColor="gray.700" type="tel" placeholder="Search Bookmarks" />
+        <Input value={inputText} onChange={getSearchResults} borderColor="gray.700" _hover={{borderColor:'gray.700'}} focusBorderColor="gray.700" type="tel" placeholder="Search Bookmarks" />
       </InputGroup>
       {isLoading && (
         <Stack height="full">

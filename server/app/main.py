@@ -4,16 +4,16 @@ from services.database.database import App
 from services.springer import start_scraping_thread
 import dotenv
 from flask_cors import CORS
-import services.user_preference as user_preference
+# import services.user_preference as user_preference
 
 app = Flask(__name__)
 CORS(app, origins=['http://localhost:3000'])
 sg = None
 initialized = False
 
-DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://58ad0a3e.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
+PASSWORD = "TrU2Lb35p2JaTVKag7sn-RPD-BQtCCP0eBZMyhwXFY4"
 
 uri = DATABASE_URL
 user = USER
@@ -58,18 +58,35 @@ def searchBookmark():
     results = database.searchBookmark(text=text,email=email)
     return jsonify(results)
 
+@app.route('/searchHistory', methods=['POST'])
+def searchHistory():
+    data = request.json
+    print(data)
+    text = data['text']
+    email = data['email']
+    results = database.searchHistory(text=text,email=email)
+    return jsonify(results)
+
+@app.route('/searchCategory', methods=['POST'])
+def searchCategory():
+    data = request.json
+    print(data)
+    text = data['text']
+    results = database.searchCategory(text=text)
+    return jsonify(results)
+
 
 @app.route('/registerUserPreferences', methods=['POST'])
-def register_user_preferences():
-    data = request.json
-    email = data['email']
-    preferences = data['preferences']
-    # percentage = 100 / len(preferences)
-    # save it in database
-    for preference in preferences:
-        database.user_to_category(email,preference)
-    # user_to_category function
-    return jsonify({"message": "User preferences registered successfully"})
+# def register_user_preferences():
+#     data = request.json
+#     email = data['email']
+#     preferences = data['preferences']
+#     # percentage = 100 / len(preferences)
+#     # save it in database
+#     for preference in preferences:
+#         database.user_to_category(email,preference)
+#     # user_to_category function
+#     return jsonify({"message": "User preferences registered successfully"})
 
 @app.route('/registerBlog', methods=['POST'])
 def register_blog():
@@ -94,14 +111,14 @@ def update_preferences():
     # user_to_category update
     return jsonify({"message": "User preferences updated successfully"})
 
-@app.route('/search', methods=['POST'])
-def search():
-    data = request.json
-    print(data)
-    text = data['text']
-    print(text)
-    results = database.search(text)
-    return jsonify(results)
+# @app.route('/search', methods=['POST'])
+# def search():
+#     data = request.json
+#     print(data)
+#     text = data['text']
+#     print(text)
+#     results = database.search(text)
+#     return jsonify(results)
 
 @app.route('/getTopArticles', methods=['GET'])
 def get_top_articles():
@@ -305,7 +322,7 @@ def updateCategoryScore():
     category_name = data['category_name']
     duration = data['duration']
     database.user_to_category_browsing(user_email, category_name, duration, datetime.now())
-    user_preference.publish_score(user_email)
+    # user_preference.publish_score(user_email)
     return jsonify({"result": "success"}), 200
 
 @app.route('/history',methods=['GET'])

@@ -7,10 +7,10 @@ import { FaArrowCircleRight } from 'react-icons/fa'
 import { AuthContext } from '@/Providers/AuthProvider'
 
 
-const AllCategories = () => {
+const AllCategories = ({ filteredData }: { filteredData: string[] }) => {
   const currentUser = useContext(AuthContext);
   const Router = useRouter();
-  const [clickedCategories, setClickedCategories] = useState<string[]>([])
+  const [clickedCategories, setClickedCategories] = useState<string[]>([]);
 
   const handleCategoryClick = (categoryName: string) => {
     setClickedCategories(prevClickedCategories => {
@@ -40,14 +40,16 @@ const AllCategories = () => {
   };
 
   useEffect(() => {
-    console.log(clickedCategories)
   }, [clickedCategories])
 
   return (
     <Box>
       <Flex width={`calc(100vw - 12px)`} flexWrap="wrap" height="100vh" justifyContent="center">
-        {categoriesData.map((categoryName, id) => <CategoryCard key={id} categoryName={categoryName}
-          onClickHandler={handleCategoryClick}></CategoryCard>)}
+        {categoriesData.map((categoryName, id) => {
+          return (
+            <CategoryCard key={id} categoryName={categoryName} onClickHandler={handleCategoryClick} view={filteredData.includes(categoryName)} />
+          );
+        })}
       </Flex>
       <Icon onClick={() => submitCategories()} cursor="pointer" boxSize="5vw" as={FaArrowCircleRight} position="fixed" bottom="2vw" right="2vw"></Icon>
     </Box>
