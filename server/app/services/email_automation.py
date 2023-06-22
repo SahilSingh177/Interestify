@@ -1,19 +1,11 @@
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from database.database import App
 
-DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
-USER = "neo4j"
-PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
-
-database = App(DATABASE_URL, USER, PASSWORD)
-
-
-def send_email(recipient_email, subject, html_template):
+def send_email(recipient_email, subject, html_template, articles):
     # Email configuration
     sender_email = 'sahilsingh1221177@gmail.com'
-    sender_password = ''
+    sender_password = 'shntcrranvcttymv'
     smtp_server = 'smtp.gmail.com'
     smtp_port = 587
 
@@ -27,7 +19,6 @@ def send_email(recipient_email, subject, html_template):
             message["Subject"] = subject
             message["From"] = sender_email
             message["To"] = recipient_email
-            # Create a MIME multipart message for each article
 
             # Fill in the HTML template with article data
             filled_template = html_template.format(
@@ -44,14 +35,14 @@ def send_email(recipient_email, subject, html_template):
             message.attach(html_part)
 
             # Send the email for each article
-            server.sendmail(sender_email, recipient_email, message.as_string())
+        server.sendmail(sender_email, recipient_email, message.as_string())
 
         server.quit()
 
 
 # Example usage
 recipient_email = 'lcs2021033@iiitl.ac.in'
-subject = 'Hello from Python!'
+subject = 'Interestify Weekly mail!'
 html_template = """
 <html>
   <head>
@@ -99,32 +90,65 @@ html_template = """
     </style>
   </head>
   <body>
-    <div class="blog-card" style="background-color: #999">
-      <h2 class="blog-title">{title}</h2>
-      <p class="blog-author">Author: {author}</p>
-      <p class="blog-category">Category: {category}</p>
-      <a href="{url}" class="read-link">Read about this</a>
-    </div>
-    <hr class="break" />
+  Here are the recommended research papers from your top 5 categories:
+  {content}
   </body>
 </html>
 """
 
-data = database.get_blogs_by_category_and_limit('Engineering', 5)
-articles = []
-for blog in data:
-    title = blog['title']
-    author = blog['author']
-    category = 'Engineering'
-    url = blog['link']
-    article = {
-        'title': title,
-        'author': author,
-        'category': category,
-        'url': url
+articles = [
+    {
+        'title': 'Book 1',
+        'author': 'Author 1',
+        'category': 'Engineering',
+        'url': 'https://example.com/book1'
+    },
+    {
+        'title': 'Book 2',
+        'author': 'Author 2',
+        'category': 'Engineering',
+        'url': 'https://example.com/book2'
+    },
+    {
+        'title': 'Book 3',
+        'author': 'Author 3',
+        'category': 'Engineering',
+        'url': 'https://example.com/book3'
+    },
+    {
+        'title': 'Book 4',
+        'author': 'Author 4',
+        'category': 'Engineering',
+        'url': 'https://example.com/book4'
+    },
+    {
+        'title': 'Book 5',
+        'author': 'Author 5',
+        'category': 'Engineering',
+        'url': 'https://example.com/book5'
     }
-    articles.append(article)
+]
 
-print(articles)
-send_email(recipient_email, subject, html_template)
-database.close()
+# Generate the content for the HTML template
+content = ""
+for article in articles:
+    content += """
+    <div class="blog-card" style="background-color: #999">
+      <h2 class="blog-title">{title}</h2>
+      <p class="blog-author">Author: {author}</p>
+      <p class="blog-category">Category: {category}</p>
+      <p class="blog-summary">{summary}</p>
+      <a href="{url}" class="read-link">Read about this</a>
+    </div>
+    <hr class="break" />
+    """.format(
+        title=article['title'],
+        author=article['author'],
+        category=article['category'],
+        summary=article['summary'],
+        url=article['url']
+    )
+
+html_template = html_template.replace("{content}", content)
+
+send_email(recipient_email, subject, html_template, articles)

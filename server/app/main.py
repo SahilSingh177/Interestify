@@ -149,29 +149,6 @@ def get_top_articles():
         print(resp)
         return jsonify(resp)
 
-@app.route('/getTopArticlesPerUser', methods=['GET'])
-def get_top_articles_per_user():
-    # data = get_articles_from_db()  # Retrieve data from the database
-    args = request.args
-    category = args['category']
-    limit = int(args['limit'])
-    data = database.get_blogs_by_category_and_limit(category,limit)
-    resp = []
-
-    for article_data in data:
-        link = article_data['link']
-        author = article_data['author']
-        # article = read_article(link)
-        # summary = summarize_article(article)
-        resp.append({
-            "link": link,
-            "category": category,
-            "author": author,
-            # "summary": summary
-        })
-
-    return jsonify(resp)
-
 @app.route('/getTopArticlesfor', methods=['GET'])
 def get_top_articles_by_category():
     args = request.args
