@@ -9,7 +9,6 @@ const SignOutModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => voi
 
   const handleSignOut = async () => {
     await signOut();
-    console.log("SIGNED OUT");
   };
 
   return (

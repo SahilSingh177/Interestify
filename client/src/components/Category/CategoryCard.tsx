@@ -12,7 +12,6 @@ const CategoryCard = ({ categoryName, onClickHandler, view }: Props) => {
   const [isSelected, setIsSelected] = useState<boolean>(false)
 
   const onClick = () => {
-    console.log(isSelected)
     onClickHandler(categoryName);
     setIsSelected(!isSelected);
   }
