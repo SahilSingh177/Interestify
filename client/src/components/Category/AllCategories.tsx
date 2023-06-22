@@ -41,7 +41,7 @@ const AllCategories = ({ filteredData }: { filteredData: string[] }) => {
         },
         body: JSON.stringify(payload)
       });
-      Router.push(isNewUser?'http://localhost:3000/welcome/register_mail':'http://localhost:3000/');
+      Router.push(isNewUser?'/welcome/register_mail':'/');
     }
     else{
       setError('Please select atleast 1 category to proceed');
@@ -60,7 +60,7 @@ const AllCategories = ({ filteredData }: { filteredData: string[] }) => {
           );
         })}
       </Flex>
-      <Icon onClick={() => submitCategories()} cursor="pointer" boxSize="5vw" as={FaArrowCircleRight} position="fixed" bottom="2vw" right="2vw"></Icon>
+      <Icon onClick={() => submitCategories()} cursor="pointer" boxSize={["10vw","10vw","5vw","5vw"]} as={FaArrowCircleRight} position="fixed" bottom="2vw" right="2vw"></Icon>
       {
         error && <ShowAlert type='warning' title="Sorry" message={error}></ShowAlert>
       }

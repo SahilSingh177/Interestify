@@ -5,8 +5,8 @@ import React from 'react'
 const AuthDivider: React.FC = () => {
     return (
         <>
-            <Box mx={2} padding="5vh 0" width="2vw">
-                <Divider orientation='vertical' />
+            <Box mx={2} padding="5vh 0" width="2vw" display={['none','none','block','block']}>
+                <Divider orientation='vertical'  />
                 <AbsoluteCenter bg='none' >
                     <Text fontSize="7xl" color="gray.600">
                         OR

@@ -71,14 +71,14 @@ const HistoryCard = ({
           <HStack>
             <Heading
               size="md"
-              width="90%"
+              width={["100%","100%","90%","90%"]}
               cursor="pointer"
               onClick={() => handleClick(articleId)}
             >
               {Title}
             </Heading>
             <Spacer />
-            <Tag size="sm" variant="solid" colorScheme="teal">
+            <Tag display={["none","none","block","block"]} size="sm" variant="solid" colorScheme="teal">
               {Category ? Category : "Unknown"}
             </Tag>
           </HStack>

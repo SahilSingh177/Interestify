@@ -50,20 +50,20 @@ const MenuDropDown = () => {
           aria-label='Options'
         />
         <MenuList pl={2} pr={2}>
-          <MenuItem as='a' icon={<FaChartLine />} cursor="pointer" onClick={() => router.push('http://localhost:3000/user/profile')}>
+          <MenuItem as='a' icon={<FaChartLine />} cursor="pointer" onClick={() => router.push('/user/profile')}>
             Activity
           </MenuItem>
           <MenuItem as='a' icon={<FaRegBookmark />} cursor="pointer"
-            onClick={() => router.push('http://localhost:3000/user/bookmarks')}>
+            onClick={() => router.push('/user/bookmarks')}>
             Bookmarks
           </MenuItem >
           <MenuItem icon={<FaRegClock />} as='a' cursor="pointer"
-            onClick={() => router.push('http://localhost:3000/user/history')}>
+            onClick={() => router.push('/user/history')}>
             History
           </MenuItem>
           <MenuDivider mb={0} />
           <MenuItem as='a' icon={<FaBolt />} cursor="pointer"
-            onClick={() => router.push('http://localhost:3000/welcome/categories')}>
+            onClick={() => router.push('/welcome/categories')}>
             Reset Categories
           </MenuItem >
           <MenuItem icon={<FaEnvelope />} as='a' cursor="pointer" onClick={openResetModal}>

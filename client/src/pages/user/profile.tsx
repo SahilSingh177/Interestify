@@ -29,25 +29,30 @@ export const options = {
       text: 'Activity',
     },
     tooltip: {
-      enabled: false
+      enabled: false,
     },
     legend: {
-      display: false
+      display: false,
     },
   },
   scales: {
     x: {
       grid: {
-        display: false
+        display: false,
       },
       title: {
         display: true,
         text: 'Categories',
       },
+      ticks: {
+        autoSkip: false,
+        maxRotation: 90,
+        minRotation: 0,
+      },
     },
     y: {
       grid: {
-        display: false
+        display: false,
       },
       title: {
         display: true,
@@ -96,7 +101,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (!currentUser) {
-      router.push('http://localhost:3000/login');
+      router.push('/login');
     }
   }, [currentUser, router]);
 

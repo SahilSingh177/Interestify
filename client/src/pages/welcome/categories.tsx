@@ -16,7 +16,7 @@ const categories: NextPageWithLayout = () => {
 
   useEffect(() => {
     if (!currentUser) {
-      router.push('http://localhost:3000/login');
+      router.push('/login');
     }
   }, [currentUser, router]);
     const [data,setData] = useState<string[]>(categoriesData);
@@ -68,12 +68,14 @@ const categories: NextPageWithLayout = () => {
                     onChange={getSearchResults}
                     value={inputText}
                     borderRadius={100}
+                    borderWidth='medium'
                     height="7vh"
                     borderColor="black"
                     _hover={{ borderColor: "black" }}
                     focusBorderColor="black"
                     type="tel"
                     placeholder="Search Categories"
+                    _placeholder={{ color: 'black', fontWeight:'bold' }}
                 />
             </InputGroup>
             <AllCategories filteredData={data}/>

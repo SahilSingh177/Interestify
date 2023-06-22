@@ -27,12 +27,6 @@ const Index = () => {
   const currentUser = useContext(AuthContext);
 
   useEffect(() => {
-    if (!currentUser) {
-      router.push('http://localhost:3000/login');
-    }
-  }, [currentUser, router]);
-
-  useEffect(() => {
     const checkCategories = async () => {
       try {
         const response = await fetch('http://127.0.0.1:5000/hasSelectedCategories', {
@@ -48,7 +42,7 @@ const Index = () => {
         console.log(data);
 
         if (!data) {
-          router.push('http://localhost:3000/welcome/categories');
+          router.push('/welcome/categories');
         }
       } catch (error) {
         console.error('Error checking categories:', error);
@@ -102,7 +96,7 @@ const Index = () => {
         <Banner></Banner>
         <Flex
           flexDirection={{ lg: "row", base: "column" }}
-          marginTop="10vh"
+          marginTop={['5vh','5vh','5vh','10vh']}
           width={`calc(100vw - 12px)`}
           justifyContent={{ lg: "space-evenly", base: "column" }}
           alignItems={{ lg: "flex-start", base: "center" }}

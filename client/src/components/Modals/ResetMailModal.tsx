@@ -6,7 +6,7 @@ const ResetMailModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => v
 
   return (
     <>
-      <Modal size='md' isOpen={isOpen} onClose={onClose}>
+      <Modal size={['xs','xs','md','md']} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalBody>

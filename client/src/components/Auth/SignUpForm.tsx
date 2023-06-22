@@ -53,7 +53,7 @@ const SignupForm = () => {
       });
   
       setSignupForm({ username: "", email: "", password: "", confirmPassword: "" });
-      Router.push("http://localhost:3000/welcome/categories");
+      Router.push("/welcome/categories");
     } catch (error) {
       console.log(error);
       setCustomErrorMessage('Internal Server Error');

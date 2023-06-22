@@ -52,11 +52,11 @@ const BookmarkCard = ({ author, article_id, link, title, toBeDisplayed, category
       <VStack width="full">
         <CardBody width="full">
           <HStack>
-            <Heading size="md" width="90%">
+            <Heading size="md" width={["100%","100%","90%","90%"]}>
               {title}
             </Heading>
             <Spacer />
-            <Tag size="sm" variant="solid" colorScheme={getRandomColour}>
+            <Tag size="sm" display={["none","none","block","block"]} variant="solid" colorScheme={getRandomColour}>
               {category}
             </Tag>
           </HStack>
