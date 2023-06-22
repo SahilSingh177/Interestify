@@ -72,7 +72,8 @@ const Sidebar: React.FC<Props> = () => {
           ))}
         </Flex>
         <Center>
-          <Button variant="success" width="60%">
+          <Button variant="success" width="60%" onClick={()=>
+                    Router.push('http://localhost:3000/search_category')}>
             See more topics
           </Button>
         </Center>

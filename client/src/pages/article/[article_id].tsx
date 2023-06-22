@@ -57,7 +57,7 @@ const ArticlePage = ({ articleData }: { articleData: ArticleData }) => {
           ArticleLink={articleData.ArticleLink}
         />
       )}
-      <ArticleRecommendations />
+      <ArticleRecommendations ArticleId={articleData.ArticleId}/>
     </Stack>
   );
 };

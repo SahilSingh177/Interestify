@@ -98,16 +98,7 @@ const Article: React.FC<Props> = ({
       });
     };
 
-    const getSimilarBlogs = async () => {
-      try{
-        const response = await fetch(`http://127.0.0.1:5000/getSimilarArticles?article_id=${ArticleId}`);
-        const bodyData = await response.json();
-        console.log(bodyData);
-      }
-      catch(error){
-        console.error(error);
-      }
-    };
+
 
 
     const handleScroll = () => {
@@ -147,10 +138,10 @@ const Article: React.FC<Props> = ({
         console.error(error);
       }
     };
+
     fetchHasBookmarked();
     fetchHasLiked();
     updateBlogList();
-    getSimilarBlogs();
 
     window.addEventListener("scroll", handleScroll);
     return () => {
@@ -208,9 +199,6 @@ const Article: React.FC<Props> = ({
       </CircularProgress>
 
       <Heading color="gray.700">{Title}</Heading>
-      <Heading as="h3" size="md" fontWeight="semibold" color="gray.600">
-        Transform your life with these ChatGPT’s hidden gems.
-      </Heading>
 
       <AuthorCard
         Author={Author}

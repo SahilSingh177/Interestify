@@ -23,11 +23,11 @@ def send_email(recipient_email, subject, html_template):
         server.login(sender_email, sender_password)
 
         for article in articles:
-            # Create a MIME multipart message for each article
             message = MIMEMultipart("alternative")
             message["Subject"] = subject
             message["From"] = sender_email
             message["To"] = recipient_email
+            # Create a MIME multipart message for each article
 
             # Fill in the HTML template with article data
             filled_template = html_template.format(
