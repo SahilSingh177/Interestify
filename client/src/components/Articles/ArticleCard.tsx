@@ -116,7 +116,7 @@ const ArticleCard: React.FC<Props> = ({
     <>
       <Card
         bg="white"
-        direction={{ md: "row", sm: "column" }}
+        direction={["column","row"]}
         overflow="hidden"
         size="md"
         marginBottom={5}
@@ -125,10 +125,10 @@ const ArticleCard: React.FC<Props> = ({
         <VStack width="full">
           <CardBody width="full" onClick={() => Router.push(`/article/${articleId}`)}>
             <HStack>
-              <Heading size="lg" width="90%">
+              <Heading size={["md","md","md","lg"]} width={["100%","100%","90%","90%"]}>
                 {Title ? Title : "Title"}
               </Heading>
-              <Tag size="sm" variant="solid" colorScheme={getRandomColour}>
+              <Tag size="sm" display={["none","none","block","block"]} variant="solid" colorScheme={getRandomColour}>
                 {Category ? Category : "Unknown"}
               </Tag>
             </HStack>

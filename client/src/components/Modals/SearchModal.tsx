@@ -35,7 +35,7 @@ const SearchModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void
 
     return (
         <>
-            <Modal size='2xl' isOpen={isOpen} onClose={onClose}>
+            <Modal size={['xs','xs','xl','2xl']} isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalBody>

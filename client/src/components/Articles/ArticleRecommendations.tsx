@@ -34,11 +34,11 @@ const ArticleRecommendations = ({ ArticleId }: { ArticleId: string }) => {
 
 
   return (
-    <VStack width="30vw">
+    <VStack width={["90vw","90vw","90vw","30vw"]} margin='auto'>
       <VStack
-        width="30vw"
+        width={["90vw","90vw","90vw","30vw"]}
         height='70vh'
-        position='fixed'
+        position={['static','static','static','fixed']}
         right='3.7vw'
         top='25vh'
         overflowY="scroll"

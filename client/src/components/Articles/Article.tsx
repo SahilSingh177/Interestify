@@ -179,12 +179,12 @@ const Article: React.FC<Props> = ({
     <VStack
       spacing={5}
       alignItems="flex-start"
-      width="55vw"
+      width={["90vw","90vw","90vw","55vw"]}
       maxWidth="100vw"
       minHeight='90vh'
       marginLeft="5vw"
       marginRight="5vw"
-      marginTop='15vh'
+      marginTop={['5vh','5vh','5vh','15vh']}
       bg="whiteAlpha.500"
       overflowX="hidden"
     >
@@ -194,13 +194,14 @@ const Article: React.FC<Props> = ({
         left="2vh"
         value={Math.floor(articleProgress)}
         color="green.400"
+        display={['none','none','block','block']}
       >
         <CircularProgressLabel>
           {Math.floor(articleProgress)}
         </CircularProgressLabel>
       </CircularProgress>
 
-      <Heading color="gray.700">{Title}</Heading>
+      <Heading color="gray.700" size={["md","md","md","lg"]}>{Title}</Heading>
 
       <AuthorCard
         Author={Author}

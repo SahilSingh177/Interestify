@@ -14,7 +14,7 @@ const History = () => {
 
   useEffect(() => {
     if (!currentUser) {
-      router.push('http://localhost:3000/login');
+      router.push('/login');
     }
   }, [currentUser, router]);
 
@@ -94,7 +94,7 @@ const History = () => {
       paddingTop="5vh"
     >
       <Heading marginBottom="5vh" ref={heightRef}>HISTORY</Heading>
-      <InputGroup width='70%' marginBottom={5}>
+      <InputGroup width={["80%","80%","70%","70%"]} marginBottom={5}>
         <InputLeftElement pointerEvents="none">
           <Icon as={FaSearch} />
         </InputLeftElement>

@@ -23,7 +23,7 @@ const SearchResult = ({ searchResults, categoryName }: Props) => {
                     borderRadius='md'
                     bg='gray.100'
                     padding={5}
-                    onClick={()=>Router.push(`http://localhost:3000/category/${categoryName}/best`)}
+                    onClick={()=>Router.push(`/category/${categoryName}/best`)}
                 >
                     <Icon as={FaBook} marginRight={2} />
                     <Text>{categoryName}</Text>

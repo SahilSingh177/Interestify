@@ -58,7 +58,7 @@ const Sidebar: React.FC<Props> = () => {
           {categoriesData.slice(0, 10).map((category, id) => (
             <Badge
               key={id}
-              onClick={() => Router.push(`http://localhost:3000/category/${category}/best`)}
+              onClick={() => Router.push(`/category/${category}/best`)}
               marginLeft={5}
               marginBottom={5}
               padding={2}
@@ -73,7 +73,7 @@ const Sidebar: React.FC<Props> = () => {
         </Flex>
         <Center>
           <Button variant="success" width="60%" onClick={()=>
-                    Router.push('http://localhost:3000/search_category')}>
+                    Router.push('/search_category')}>
             See more topics
           </Button>
         </Center>

@@ -1,11 +1,11 @@
 from datetime import datetime
 from flask import Flask, request, jsonify
-from services.database.database import App
-from services.springer import start_scraping_thread
+from .services.database.database import App
+from .services.springer import start_scraping_thread
 import dotenv
 from flask_cors import CORS
-import services.user_preference as user_preference
-import services.similar_articles as similar_articles
+from .services import user_preference
+from .services import similar_articles
 
 app = Flask(__name__)
 CORS(app, origins=['http://localhost:3000'])

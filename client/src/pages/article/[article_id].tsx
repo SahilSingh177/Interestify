@@ -31,7 +31,7 @@ const ArticlePage = ({ articleData }: { articleData: ArticleData }) => {
       <Head>
         <title>Articles</title>
       </Head>
-      <Stack direction={{ md: 'row', sm: 'column' }} width="calc(100vw - 12px)" maxWidth="100vw" overflowX='hidden'>
+      <Stack direction={["column",'column','column','row']} width="calc(100vw - 12px)" maxWidth="100vw" overflowX='hidden'>
         {isLoading && (
           <Spinner
             margin='auto'

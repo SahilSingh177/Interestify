@@ -23,7 +23,7 @@ const Bookmarks = () => {
 
   useEffect(() => {
     if (!currentUser) {
-      router.push('http://localhost:3000/login');
+      router.push('/login');
     }
   }, [currentUser, router]);
   const heightRef = useRef<HTMLHeadingElement>(null);
@@ -111,7 +111,7 @@ const Bookmarks = () => {
       <Heading ref={heightRef} marginBottom="5vh">
         BOOKMARKS
       </Heading>
-      <InputGroup width="70%" marginBottom={5}>
+      <InputGroup width={["80%","80%","70%","70%"]} marginBottom={5}>
         <InputLeftElement pointerEvents="none">
           <Icon as={FaSearch} />
         </InputLeftElement>

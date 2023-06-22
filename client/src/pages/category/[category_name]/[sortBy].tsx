@@ -105,21 +105,21 @@ const Category = ({
           <TabList>
             <Tab
               onClick={() =>
-                router.push(`http://localhost:3000/category/${category}/best`)
+                router.push(`/category/${category}/best`)
               }
             >
               Best
             </Tab>
             <Tab
               onClick={() =>
-                router.push(`http://localhost:3000/category/${category}/recent`)
+                router.push(`/category/${category}/recent`)
               }
             >
               Recent
             </Tab>
             <Tab
               onClick={() =>
-                router.push(`http://localhost:3000/category/${category}/hot`)
+                router.push(`/category/${category}/hot`)
               }
             >
               Hot

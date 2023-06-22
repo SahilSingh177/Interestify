@@ -13,7 +13,7 @@ const SignOutModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => voi
 
   return (
     <>
-      <Modal size='2xl' isOpen={isOpen} onClose={onClose}>
+      <Modal size={['xs','xs','lg','lg']} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalBody>
