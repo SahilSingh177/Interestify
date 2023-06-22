@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router';
-import { Text, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure, InputGroup, InputLeftElement, Icon, Input, Flex, HStack, VStack, Spacer, Divider } from '@chakra-ui/react'
+import { Text, Modal, ModalBody, ModalContent,  ModalOverlay, InputGroup, InputLeftElement, Icon, Input, Flex, HStack, VStack, Spacer, Divider } from '@chakra-ui/react'
 import { FaBook, FaExternalLinkAlt, FaSearch } from 'react-icons/fa'
-import { Link } from '@chakra-ui/next-js';
 
 const SearchModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
     const Router = useRouter();

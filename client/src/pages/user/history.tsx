@@ -89,7 +89,7 @@ const History = () => {
       paddingTop="5vh"
     >
       <Heading marginBottom="5vh" ref={heightRef}>HISTORY</Heading>
-      <InputGroup width='70%' marginBottom={2}>
+      <InputGroup width='70%' marginBottom={5}>
         <InputLeftElement pointerEvents="none">
           <Icon as={FaSearch} />
         </InputLeftElement>

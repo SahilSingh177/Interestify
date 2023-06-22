@@ -106,7 +106,7 @@ const Bookmarks = () => {
       <Heading ref={heightRef} marginBottom="5vh">
         BOOKMARKS
       </Heading>
-      <InputGroup width="70%" marginBottom={2}>
+      <InputGroup width="70%" marginBottom={5}>
         <InputLeftElement pointerEvents="none">
           <Icon as={FaSearch} />
         </InputLeftElement>
