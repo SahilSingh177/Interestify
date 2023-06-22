@@ -13,6 +13,7 @@ import ArticleCard from '@/components/Articles/ArticleCard';
 import Sidebar from '@/components/Articles/SideBar';
 import { GetServerSidePropsContext } from 'next';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import Head from 'next/head';
 
 interface Article {
   id: string;
@@ -81,6 +82,10 @@ const Category = ({
   };
 
   return (
+    <>
+    <Head>
+        <title>{category}</title>
+      </Head>
     <Flex
       flexDirection={{ lg: 'row', md: 'column', sm: 'column' }}
       marginTop="10vh"
@@ -169,6 +174,7 @@ const Category = ({
       ></Divider>
       <Sidebar></Sidebar>
     </Flex>
+    </>
   );
 };
 

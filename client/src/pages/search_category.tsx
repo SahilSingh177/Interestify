@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Flex, Icon, Input, InputGroup, InputLeftElement, VStack } from '@chakra-ui/react'
 import { FaSearch } from 'react-icons/fa'
 import SearchCategoriesModal from '@/components/Modals/SearchCategoriesModal';
+import Head from 'next/head';
 
 
 const search_category = () => {
@@ -11,6 +12,10 @@ const search_category = () => {
     }
 
     return (
+        <>
+        <Head>
+        <title>Interestify - Categories</title>
+      </Head>
         <Flex
             flexDirection='column'
             alignItems='center'
@@ -46,6 +51,7 @@ const search_category = () => {
                 <SearchCategoriesModal inputText={searchInput}></SearchCategoriesModal>
             </VStack>
         </Flex>
+        </>
     )
 }
 

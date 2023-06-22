@@ -6,6 +6,7 @@ import { Player } from "@lottiefiles/react-lottie-player";
 import { AuthContext } from "@/Providers/AuthProvider";
 import { FaSearch } from "react-icons/fa";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
 const History = () => {
   const currentUser = useContext(AuthContext);
@@ -80,6 +81,10 @@ const History = () => {
   };
 
   return (
+    <>
+    <Head>
+        <title>History</title>
+      </Head>
     <Stack
       width={`calc(100vw - 12px)`}
       minHeight='90vh'
@@ -134,6 +139,7 @@ const History = () => {
           />
         ))}
     </Stack>
+    </>
   );
 };
 

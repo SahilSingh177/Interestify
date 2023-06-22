@@ -53,7 +53,7 @@ const AllCategories = ({ filteredData }: { filteredData: string[] }) => {
 
   return (
     <Box>
-      <Flex width={`calc(100vw - 12px)`} flexWrap="wrap" height="100vh" justifyContent="center">
+      <Flex width={`calc(100vw - 12px)`} flexWrap="wrap" minHeight="100vh" justifyContent="center">
         {categoriesData.map((categoryName, id) => {
           return (
             <CategoryCard key={id} categoryName={categoryName} onClickHandler={handleCategoryClick} view={filteredData.includes(categoryName)} imageLink={imageLinks[id]} />
