@@ -202,7 +202,7 @@ class App:
                 summary_text = summary.summary
                 lines = summary_text.splitlines()
                 cleaned_lines = [line.lstrip("- ") for line in lines]
-                cleaned_summary = "\n".join(cleaned_lines)[:3]
+                cleaned_summary = "\n".join(cleaned_lines)
                 result = session.execute_write(
                     self._create_blog, blog_title, blog_link, blog_author,read_time, download_link, cleaned_summary,text, category_name)
                 for record in result:

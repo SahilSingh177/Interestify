@@ -20,8 +20,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (!loading) {
       setCurrentUser({ email: user?.email, photoURL: user?.email, displayName: user?.displayName });
-      console.log('PROVIDER:');
-      console.log(user);
 
       if (user && user.email) {
         localStorage.setItem('email', user.email);

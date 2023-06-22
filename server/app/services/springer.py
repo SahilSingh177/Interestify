@@ -172,12 +172,9 @@ executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
 shutdown_event = threading.Event()
 
 def start_scraping_thread():
-    # Start fetching new articles on a separate thread
     fetch_articles_thread = threading.Thread(target=fetch_new_articles, args=(executor, shutdown_event))
     fetch_articles_thread.start()
 
-
-# Start doing this as soon as the app is run
 atexit.register(executor.shutdown)
 
 
@@ -208,5 +205,4 @@ def fetch_new_articles(executor, shutdown_event):
         time.sleep(3600)
 
     finally:
-        # Notify the executor that it can shut down
         shutdown_event.set()

@@ -1,4 +1,3 @@
-import Router, { useRouter } from "next/router";
 import { ChakraProvider } from '@chakra-ui/react'
 import { theme } from '../chakra/theme'
 import Layout from '../components/Layout/Layout'

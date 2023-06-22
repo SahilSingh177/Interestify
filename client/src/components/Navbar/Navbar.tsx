@@ -44,7 +44,7 @@ const Navbar: React.FC = () => {
       overflowY="hidden"
     >
       <Link href="/">
-        <Image src="/assets/png/logo-color.png" height='10vh' transform={transformScale}></Image>
+        <Image src="/assets/png/logo-no-background.png" height='7vh' transform={transformScale}></Image>
 
       </Link>
         <SearchBar></SearchBar>
