@@ -10,6 +10,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import useAuthRedirect from '@/hooks/useAuthRedirect';
 
 ChartJS.register(
   CategoryScale,
@@ -80,6 +81,7 @@ const Profile = () => {
   let dataArray: number[] = [];
 
   const fetchData = async () => {
+    useAuthRedirect();
     const resp = await fetch(`http://127.0.0.1:5000/getCategoryData?email=${currentUser?.email}`);
     const data = await resp.json();
     for (const categoryData of data) {

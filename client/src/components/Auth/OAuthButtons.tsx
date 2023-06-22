@@ -12,7 +12,6 @@ type Props = {
 };
 
 const OauthButtons = ({ imageSrc, providerName }: Props) => {
-  const currentUser = useContext(AuthContext);
   const [signInWithGoogle, guser, gloading, gerror] = useSignInWithGoogle(auth);
   const [signInWithFacebook, fuser, floading, ferror] = useSignInWithFacebook(auth);
 
@@ -31,13 +30,12 @@ const OauthButtons = ({ imageSrc, providerName }: Props) => {
         return;
       }
     }
-  
     
     await new Promise<void>((resolve) => {
       const unsubscribe = auth.onAuthStateChanged((user) => {
         if (user) {
           unsubscribe();
-          resolve(); // Resolving the promise without any value
+          resolve();
         }
       });
     });

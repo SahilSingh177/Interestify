@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useRouter } from 'next/router';
 import {
   Stack, Text, Input, SimpleGrid, GridItem,
-  InputGroup, InputLeftAddon, InputRightElement, Icon, Box, Button, Flex
+  InputGroup, InputLeftAddon, InputRightElement, Icon, Box, Button
 } from '@chakra-ui/react';
 import { FaArrowCircleRight, FaEnvelope } from 'react-icons/fa';
+import useAuthRedirect from '@/hooks/useAuthRedirect';
 
 const RegisterMail = () => {
+  useAuthRedirect();
   const router = useRouter();
   const [userEmail, setUserEmail] = useState('');
 
