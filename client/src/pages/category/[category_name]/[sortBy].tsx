@@ -44,6 +44,7 @@ const Category = ({
   useEffect(() => {
     const handleRouteChange = () => {
       if (router.query.optionalParam !== router.asPath) {
+        console.log('route changed');
         setData(initialData);
         setPage(2);
         setHasMoreData(true);
@@ -175,7 +176,11 @@ export async function getServerSideProps({
   query,
 }: GetServerSidePropsContext<{ category_name: string; sortBy: string }>) {
   try {
+    
     const { category_name, sortBy } = query;
+    console.log('HIT');
+    console.log(category_name);
+    console.log(query);
     let endpoint = '';
 
     if (sortBy === 'best')
