@@ -10,7 +10,7 @@ from neo4j.exceptions import Neo4jError
 # from dotenv import load_dotenv
 from pathlib import Path
 
-from .read_article import read_article
+from read_article import read_article
 
 # load_dotenv()
 
@@ -913,31 +913,70 @@ class App:
         except Neo4jError as exception:
             logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
             raise
-
-    def get_blogs_by_category_and_limit(self, category_name, limit):
+    
+    def get_top_categories_for_a_user(self,user_email):
         with self.driver.session(database="neo4j") as session:
-            result = session.execute_read(self._get_blogs_by_category_and_limit, category_name, limit)
-            if result:
-                print("Success")
-                return result
-            else:
-                print("Failure")
-                return False
-            
+            result = session.execute_read(
+                self._get_top_categories_for_a_user,
+                user_email
+            )
+            return result
+        
     @staticmethod
-    def _get_blogs_by_category_and_limit(tx, category_name, limit):
+    def _get_top_categories_for_a_user(tx,user_email):
         query = (
-            "MATCH (b:Blog)-[:BELONGS_TO]->(:Category {name:$category_name})  "
+            "MATCH (u:User{email:$user_email})-[:BROWSES]->(c:Category) "
+            "RETURN c.name AS category_name "
+            "ORDER BY c.score DESC "
+            "LIMIT 5"
+        )
+        result = tx.run(
+            query,
+            user_email=user_email
+        )
+        try:
+            return [
+                {
+                    "category_name": record["category_name"]
+                }
+                for record in result
+            ]
+        except Neo4jError as exception:
+            logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
+            raise
+
+    def get_top_blog_for_a_category(self,category_name):
+        with self.driver.session(database="neo4j") as session:
+            result = session.execute_read(
+                self._get_top_blog_for_a_category,
+                category_name
+            )
+            return result
+        
+    @staticmethod
+    def _get_top_blog_for_a_category(tx,category_name):
+        query = (
+            "MATCH (c:Category{name:$category_name})<-[:BELONGS_TO]-(b:Blog) "
             "WITH b "
             "MATCH (:User)-[r:LIKES]->(b) "
             "WITH b, COUNT(r) AS likecount "
-            "RETURN b.title as title,b.author as author,b.link as link "
-            "ORDER BY likecount DESC LIMIT $limit"
+            "RETURN b.title AS title, b.link AS link, b.summary AS summary, b.author AS author "
+            "ORDER BY likecount DESC "
+            "LIMIT 1"
         )
-        result = tx.run(query, category_name=category_name, limit=limit)
+        result = tx.run(
+            query,
+            category_name=category_name
+        )
         try:
             return [
-                {"author": record["author"], "title": record["title"], "link": record["link"]}
+                {
+                    "title": record["title"],
+                    "link": record["link"],
+                    "summary": record["summary"],
+                    "author": record["author"],
+                    "category_name": category_name
+                }
                 for record in result
             ]
         except Neo4jError as exception:
@@ -965,6 +1004,35 @@ class App:
             logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
             raise
 
+    def check_user_browses_any_category(self, user_email):
+        if not self.check_user_exists(user_email):
+            return False
+        with self.driver.session(database="neo4j") as session:
+            result = session.execute_read(
+                self._check_user_browses_any_category,
+                user_email
+            )
+            return result
+        
+    @staticmethod
+    def _check_user_browses_any_category(tx,user_email):
+        query = (
+            "MATCH (u:User{email:$user_email})-[:BROWSES]->(c:Category) "
+            "RETURN u "
+        )
+        result = tx.run(
+            query,
+            user_email=user_email
+        )
+        try:
+            print(result)
+            if result.peek() is not None:
+                return True
+            else:
+                return False
+        except Neo4jError as exception:
+            logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
+            raise
     
     # Deletion
 
@@ -1197,4 +1265,5 @@ if __name__ == "__main__":
     # app.user_to_category_browsing("sahilsingh1221177@gmail.com","Chemistry","400",datetime.now())
     # print(app.get_duration_and_timestamp("sahilsingh1221177@gmail.com"))
     # print(app.get_session_data("kaabil@gmail.com"))
+    print(app.check_user_browses_any_category("sahilsi1177@gmail.com"))
     app.close()
