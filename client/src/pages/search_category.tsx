@@ -21,7 +21,7 @@ const search_category = () => {
             height='90vh'
             width='100vw'
         >
-            <VStack minHeight='8vh' justifyContent='center' width='70%' bg='white' marginTop='10vh' borderRadius={15} padding={0}>
+            <VStack minHeight='8vh' justifyContent='center' width='70%' bg='white' marginTop='10vh' borderRadius={15} padding={0} paddingBottom={5}>
                 <Flex height='8vh' width='100%' justifyContent='center' alignItems='center'>
                     <InputGroup height='7vh' size='lg' bg='white' width='65vw' maxHeight='-moz-min-content'>
                         <InputLeftElement

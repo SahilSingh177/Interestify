@@ -39,13 +39,13 @@ const Category = ({
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<Article[]>(initialData);
   const [hasMoreData, setHasMoreData] = useState(true);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(2);
 
   useEffect(() => {
     const handleRouteChange = () => {
       if (router.query.optionalParam !== router.asPath) {
         setData(initialData);
-        setPage(1);
+        setPage(2);
         setHasMoreData(true);
       }
     };
