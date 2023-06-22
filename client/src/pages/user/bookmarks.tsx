@@ -14,8 +14,10 @@ import { Player } from "@lottiefiles/react-lottie-player";
 import BookmarkCard from "@/components/User/BookmarkCard";
 import { auth } from "@/firebase/clientApp";
 import { AuthContext } from "@/Providers/AuthProvider";
+import useAuthRedirect from "@/hooks/useAuthRedirect";
 
 const Bookmarks = () => {
+  useAuthRedirect();
   const currentUser = useContext(AuthContext);
   const heightRef = useRef<HTMLHeadingElement>(null);
 

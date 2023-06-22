@@ -217,7 +217,6 @@ const Article: React.FC<Props> = ({
           cursor="pointer"
           onClick={handleLike}
         />
-        <Icon as={regularComment} size="lg" cursor="pointer" />
         <Spacer />
         <Icon
           as={isBookMarked ? solidBookMark : regularBookmark}
@@ -233,59 +232,6 @@ const Article: React.FC<Props> = ({
         {Content}
       </Text>
 
-      <Flex flexWrap="wrap" marginTop={5} marginBottom={5}>
-        <Badge
-          marginLeft={5}
-          marginBottom={5}
-          padding={2}
-          borderRadius={20}
-          fontWeight="light"
-          bg="gray.100"
-        >
-          Startup
-        </Badge>
-        <Badge
-          marginLeft={5}
-          marginBottom={5}
-          padding={2}
-          borderRadius={20}
-          fontWeight="light"
-          bg="gray.100"
-        >
-          Software Development
-        </Badge>
-        <Badge
-          marginLeft={5}
-          marginBottom={5}
-          padding={2}
-          borderRadius={20}
-          fontWeight="light"
-          bg="gray.100"
-        >
-          Software Architecture
-        </Badge>
-        <Badge
-          marginLeft={5}
-          marginBottom={5}
-          padding={2}
-          borderRadius={20}
-          fontWeight="light"
-          bg="gray.100"
-        >
-          Software Enginerring
-        </Badge>
-        <Badge
-          marginLeft={5}
-          marginBottom={5}
-          padding={2}
-          borderRadius={20}
-          fontWeight="light"
-          bg="gray.100"
-        >
-          Software Programming
-        </Badge>
-      </Flex>
-
       <Divider bg="gray.400" borderColor="gray.600" />
       <HStack spacing={5} paddingLeft={5} paddingRight={5} width="100%">
         <Icon
@@ -294,7 +240,6 @@ const Article: React.FC<Props> = ({
           cursor="pointer"
           onClick={handleLike}
         />
-        <Icon as={regularComment} size="lg" cursor="pointer" />
         <Spacer />
         <Icon
           as={isBookMarked ? solidBookMark : regularBookmark}

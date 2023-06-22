@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Flex, Input, FormLabel, Box } from "@chakra-ui/react";
-import { useAuthState, useCreateUserWithEmailAndPassword, useUpdateProfile } from 'react-firebase-hooks/auth';
+import { useCreateUserWithEmailAndPassword, useUpdateProfile } from 'react-firebase-hooks/auth';
 import { auth } from '../../firebase/clientApp';
 import Redirect from "./Redirect";
 import ShowAlert from "../Alert/Alert";
@@ -23,35 +23,46 @@ const SignupForm = () => {
   ] = useCreateUserWithEmailAndPassword(auth);
 
   const [updateProfile, updating, ProfileError] = useUpdateProfile(auth);
+  const [customErrorMessage,setCustomErrorMessage] = useState<string>('');
 
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    // handle password validation (e.g., check length, match, etc.)
-    // if (signupForm.password !== signupForm.confirmPassword)
-
-
-    await createUserWithEmailAndPassword(signupForm.email, signupForm.password);
-    await updateProfile({ displayName: signupForm.username });
-    await updateProfile({ photoURL: '/assets/default_profile_photo.png' });
-
-    if (error) {
-      console.log(error);
+  
+    if (signupForm.password !== signupForm.confirmPassword) {
+      setCustomErrorMessage('Passwords do not match');
       return;
     }
-    await fetch("http://127.0.0.1:5000/registerUser", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email: signupForm.email, username: signupForm.username }),
-    });
-    setSignupForm({ username: "", email: "", password: "", confirmPassword: "" });
-    Router.push("http://localhost:3000/welcome/categories");
+    
+    if (signupForm.password.length < 6) {
+      setCustomErrorMessage('Password should be at least 6 characters long');
+      return;
+    }
+
+    try {
+      await createUserWithEmailAndPassword(signupForm.email, signupForm.password);
+      await updateProfile({ displayName: signupForm.username });
+      await updateProfile({ photoURL: '/assets/default_profile_photo.png' });
+  
+      await fetch("http://127.0.0.1:5000/registerUser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: signupForm.email, username: signupForm.username }),
+      });
+  
+      setSignupForm({ username: "", email: "", password: "", confirmPassword: "" });
+      Router.push("http://localhost:3000/welcome/categories");
+    } catch (error) {
+      console.log(error);
+      setCustomErrorMessage('Internal Server Error');
+    }
   };
+  
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomErrorMessage('');
     setSignupForm((prev) => ({
       ...prev,
       [event.target.name]: event.target.value,
@@ -80,7 +91,7 @@ const SignupForm = () => {
           required
           name="email"
           placeholder="email"
-          type="text"
+          type="email"
           width="25vw"
           height="7.5vh"
           mb={2}
@@ -119,11 +130,11 @@ const SignupForm = () => {
         <Redirect view="signup"></Redirect>
       </form>
 
-      {error && (
+      {customErrorMessage && (
         <ShowAlert
           type="error"
           title="Sorry!"
-          message={"Internal Server Error"}
+          message={customErrorMessage}
         />
       )}
     </Flex>

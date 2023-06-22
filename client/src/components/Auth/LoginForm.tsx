@@ -11,36 +11,44 @@ const LoginForm = () => {
     email: "",
     password: "",
   });
-  
+
+  const [customErrorMessage, setCustomErrorMessage] = useState<string>('');
+
   const [
     signInWithEmailAndPassword,
     user,
     loading,
     error,
   ] = useSignInWithEmailAndPassword(auth);
-  
+
   const Router = useRouter();
-  
+
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    
-    signInWithEmailAndPassword(loginForm.email, loginForm.password);
-  
+    await signInWithEmailAndPassword(loginForm.email, loginForm.password);
+
     if (error) {
-      console.log(error);
+      if (error.code === 'auth/wrong-password') {
+        console.log('yayy')
+        setCustomErrorMessage('Wrong password. Please try again.');
+      } else {
+        console.log(error);
+      }
       return;
     }
-
-    setLoginForm({ email: "", password: "" });
-    Router.push("/");
+    else{
+      setLoginForm({ email: "", password: "" });
+      Router.push("/");
+    }
   };
-  
+
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomErrorMessage('');
     setLoginForm((prev) => ({
       ...prev,
       [event.target.name]: event.target.value,
     }));
-  };  
+  };
 
   return (
     <Flex width="50vw" padding="10vw" alignItems='center'>
@@ -75,8 +83,14 @@ const LoginForm = () => {
           Log In
         </Button>
         <Redirect view="login"></Redirect>
-        {error && (<ShowAlert type="error" title={"Sorry!"} message={"Internal Server Error"} />)}
       </form>
+      {customErrorMessage && (
+        <ShowAlert
+          type="error"
+          title="Sorry!"
+          message={customErrorMessage}
+        />
+      )}
     </Flex>
   )
 };

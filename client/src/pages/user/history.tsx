@@ -5,8 +5,10 @@ import { auth } from '@/firebase/clientApp';
 import { Player } from "@lottiefiles/react-lottie-player";
 import { AuthContext } from "@/Providers/AuthProvider";
 import { FaSearch } from "react-icons/fa";
+import useAuthRedirect from "@/hooks/useAuthRedirect";
 
 const History = () => {
+  useAuthRedirect();
   const currentUser = useContext(AuthContext);
   const heightRef = useRef<HTMLHeadingElement>(null);
   interface PreviousArticle {

@@ -19,7 +19,6 @@ const AuthorCard: React.FC<AuthorData> = ({ Author, Category, ReadTime }) => {
           <Stack direction={{ md: "row", sm: "column" }} spacing={{ md: "4", sm: "2" }}>
             <Text fontSize='sm' color='gray.500'>Published in <Link color="black">{Category ? Category : "Unknown"}</Link></Text>
             <Text fontSize='sm' color='gray.500'>{ReadTime}</Text>
-            <Text fontSize='sm' color='gray.500'>May 3</Text>
           </Stack>
         </Box>
       </VStack>
