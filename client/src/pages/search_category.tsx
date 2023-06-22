@@ -1,30 +1,50 @@
-import React from 'react'
-import { Flex, Icon, Input, InputGroup, InputLeftElement } from '@chakra-ui/react'
+import React, { useState } from 'react'
+import { Flex, Icon, Input, InputGroup, InputLeftElement, VStack } from '@chakra-ui/react'
 import { FaSearch } from 'react-icons/fa'
+import SearchCategoriesModal from '@/components/Modals/SearchCategoriesModal';
+
 
 const search_category = () => {
+    const [searchInput, setSearchInput] = useState<string>("");
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchInput(event.target.value);
+    }
+
     return (
-        <Flex height={`calc(100vh - 80px)`} width={`calc(100vw - 12px)`}>
-            <InputGroup width="60vw" margin="5vh 5vw" maxHeight='-moz-min-content'>
-                <InputLeftElement
-                    pointerEvents="none"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    height="100%"
-                >
-                    <Icon as={FaSearch} />
-                </InputLeftElement>
-                <Input
-                    borderRadius={100}
-                    height="7vh"
-                    borderColor="black"
-                    _hover={{ borderColor: "black" }}
-                    focusBorderColor="black"
-                    type="tel"
-                    placeholder="Search Categories"
-                />
-            </InputGroup>
+        <Flex
+            flexDirection='column'
+            alignItems='center'
+            bgImage='/assets/search_bg.jpg'
+            bgSize="cover"
+            bgPosition="center"
+            bgRepeat="no-repeat"
+            height='90vh'
+            width='100vw'
+        >
+            <VStack minHeight='8vh' justifyContent='center' width='70%' bg='white' marginTop='10vh' borderRadius={15} padding={0}>
+                <Flex height='8vh' width='100%' justifyContent='center' alignItems='center'>
+                    <InputGroup height='7vh' size='lg' bg='white' width='65vw' maxHeight='-moz-min-content'>
+                        <InputLeftElement
+                            color='teal.400'
+                            pointerEvents="none"
+                        >
+                            <Flex alignItems='center' justifyContent='center' height="7vh">
+                                <Icon as={FaSearch} color='teal.400' />
+                            </Flex>
+                        </InputLeftElement>
+                        <Input
+                            height='7vh'
+                            borderColor="white"
+                            _hover={{ borderColor: "white" }}
+                            focusBorderColor="white"
+                            type="tel"
+                            placeholder="Search Categories"
+                            onChange={handleChange}
+                        />
+                    </InputGroup>
+                </Flex>
+                <SearchCategoriesModal inputText={searchInput}></SearchCategoriesModal>
+            </VStack>
         </Flex>
     )
 }
