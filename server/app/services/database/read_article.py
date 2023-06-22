@@ -3,33 +3,41 @@ import PyPDF2
 import os
 import cohere
 import readtime
+import dotenv
 
-co = cohere.Client('Vuhf7IBdd3EXdtZBWpDmkCfgRttlg3EXGzvizBqr')
+dotenv.load_dotenv()
+
+co = cohere.Client(os.getenv("COHERE_API_KEY"))
 
 def read_article(link):
-    article = ""
+    try:
+        article = ""
 
-    # Download the PDF file
-    response = requests.get(link)
-    with open("temp.pdf", "wb") as file:
-        file.write(response.content)
+        # Download the PDF file
+        response = requests.get(link)
+        with open("temp.pdf", "wb") as file:
+            file.write(response.content)
 
-    pdf_file = open("temp.pdf", "rb")
-    pdf_reader = PyPDF2.PdfReader(pdf_file)
+        pdf_file = open("temp.pdf", "rb")
+        pdf_reader = PyPDF2.PdfReader(pdf_file)
 
-    pageData = ""
-    for page_num in range(len(pdf_reader.pages)):
-        page = pdf_reader.pages[page_num]
-        page = page.extract_text()
-        page = page.replace('\n','').strip()
-        pageData += page
-        pageData += '\n'
+        pageData = ""
+        for page_num in range(len(pdf_reader.pages)):
+            page = pdf_reader.pages[page_num]
+            page = page.extract_text()
+            page = page.replace('\n','').strip()
+            pageData += page
+            pageData += '\n'
 
-    article = pageData
-    summary = co.summarize(text=article,length='short',format='paragraph',extractiveness ='low') 
-    read_time = readtime.of_text(article)
-    data = [pageData, summary, read_time]
-    pdf_file.close()
-    os.remove("temp.pdf")
+        article = pageData
+        summary = co.summarize(text=article,length='short',format='paragraph',extractiveness ='low') 
+        read_time = readtime.of_text(article)
+        data = [pageData, summary, read_time]
+        pdf_file.close()
+        os.remove("temp.pdf")
 
-    return data
+        return data
+
+    except Exception as e:
+        print("An error occurred in read_article:", e)
+        return []
