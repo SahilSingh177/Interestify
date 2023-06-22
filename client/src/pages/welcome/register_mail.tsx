@@ -1,17 +1,48 @@
-import React, { useState, useContext } from 'react';
+import React, { useState,useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
 import {
   Stack, Text, Input, SimpleGrid, GridItem,
   InputGroup, InputLeftAddon, InputRightElement, Icon, Box, Button
 } from '@chakra-ui/react';
 import { FaArrowCircleRight, FaEnvelope } from 'react-icons/fa';
-import useAuthRedirect from '@/hooks/useAuthRedirect';
-import useCategoryCheck from '@/hooks/useCategoryCheck';
+import { AuthContext } from '@/Providers/AuthProvider';
 
 const RegisterMail = () => {
-  useAuthRedirect();
-  useCategoryCheck();
+  const currentUser = useContext(AuthContext);
   const router = useRouter();
+
+  useEffect(() => {
+    if (!currentUser) {
+      router.push('http://localhost:3000/login');
+    }
+  }, [currentUser, router]);
+
+  useEffect(() => {
+    const checkCategories = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/hasSelectedCategories',{
+          method:'POST',
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            "email": currentUser?.email,
+          }),
+        });
+        const data = await response.json();
+        console.log(data);
+        
+        if (!data) {
+          router.push('http://localhost:3000/welcome/categories'); 
+        }
+      } catch (error) {
+        console.error('Error checking categories:', error);
+      }
+    };
+
+    checkCategories();
+  }, []);
+
   const [userEmail, setUserEmail] = useState('');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

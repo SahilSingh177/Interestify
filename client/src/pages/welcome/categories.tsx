@@ -1,13 +1,22 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect ,useContext} from 'react'
 import { Stack, InputGroup, InputLeftElement, Input, Icon, Heading } from '@chakra-ui/react'
 import AllCategories from '@/components/Category/AllCategories'
 import { FaSearch } from 'react-icons/fa'
 import { categoriesData } from '@/Handlers/CategoriesData'
 import { auth } from '@/firebase/clientApp'
-import useAuthRedirect from '@/hooks/useAuthRedirect'
+import { AuthContext } from '@/Providers/AuthProvider'
+import { useRouter } from 'next/router'
 
 const categories = () => {
-    useAuthRedirect();
+  const currentUser = useContext(AuthContext);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!currentUser) {
+      router.push('http://localhost:3000/login');
+    }
+  }, [currentUser, router]);
+
     const [data,setData] = useState<string[]>(categoriesData);
     const [inputText, setInputText] = useState<string>('');
     

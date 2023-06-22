@@ -201,7 +201,7 @@ def fetch_new_articles(executor, shutdown_event):
                     app = App(uri, user, password)
                     app.create_blog(title, link, authors, pdf_link, backend_category)
                     print("New article found:", title)
-        # time.sleep(3600)
+        time.sleep(3600)
 
     finally:
         shutdown_event.set()
