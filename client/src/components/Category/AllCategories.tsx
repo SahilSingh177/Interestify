@@ -22,8 +22,7 @@ const AllCategories = ({ filteredData }: { filteredData: string[] }) => {
 
   const submitCategories = async () => {
     const email = currentUser?.email;
-    console.log(email);
-    if (email && clickedCategories.length >= 5 && clickedCategories.length >= 5) {
+    if (email && clickedCategories.length >= 5) {
       Router.push('http://localhost:3000/welcome/register_mail');
       const payload = {
         email: email,

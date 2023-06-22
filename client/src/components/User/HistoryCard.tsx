@@ -52,7 +52,6 @@ const HistoryCard = ({
       );
       const bodyData = await response.json();
       const filteredData = bodyData.data;
-      console.log(filteredData);
     } catch (error) {
       console.error(error);
     }

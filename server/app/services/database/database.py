@@ -14,10 +14,9 @@ from .read_article import read_article
 
 # load_dotenv()
 
-
-DATABASE_URL = "neo4j+s://58ad0a3e.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "TrU2Lb35p2JaTVKag7sn-RPD-BQtCCP0eBZMyhwXFY4"
+PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
 print(USER)
 
 class App:
@@ -466,7 +465,7 @@ class App:
                 "WITH b, r2, r.score as score, c.name as category_name "
                 "WHERE NOT (u:User)-[r:LIKES]->(b) "
                 "RETURN b.author AS author, b.title AS title, b.link AS link, b.summary AS summary, b.read_time as read_time, ID(b) AS id, score, category_name,0 as likes "
-                "ORDER BY id DESC "
+                "ORDER BY b.created_at DESC "
                 "SKIP $skip "
                 "LIMIT $limit"
             )
@@ -720,34 +719,32 @@ class App:
                 query=query, exception=exception))
             raise
     
-    def get_blogs_by_likes(self, category_name: Optional[str]=None, limit: int = 10, page: int = 1, page_limit: int = 5):
+    def get_blogs_by_likes(self, category_name: Optional[str]=None, page: int = 1, page_limit: int = 5):
         with self.driver.session(database="neo4j") as session:
             result = session.execute_read(self._get_blogs_by_likes, category_name, page, page_limit)
             print("Success")
             return result
 
     @staticmethod
-    def _get_blogs_by_likes(
-        tx,
-        category_name: Optional[str] = None,
-        page: int = 1,
-        page_limit: int = 5
-    ):
+    def _get_blogs_by_likes(tx, category_name: Optional[str]=None, page: int = 1, page_limit: int = 5):
         skip_count = (page - 1) * page_limit
         if category_name:
+            print(skip_count, page_limit)
             query = (
                 "MATCH (u:User)-[r:LIKES]->(b:Blog)-[:BELONGS_TO]->(c:Category{name:$category_name}) "
                 "WITH b, COUNT(r) AS likeCount "
-                "ORDER BY likeCount DESC "
                 "RETURN b.title AS title, likeCount, b.author AS author, b.link AS link, b.download_link AS download_link, b.summary AS summary, b.read_time AS read_time, ID(b) AS id "
+                "SKIP $skip_count "
+                "LIMIT $page_limit "
                 "UNION "
                 "MATCH (b:Blog)-[:BELONGS_TO]->(c:Category{name:$category_name}) "
                 "WHERE NOT EXISTS((:User)-[:LIKES]->(b)) "
                 "RETURN b.title AS title, 0 AS likeCount, b.author AS author, b.link AS link, b.download_link AS download_link, b.summary AS summary, b.read_time AS read_time, ID(b) AS id "
-                "ORDER BY b.createdAt DESC "
+                "ORDER BY likeCount DESC, b.created_at DESC "
                 "SKIP $skip_count "
                 "LIMIT $page_limit"
             )
+
             result = tx.run(
                 query,
                 category_name=category_name,
@@ -760,11 +757,13 @@ class App:
                 "WITH b, COUNT(r) AS likeCount "
                 "ORDER BY likeCount DESC "
                 "RETURN b.title AS title, likeCount, b.author AS author, b.link AS link, b.download_link AS download_link, b.summary AS summary, b.read_time AS read_time, ID(b) AS id "
+                "SKIP $skip_count "
+                "LIMIT $page_limit "
                 "UNION "
                 "MATCH (b:Blog) "
                 "WHERE NOT EXISTS((:User)-[:LIKES]->(b)) "
                 "RETURN b.title AS title, 0 AS likeCount, b.author AS author, b.link AS link, b.download_link AS download_link, b.summary AS summary, b.read_time AS read_time, ID(b) AS id "
-                "ORDER BY b.createdAt DESC "
+                "ORDER BY b.created_at DESC "
                 "SKIP $skip_count "
                 "LIMIT $page_limit"
             )
@@ -794,73 +793,50 @@ class App:
 
     def get_recent_blogs(self, category_name: Optional[str] = None, limit: int = 10, page: int = 1, page_limit: int = 5):
         with self.driver.session(database="neo4j") as session:
-            result = session.execute_read(
-                self._get_recent_blogs,
-                category_name,
-                limit,
-                page,
-                page_limit
-            )
-            print("Success")
-            return result
-
-    @staticmethod
-    def _get_recent_blogs(
-        tx,
-        category_name: Optional[str] = None,
-        limit: int = 10,
-        page: int = 1,
-        page_limit: int = 5
-    ):
-        skip_count = (page - 1) * page_limit
-        # print(skip_count)
-        if category_name:
-            query = (
-                "MATCH (b:Blog)-[:BELONGS_TO]->(c:Category{name:$category_name}) "
-                "WITH b "
-                "MATCH (u2:User)-[r2:LIKES]->(b) "
-                "WITH b, COUNT(r2) AS likeCount "
-                "RETURN b.title AS title, b.author AS author, b.link AS link, b.download_link AS download_link, b.summary AS summary, b.read_time AS read_time, ID(b) AS id, likeCount "
-                "ORDER BY b.createdAt DESC "
-                "SKIP $skip_count "
-                "LIMIT $page_limit"
-            )
-            result = tx.run(
-                query,
-                category_name=category_name,
-                skip_count=skip_count,
-                page_limit=page_limit
-            )
-        else:
-            query = (
-                "MATCH (b:Blog) "
-                "RETURN b.title AS title, b.author AS author, b.link AS link, b.download_link AS download_link, b.summary AS summary, b.read_time AS read_time, ID(b) AS id "
-                "ORDER BY b.createdAt DESC "
-                "SKIP $skip_count "
-                "LIMIT $page_limit"
-            )
-            result = tx.run(
-                query,
-                skip_count=skip_count,
-                page_limit=page_limit
-            )
-
-        try:
-            return [
+            skip_count = (page - 1) * page_limit
+            if category_name:
+                query = (
+                    "MATCH (b:Blog)-[:BELONGS_TO]->(c:Category{name:$category_name}) "
+                    "RETURN b.title AS title, b.author AS author, b.link AS link, b.summary AS summary, b.read_time AS read_time, ID(b) AS id, likeCount "
+                    "ORDER BY b.created_at DESC "
+                    "SKIP $skip_count "
+                    "LIMIT $page_limit"
+                )
+                result = session.run(
+                    query,
+                    category_name=category_name,
+                    skip_count=skip_count,
+                    page_limit=page_limit
+                )
+            else:
+                query = (
+                    "MATCH (b:Blog) "
+                    "RETURN b.title AS title, b.author AS author, b.link AS link, b.summary AS summary, b.read_time AS read_time, ID(b) AS id, likeCount "
+                    "ORDER BY b.created_at DESC "
+                    "SKIP $skip_count "
+                    "LIMIT $page_limit"
+                )
+                result = session.run(
+                    query,
+                    skip_count=skip_count,
+                    page_limit=page_limit
+                )
+            try:
+                return [
                 {
                     "author": record["author"],
                     "title": record["title"],
                     "link": record["link"],
-                    "pdf_link": record["download_link"],
                     "summary": record["summary"],
                     "read_time": record["read_time"],
-                    "id": record["id"]
+                    "id": record["id"],
+                    "likes": self.get_count_of_likes(record["id"])
                 }
                 for record in result
             ]
-        except Neo4jError as exception:
-            logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
-            raise
+            except Neo4jError as exception:
+                logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
+                raise
 
     def get_hot_blogs(self, category_name: Optional[str] = None, limit: int = 10, page: int = 1, page_limit: int = 5):
         #Fetch most liked blogs in last 7 days
@@ -893,7 +869,7 @@ class App:
                 "WHERE date(b.created_at) > date($time) "
                 "WITH b, COUNT(r) AS likecount "
                 "RETURN b.title as title,b.author as author,b.link as link,likecount,b.summary AS summary, b.read_time AS read_time, ID(b) AS id "
-                "ORDER BY likecount DESC LIMIT $limit"
+                "ORDER BY likecount DESC SKIP $skip_count LIMIT $limit"
             )
             result = tx.run(
                 query,
@@ -910,7 +886,7 @@ class App:
                 "MATCH (:User)-[r:LIKES]->(b) "
                 "WHERE date(b.created_at) > date($time) "
                 "WITH b, COUNT(r) AS likecount "
-                "RETURN b.title as title,b.author as author,b.link as link "
+                "RETURN b.title as title,b.author as author,b.link as link,likecount,b.summary AS summary, b.read_time AS read_time, ID(b) AS id "
                 "ORDER BY likecount DESC LIMIT $limit"
             )
             result = tx.run(
@@ -926,7 +902,11 @@ class App:
                 {
                     "author": record["author"],
                     "title": record["title"],
-                    "link": record["link"]
+                    "link": record["link"],
+                    "summary": record["summary"],
+                    "read_time": record["read_time"],
+                    "id": record["id"],
+                    "likes": record["likecount"]
                 }
                 for record in result
             ]
@@ -1179,6 +1159,26 @@ class App:
         result = tx.run(query)
         try:
             return [{"title":record["title"],"link": record["link"], "author": record["author"], "summary": record["summary"], "id":record["id"]} for record in result]
+        except Neo4jError as exception:
+            logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
+            raise
+    
+    def get_count_of_likes(self, blog_id):
+        with self.driver.session(database="neo4j") as session:
+            result = session.execute_read(self._get_count_of_likes, blog_id)
+            print("success")
+            return result
+        
+    @staticmethod
+    def _get_count_of_likes(tx, blog_id):
+        query =(
+            "MATCH (u:User)-[r:LIKES]->(b:Blog) "
+            "WHERE ID(b) = $blog_id "
+            "RETURN COUNT(*) AS count "
+        )
+        result = tx.run(query, blog_id=blog_id)
+        try:
+            return result.single()["count"]
         except Neo4jError as exception:
             logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
             raise
