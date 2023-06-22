@@ -84,6 +84,7 @@ const Article: React.FC<Props> = ({
   }, []);
 
   useEffect(() => {
+
     const updateBlogList = async () => {
       if (!currentUser) return;
       await fetch("http://127.0.0.1:5000/registerBlog", {
@@ -97,9 +98,6 @@ const Article: React.FC<Props> = ({
         }),
       });
     };
-
-
-
 
     const handleScroll = () => {
       const windowHeight = window.innerHeight;
@@ -125,6 +123,7 @@ const Article: React.FC<Props> = ({
         console.error(error);
       }
     };
+    
     const fetchHasBookmarked = async () => {
       if(!currentUser) return;
       try {
@@ -139,10 +138,13 @@ const Article: React.FC<Props> = ({
       }
     };
 
-    fetchHasBookmarked();
-    fetchHasLiked();
-    updateBlogList();
+    const promises = [
+      fetchHasBookmarked(),
+      fetchHasLiked(),
+      updateBlogList()
+    ];
 
+    Promise.all(promises);
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);

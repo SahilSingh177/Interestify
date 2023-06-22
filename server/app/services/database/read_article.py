@@ -26,11 +26,10 @@ def read_article(link):
         pageData += '\n'
 
     article = pageData
-    summary = co.summarize(text=article,length='short') 
+    summary = co.summarize(text=article,length='short',format='paragraph',extractiveness ='low') 
     read_time = readtime.of_text(article)
     data = [pageData, summary, read_time]
     pdf_file.close()
     os.remove("temp.pdf")
 
     return data
-

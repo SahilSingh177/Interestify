@@ -33,6 +33,7 @@ def initialize():
 @app.route('/registerUser', methods=['POST'])
 def register_user():
     data = request.json
+    print(data)
     email = data['email']
     username = data['username']
     print(email)
