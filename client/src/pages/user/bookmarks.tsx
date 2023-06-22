@@ -14,11 +14,17 @@ import { Player } from "@lottiefiles/react-lottie-player";
 import BookmarkCard from "@/components/User/BookmarkCard";
 import { auth } from "@/firebase/clientApp";
 import { AuthContext } from "@/Providers/AuthProvider";
-import useAuthRedirect from "@/hooks/useAuthRedirect";
+import { useRouter } from "next/router";
 
 const Bookmarks = () => {
-  useAuthRedirect();
   const currentUser = useContext(AuthContext);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!currentUser) {
+      router.push('http://localhost:3000/login');
+    }
+  }, [currentUser, router]);
   const heightRef = useRef<HTMLHeadingElement>(null);
 
   interface BookmarkedArticle {

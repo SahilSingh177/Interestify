@@ -29,7 +29,6 @@ const AllCategories = ({ filteredData }: { filteredData: string[] }) => {
   const submitCategories = async () => {
     const email = currentUser?.email;
     if (email && clickedCategories.length >= 1) {
-      Router.push(isNewUser?'http://localhost:3000/welcome/register_mail':'http://localhost:3000/');
       const payload = {
         email: email,
         updated_preferences: clickedCategories
@@ -41,6 +40,7 @@ const AllCategories = ({ filteredData }: { filteredData: string[] }) => {
         },
         body: JSON.stringify(payload)
       });
+      Router.push(isNewUser?'http://localhost:3000/welcome/register_mail':'http://localhost:3000/');
     }
     else{
       setError('Please select atleast 1 category to proceed');

@@ -5,11 +5,18 @@ import { auth } from '@/firebase/clientApp';
 import { Player } from "@lottiefiles/react-lottie-player";
 import { AuthContext } from "@/Providers/AuthProvider";
 import { FaSearch } from "react-icons/fa";
-import useAuthRedirect from "@/hooks/useAuthRedirect";
+import { useRouter } from "next/router";
 
 const History = () => {
-  useAuthRedirect();
   const currentUser = useContext(AuthContext);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!currentUser) {
+      router.push('http://localhost:3000/login');
+    }
+  }, [currentUser, router]);
+
   const heightRef = useRef<HTMLHeadingElement>(null);
   interface PreviousArticle {
     id: string;
