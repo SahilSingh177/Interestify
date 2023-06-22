@@ -4,7 +4,7 @@ import os
 import cohere
 import readtime
 
-co = cohere.Client('410fhpjmHWW23NoOKDJ9u9yTkRqxyWrJdKHLJ04u')
+co = cohere.Client('Vuhf7IBdd3EXdtZBWpDmkCfgRttlg3EXGzvizBqr')
 
 def read_article(link):
     article = ""
@@ -27,9 +27,12 @@ def read_article(link):
 
     article = pageData
     summary = co.summarize(text=article,length='short',format='paragraph',extractiveness ='low') 
+    # print(summary)
     read_time = readtime.of_text(article)
     data = [pageData, summary, read_time]
     pdf_file.close()
     os.remove("temp.pdf")
 
     return data
+
+# read_article('https://link.springer.com/content/pdf/10.1007/s42757-022-0154-6.pdf?pdf=button')
