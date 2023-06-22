@@ -8,7 +8,7 @@ import Link from 'next/link';
 import SearchBar from "./SearchBar";
 
 const Navbar: React.FC = () => {
-  const transformScale = useBreakpointValue({ base: 'scale(1.3)', md: 'scale(0.9)', sm: 'scale(0.7)',lg:'2.5' });
+  // const transformScale = useBreakpointValue({ base: 'scale(1.3)', md: 'scale(0.9)', sm: 'scale(0.7)',lg:'2.5' });
   const currentUser = useContext(AuthContext);
   const router = useRouter();
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -44,7 +44,7 @@ const Navbar: React.FC = () => {
       overflowY="hidden"
     >
       <Link href="/">
-        <Image src="/assets/png/logo-no-background.png" height='7vh' transform={transformScale}></Image>
+        <Image src="/assets/logo-no-background.svg" height='10vh'></Image>
 
       </Link>
         <SearchBar></SearchBar>
