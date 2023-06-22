@@ -6,9 +6,9 @@ import threading
 import atexit
 from .database.database import App
 
-DATABASE_URL = "neo4j+s://58ad0a3e.databases.neo4j.io:7687"
+DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
 USER = "neo4j"
-PASSWORD = "TrU2Lb35p2JaTVKag7sn-RPD-BQtCCP0eBZMyhwXFY4"
+PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
 
 uri = DATABASE_URL
 user = USER
@@ -202,7 +202,7 @@ def fetch_new_articles(executor, shutdown_event):
                     app.create_blog(title, link, authors, pdf_link, backend_category)
                         # break
                     print("New article found:", title)
-        time.sleep(3600)
+        # time.sleep(3600)
 
     finally:
         shutdown_event.set()
