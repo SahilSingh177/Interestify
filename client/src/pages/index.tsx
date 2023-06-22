@@ -6,6 +6,7 @@ import SideBar from "@/components/Articles/SideBar";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Spinner } from "@chakra-ui/react";
 import { auth } from "@/firebase/clientApp";
+import useCategoryCheck from "@/hooks/useCategoryCheck";
 
 interface Article {
   id: string;
@@ -20,6 +21,7 @@ interface Article {
 }
 
 const Index = () => {
+  useCategoryCheck();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [data, setData] = useState<Article[]>([]);
   const [hasMoreData, setHasMoreData] = useState<boolean>(true);

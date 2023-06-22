@@ -4,7 +4,7 @@ import { Button, Flex, Input, Text, FormLabel } from "@chakra-ui/react";
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { auth } from '../../firebase/clientApp';
 import Redirect from "./Redirect";
-import ShowAlert from "../Alert/Alert";
+import ShowAlert from "../Alert/ShowAlert";
 
 const LoginForm = () => {
   const [loginForm, setLoginForm] = useState({

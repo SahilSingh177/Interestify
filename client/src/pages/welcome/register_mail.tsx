@@ -6,9 +6,11 @@ import {
 } from '@chakra-ui/react';
 import { FaArrowCircleRight, FaEnvelope } from 'react-icons/fa';
 import useAuthRedirect from '@/hooks/useAuthRedirect';
+import useCategoryCheck from '@/hooks/useCategoryCheck';
 
 const RegisterMail = () => {
   useAuthRedirect();
+  useCategoryCheck();
   const router = useRouter();
   const [userEmail, setUserEmail] = useState('');
 
