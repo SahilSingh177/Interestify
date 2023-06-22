@@ -18,7 +18,6 @@ type AppPropsWithLayout = AppProps & {
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout
-  console.log(getLayout)
   if (getLayout===undefined) {
     return (
     <AuthProvider>
