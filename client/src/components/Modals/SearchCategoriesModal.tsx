@@ -56,7 +56,7 @@ const SearchCategoriesModal = ({ inputText }: { inputText: string }) => {
   return (
     <>
       {searchResults.length > 0 && (
-        <VStack width='100%' overflowY='scroll'>
+        <VStack width='100%' overflowY='scroll' paddingBottom={5}>
             <Divider marginBottom={5}></Divider>
           {categoriesData.map((categoryName, index) => (
             <SearchResult key={index} searchResults={searchResults} categoryName={categoryName} />
