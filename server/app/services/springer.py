@@ -5,14 +5,14 @@ import concurrent.futures
 import threading
 import atexit
 from .database.database import App
+import dotenv
+import os
 
-DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
-USER = "neo4j"
-PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
+dotenv.load_dotenv()
 
-uri = DATABASE_URL
-user = USER
-password = PASSWORD
+uri = os.getenv("DATABASE_URL")
+user = os.getenv("DATABASE_USER")
+password = os.getenv("DATABASE_PASSWORD")
 
 root_url = "https://link.springer.com"
 base_url = "https://link.springer.com/search/page/"
@@ -124,12 +124,12 @@ def fetch_articles(page, current_category):
         # Check if the element has the 'no-access' class
         if article.get("class") and "no-access" in article.get("class"):
             continue
-        if article.find("span", class_="authors") :
+        if article.find("span", class_="authors"):
             article_authors = article.find("span", class_="authors").find_all("a")
             authors = [author.get_text() for author in article_authors]
-        if article.find("a", class_="title") :
+        if article.find("a", class_="title"):
             article_title = article.find("a", class_="title").get_text()
-        if article.find("h2") :
+        if article.find("h2"):
             article_link = article.find("h2").find("a")
         article_url = root_url + article_link.get("href") if article_link else None
         index = category.index(current_category)
@@ -168,6 +168,7 @@ def shutdown(self):
     self._worker_queue.put(None)
     for worker in self._workers:
         worker.join()
+
 executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
 shutdown_event = threading.Event()
 
