@@ -7,6 +7,7 @@ import { FaArrowCircleRight } from 'react-icons/fa'
 import { AuthContext } from '@/Providers/AuthProvider'
 import { auth } from '@/firebase/clientApp'
 import ShowAlert from '../Alert/ShowAlert'
+import { imageLinks } from '@/Handlers/CategoriesData'
 
 
 const AllCategories = ({ filteredData }: { filteredData: string[] }) => {
@@ -55,7 +56,7 @@ const AllCategories = ({ filteredData }: { filteredData: string[] }) => {
       <Flex width={`calc(100vw - 12px)`} flexWrap="wrap" height="100vh" justifyContent="center">
         {categoriesData.map((categoryName, id) => {
           return (
-            <CategoryCard key={id} categoryName={categoryName} onClickHandler={handleCategoryClick} view={filteredData.includes(categoryName)} />
+            <CategoryCard key={id} categoryName={categoryName} onClickHandler={handleCategoryClick} view={filteredData.includes(categoryName)} imageLink={imageLinks[id]} />
           );
         })}
       </Flex>

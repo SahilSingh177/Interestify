@@ -1,4 +1,5 @@
 import React, { useState,useEffect, useContext } from 'react';
+import type { ReactElement } from 'react'
 import { useRouter } from 'next/router';
 import {
   Stack, Text, Input, SimpleGrid, GridItem,
@@ -6,8 +7,9 @@ import {
 } from '@chakra-ui/react';
 import { FaArrowCircleRight, FaEnvelope } from 'react-icons/fa';
 import { AuthContext } from '@/Providers/AuthProvider';
+import { NextPageWithLayout } from '../_app';
 
-const RegisterMail = () => {
+const RegisterMail: NextPageWithLayout = () => {
   const currentUser = useContext(AuthContext);
   const router = useRouter();
 
@@ -108,5 +110,13 @@ const RegisterMail = () => {
     </Stack>
   );
 };
+
+RegisterMail.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <>
+      {page}
+    </>
+  )
+}
 
 export default RegisterMail;

@@ -1,13 +1,15 @@
 import React, {useState, useEffect ,useContext} from 'react'
+import type { ReactElement } from 'react'
 import { Stack, InputGroup, InputLeftElement, Input, Icon, Heading } from '@chakra-ui/react'
 import AllCategories from '@/components/Category/AllCategories'
 import { FaSearch } from 'react-icons/fa'
 import { categoriesData } from '@/Handlers/CategoriesData'
-import { auth } from '@/firebase/clientApp'
 import { AuthContext } from '@/Providers/AuthProvider'
 import { useRouter } from 'next/router'
+import { NextPageWithLayout } from '../_app'
+import { auth } from '@/firebase/clientApp'
 
-const categories = () => {
+const categories: NextPageWithLayout = () => {
   const currentUser = useContext(AuthContext);
   const router = useRouter();
 
@@ -16,7 +18,6 @@ const categories = () => {
       router.push('http://localhost:3000/login');
     }
   }, [currentUser, router]);
-
     const [data,setData] = useState<string[]>(categoriesData);
     const [inputText, setInputText] = useState<string>('');
     
@@ -75,4 +76,12 @@ const categories = () => {
     )
 }
 
-export default categories
+categories.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <>
+      {page}
+    </>
+  )
+}
+
+export default categories;
