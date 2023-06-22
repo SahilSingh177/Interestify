@@ -8,6 +8,7 @@ import {
 import { FaArrowCircleRight, FaEnvelope } from 'react-icons/fa';
 import { AuthContext } from '@/Providers/AuthProvider';
 import { NextPageWithLayout } from '../_app';
+import Head from 'next/head';
 
 const RegisterMail: NextPageWithLayout = () => {
   const currentUser = useContext(AuthContext);
@@ -52,6 +53,10 @@ const RegisterMail: NextPageWithLayout = () => {
   };
 
   return (
+    <>
+    <Head>
+        <title>Interestify - Select Categories</title>
+      </Head>
     <Stack
       bgImage="/assets/mail_bg.jpg"
       backgroundRepeat="none"
@@ -108,6 +113,7 @@ const RegisterMail: NextPageWithLayout = () => {
         right="2vw"
       />
     </Stack>
+    </>
   );
 };
 

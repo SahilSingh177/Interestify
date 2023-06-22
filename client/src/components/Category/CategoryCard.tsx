@@ -25,6 +25,7 @@ const CategoryCard = ({ categoryName, onClickHandler, view, imageLink }: Props) 
       cursor='pointer'
       onClick={() => onClick()}
       position='relative'
+      borderRadius={10}
     >
       {isSelected && <Icon as={FaCheckCircle} position='absolute' right='0' />}
       <CardBody padding={0} margin={0} >

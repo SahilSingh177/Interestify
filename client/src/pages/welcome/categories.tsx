@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import React, {useState, useEffect ,useContext} from 'react'
 import type { ReactElement } from 'react'
 import { Stack, InputGroup, InputLeftElement, Input, Icon, Heading } from '@chakra-ui/react'
@@ -47,7 +48,11 @@ const categories: NextPageWithLayout = () => {
         }
       };
     return (
-        <Stack alignItems="center" justifyContent="center">
+      <>
+      <Head>
+        <title>Interestify - Select Categories</title>
+      </Head>
+        <Stack bgImage='/assets/category_bg.jpg'  backgroundSize="contain" bgRepeat='repeat-y'  alignItems="center" justifyContent="center">
             <Heading marginTop="5vh" textAlign='center'>SELECT YOUR FAVOURITE CATEGORIES</Heading>
             <InputGroup width="60vw" margin="5vh 5vw 0 5vw">
                 <InputLeftElement
@@ -73,6 +78,7 @@ const categories: NextPageWithLayout = () => {
             </InputGroup>
             <AllCategories filteredData={data}/>
         </Stack>
+        </>
     )
 }
 

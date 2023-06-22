@@ -1,12 +1,14 @@
 import React from 'react'
 import Navbar from '../Navbar/Navbar'
 import { Flex, Divider } from '@chakra-ui/react'
+import Head from 'next/head'
 
 type Props = {}
 
 const Layout = ({ children }: React.PropsWithChildren<Props>) => {
   return (
     <>
+      <Head>Interestify</Head>
       <Navbar />
       <Flex height="10vh"></Flex>
       <Divider

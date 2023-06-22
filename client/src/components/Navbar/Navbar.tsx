@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from "@/Providers/AuthProvider";
 import { useRouter } from "next/router";
-import { Flex, Image, useBreakpointValue } from "@chakra-ui/react";
+import { Avatar, Flex, Image, useBreakpointValue } from "@chakra-ui/react";
 import AuthButtons from "./AuthButtons";
 import Link from 'next/link';
 import SearchBar from "./SearchBar";

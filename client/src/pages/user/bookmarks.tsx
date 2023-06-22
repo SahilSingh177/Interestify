@@ -15,6 +15,7 @@ import BookmarkCard from "@/components/User/BookmarkCard";
 import { auth } from "@/firebase/clientApp";
 import { AuthContext } from "@/Providers/AuthProvider";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
 const Bookmarks = () => {
   const currentUser = useContext(AuthContext);
@@ -95,6 +96,10 @@ const Bookmarks = () => {
   };
 
   return (
+    <>
+    <Head>
+        <title>Bookmarks</title>
+      </Head>
     <Stack
       width="calc(100vw - 12px)"
       minHeight="90vh"
@@ -164,6 +169,7 @@ const Bookmarks = () => {
         />
       ))}
     </Stack>
+    </>
   );
 };
 

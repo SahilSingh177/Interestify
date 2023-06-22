@@ -11,6 +11,7 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 
 ChartJS.register(
   CategoryScale,
@@ -25,7 +26,7 @@ export const options = {
   plugins: {
     title: {
       display: true,
-      text: 'Activity', 
+      text: 'Activity',
     },
     tooltip: {
       enabled: false
@@ -50,7 +51,7 @@ export const options = {
       },
       title: {
         display: true,
-        text: 'Time', 
+        text: 'Time',
       },
     },
   },
@@ -104,12 +105,17 @@ const Profile = () => {
   }, [currentUser?.email]);
 
   return (
-    <Flex bg='gray.50' height='100vh' flexDirection='column' width={`(100vw - 12px)`} alignItems='center' justifyContent='space-around' padding='5vh 5vw' maxHeight='90vh'>
-      <Heading>YOUR ACTIVITY</Heading>
-      <Bar  options={options} data={data}  style={{
-      maxHeight: '80vh' 
-    }} />
-    </Flex>
+    <>
+      <Head>
+        <title>Activity</title>
+      </Head>
+      <Flex bg='gray.50' height='100vh' flexDirection='column' width={`(100vw - 12px)`} alignItems='center' justifyContent='space-around' padding='5vh 5vw' maxHeight='90vh'>
+        <Heading>YOUR ACTIVITY</Heading>
+        <Bar options={options} data={data} style={{
+          maxHeight: '80vh'
+        }} />
+      </Flex>
+    </>
   );
 };
 

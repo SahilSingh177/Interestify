@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext} from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useRouter } from "next/router";
 import { Stack, Flex, Divider, Skeleton } from "@chakra-ui/react";
 import Banner from "@/components/Navbar/Banner";
@@ -8,6 +8,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { Spinner } from "@chakra-ui/react";
 import { auth } from "@/firebase/clientApp";
 import { AuthContext } from "@/Providers/AuthProvider";
+import Head from "next/head";
 
 interface Article {
   id: string;
@@ -34,8 +35,8 @@ const Index = () => {
   useEffect(() => {
     const checkCategories = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/hasSelectedCategories',{
-          method:'POST',
+        const response = await fetch('http://127.0.0.1:5000/hasSelectedCategories', {
+          method: 'POST',
           headers: {
             "Content-Type": "application/json",
           },
@@ -45,9 +46,9 @@ const Index = () => {
         });
         const data = await response.json();
         console.log(data);
-        
+
         if (!data) {
-          router.push('http://localhost:3000/welcome/categories'); 
+          router.push('http://localhost:3000/welcome/categories');
         }
       } catch (error) {
         console.error('Error checking categories:', error);
@@ -56,7 +57,7 @@ const Index = () => {
 
     checkCategories();
   }, []);
-  
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [data, setData] = useState<Article[]>([]);
   const [hasMoreData, setHasMoreData] = useState<boolean>(true);
@@ -94,6 +95,9 @@ const Index = () => {
 
   return (
     <>
+      <Head>
+        <title>Interestify</title>
+      </Head>
       <Stack>
         <Banner></Banner>
         <Flex
