@@ -1,23 +1,14 @@
 from datetime import datetime, timedelta
 import logging
 import math
-import os
 import random
 from typing import Optional
 
 from neo4j import GraphDatabase
 from neo4j.exceptions import Neo4jError
-# from dotenv import load_dotenv
 from pathlib import Path
 
 from .read_article import read_article
-
-# load_dotenv()
-
-DATABASE_URL = "neo4j+s://eae81324.databases.neo4j.io:7687"
-USER = "neo4j"
-PASSWORD = "C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY"
-print(USER)
 
 class App:
 
@@ -31,8 +22,11 @@ class App:
     # Checks
     def check_user_exists(self, user_email):
         with self.driver.session(database="neo4j") as session:
-            return session.execute_read(
-                self._check_user_exists, user_email)
+            try:
+                return session.execute_read(self._check_user_exists, user_email)
+            except Neo4jError as exception:
+                logging.error("Error executing query: {exception}".format(exception=exception))
+                raise
 
     @staticmethod
     def _check_user_exists(tx, user_email):
@@ -50,8 +44,11 @@ class App:
 
     def check_blog_exists(self, blog_link):
         with self.driver.session(database="neo4j") as session:
-            return session.execute_read(
-                self._check_blog_exists, blog_link)
+            try:
+                return session.execute_read(self._check_blog_exists, blog_link)
+            except Neo4jError as exception:
+                logging.error("Error executing query: {exception}".format(exception=exception))
+                raise
 
     @staticmethod
     def _check_blog_exists(tx, blog_link):
@@ -69,8 +66,11 @@ class App:
 
     def check_category_exists(self, category_name):
         with self.driver.session(database="neo4j") as session:
-            return session.execute_read(
-                self._check_category_exists, category_name)
+            try:
+                return session.execute_read(self._check_category_exists, category_name)
+            except Neo4jError as exception:
+                logging.error("Error executing query: {exception}".format(exception=exception))
+                raise
 
     @staticmethod
     def _check_category_exists(tx, category_name):
@@ -90,106 +90,179 @@ class App:
     def create_user(self, user_email, user_name):
         with self.driver.session(database="neo4j") as session:
             if self.check_user_exists(user_email):
-                print("User already exists")
                 return False
-            result = session.execute_write(
-                self._create_user, user_email, user_name)
-            for record in result:
-                print("Created User: {u}"
-                      .format(u=record['u']))
-            return True
+            try:
+                result = session.execute_write(self._create_user, user_email, user_name)
+                return True
+            except Neo4jError as exception:
+                logging.error("Error executing query: {exception}".format(exception=exception))
+                raise
 
     @staticmethod
     def _create_user(tx, user_email, user_name):
         query = (
-            "CREATE (u:User { name: $user_name, email: $user_email }) "
+            "CREATE (u:User { name: $user_name, email: $user_email, registered: False }) "
             "RETURN u"
         )
-        result = tx.run(query, user_name = user_name, user_email = user_email)
+        result = tx.run(query, user_email=user_email, user_name=user_name)
+        return result
+
+    def register_mail(self, user_email):
+        with self.driver.session(database="neo4j") as session:
+            try:
+                result = session.execute_write(self._register_mail, user_email)
+                return True
+            except Neo4jError as exception:
+                logging.error("Error executing query: {exception}".format(exception=exception))
+                raise
+
+    @staticmethod
+    def _register_mail(tx, user_email):
+        query = (
+            "MATCH (u:User { email: $user_email }) "
+            "SET u.registered = True "
+            "RETURN u"
+        )
         try:
-            return [{"u": record["u"]["name"]}
-                    for record in result]
-        # Capture any errors along with the query and data for traceability
+            result = tx.run(query, user_email=user_email)
+            return [{"u": record["u"]["name"]} for record in result]
         except Neo4jError as exception:
-            logging.error("{query} raised an error: \n {exception}".format(
-                query=query, exception=exception))
+            logging.error("Error executing query: {exception}".format(exception=exception))
+            raise
+
+    def unregister_mail(self, user_email):
+        with self.driver.session(database="neo4j") as session:
+            try:
+                result = session.execute_write(self._unregister_mail, user_email)
+                return True
+            except Neo4jError as exception:
+                logging.error("Error executing query: {exception}".format(exception=exception))
+                raise
+
+    @staticmethod
+    def _unregister_mail(tx, user_email):
+        query = (
+            "MATCH (u:User { email: $user_email }) "
+            "SET u.registered = False "
+            "RETURN u"
+        )
+        try:
+            result = tx.run(query, user_email=user_email)
+            return [{"u": record["u"]["name"]} for record in result]
+        except Neo4jError as exception:
+            logging.error("Error executing query: {exception}".format(exception=exception))
             raise
 
     def search(self, text):
         with self.driver.session(database="neo4j") as session:
-            # return self._search(session, text)
-            result = session.execute_write(
-                self._search,text)
-            return result
+            try:
+                result = session.execute_write(self._search, text)
+                return result
+            except Neo4jError as exception:
+                logging.error("Error executing query: {exception}".format(exception=exception))
+                raise
+
     @staticmethod
     def _search(tx, text):
-        text+='~'
+        text += '~'
+        query = (
+            'CALL db.index.fulltext.queryNodes("BlogName", $searchTerm) YIELD node, score '
+            'RETURN node.title AS title, ID(node) AS id '
+            'LIMIT 10'
+        )
+        try:
+            result = tx.run(query, searchTerm=text)
+            formatted_result = [(record["title"], record["id"]) for record in result]
+            return formatted_result
+        except Neo4jError as exception:
+            logging.error("Error executing query: {exception}".format(exception=exception))
+            raise
+
+    def check_user_registration(self, user_email):
+        with self.driver.session(database="neo4j") as session:
+            return session.execute_read(self._check_user_registration, user_email)
+
+    @staticmethod
+    def _check_user_registration(tx, user_email):
+        query = (
+            "MATCH (u:User) "
+            "WHERE u.email = $user_email "
+            "RETURN u.registered"
+        )
+        result = tx.run(query, user_email=user_email)
+        # Check if result has any data or multiple data
+        if result.peek():
+            return result.single()[0]
+        else:
+            return False
+
+    @staticmethod
+    def _search(tx, text):
+        text += '~'
         query = (
             'CALL db.index.fulltext.queryNodes("BlogName", $searchTerm) YIELD node, score '
             'RETURN node.title AS title, ID(node) as id '
-            'LIMIT 10 '
+            'LIMIT 10'
         )
         result = tx.run(query, searchTerm=text)
         formatted_result = [(record["title"], record["id"]) for record in result]
         return formatted_result
-    
-    def searchBookmark(self,email,text):
+
+    def searchBookmark(self, email, text):
         with self.driver.session(database="neo4j") as session:
-            result = session.execute_write(self._searchBookmark,email,text)
+            result = session.execute_write(self._searchBookmark, email, text)
             return result
 
     @staticmethod
-    def _searchBookmark(tx,email,text):
-        text+='~'
-        query =(
+    def _searchBookmark(tx, email, text):
+        text += '~'
+        query = (
             'CALL db.index.fulltext.queryNodes("BlogName", $searchTerm) YIELD node, score '
             'MATCH (user:User)-[:BOOKMARK]->(node) '
             'WHERE user.email = $email '
-            'RETURN node.link AS link, score '
+            'RETURN node.link AS link, score'
         )
-        result = tx.run(query,searchTerm=text,email=email)
-        formatted_result=[(record['link']) for record in result]
+        result = tx.run(query, searchTerm=text, email=email)
+        formatted_result = [record['link'] for record in result]
         return formatted_result
-    
-    def searchHistory(self,email,text):
+
+    def searchHistory(self, email, text):
         with self.driver.session(database="neo4j") as session:
-            result = session.execute_write(self._searchHistory,email,text)
+            result = session.execute_write(self._searchHistory, email, text)
             return result
 
     @staticmethod
-    def _searchHistory(tx,email,text):
-        text+='~'
-        query =(
+    def _searchHistory(tx, email, text):
+        text += '~'
+        query = (
             'CALL db.index.fulltext.queryNodes("BlogName", $searchTerm) YIELD node, score '
             'MATCH (user:User)-[:READS]->(node) '
             'WHERE user.email = $email '
-            'RETURN node.link AS link, score '
+            'RETURN node.link AS link, score'
         )
-        result = tx.run(query,searchTerm=text,email=email)
-        formatted_result=[(record['link']) for record in result]
+        result = tx.run(query, searchTerm=text, email=email)
+        formatted_result = [record['link'] for record in result]
         return formatted_result
-    
-    def searchCategory(self,text):
+
+    def searchCategory(self, text):
         with self.driver.session(database="neo4j") as session:
-            result = session.execute_write(self._searchCategory,text)
+            result = session.execute_write(self._searchCategory, text)
             return result
 
     @staticmethod
-    def _searchCategory(tx,text):
-        text+='~'
-        query =(
+    def _searchCategory(tx, text):
+        text += '~'
+        query = (
             'CALL db.index.fulltext.queryNodes("CategoryName", $searchTerm) YIELD node, score '
-            'RETURN node.name AS name, score '
+            'RETURN node.name AS name, score'
         )
-        result = tx.run(query,searchTerm=text)
-        formatted_result=[(record['name']) for record in result]
+        result = tx.run(query, searchTerm=text)
+        formatted_result = [record['name'] for record in result]
         return formatted_result
-
 
     def create_blog(self, blog_title, blog_link, blog_author, download_link, category_name):
         with self.driver.session(database="neo4j") as session:
             if self.check_blog_exists(blog_link):
-                print("Blog already exists")
                 return False
             if not self.check_category_exists(category_name):
                 self.create_category(category_name)
@@ -203,13 +276,10 @@ class App:
                 cleaned_lines = [line.lstrip("- ") for line in lines]
                 cleaned_summary = "\n".join(cleaned_lines)
                 result = session.execute_write(
-                    self._create_blog, blog_title, blog_link, blog_author,read_time, download_link, cleaned_summary,text, category_name)
-                for record in result:
-                    print("Created Blog: {b}"
-                        .format(b=record['b']))
+                    self._create_blog, blog_title, blog_link, blog_author, read_time, download_link, cleaned_summary, text,
+                    category_name)
                 return True
             except:
-                print("Error creating blog")
                 return False
 
     @staticmethod
@@ -220,29 +290,22 @@ class App:
             "MATCH (c:Category) WHERE c.name = $category_name "
             "MERGE (b)-[:BELONGS_TO]->(c) "
             "RETURN b"
-
         )
-        result = tx.run(query, blog_title = blog_title, blog_link = blog_link, blog_author = blog_author,read_time=read_time ,download_link = download_link, summary = summary, text = text, category_name = category_name, created_at = datetime.now())
+        result = tx.run(query, blog_title=blog_title, blog_link=blog_link, blog_author=blog_author, read_time=read_time,
+                        download_link=download_link, summary=summary, text=text, category_name=category_name,
+                        created_at=datetime.now())
         try:
-            return [{"b": record["b"]["title"]}
-                    for record in result]
+            return [{"b": record["b"]["title"]} for record in result]
         # Capture any errors along with the query and data for traceability
         except Neo4jError as exception:
-            logging.error("{query} raised an error: \n {exception}".format(
-                query=query, exception=exception))
+            logging.error("{query} raised an error: \n {exception}".format(query=query, exception=exception))
             raise
-
 
     def create_category(self, category_name):
         with self.driver.session(database="neo4j") as session:
             if self.check_category_exists(category_name):
-                print("Category already exists")
                 return False
-            result = session.execute_write(
-                self._create_category, category_name)
-            for record in result:
-                print("Created Category: {c}"
-                      .format(c=record['c']))
+            result = session.execute_write(self._create_category, category_name)
             return True
 
     @staticmethod
@@ -251,14 +314,12 @@ class App:
             "CREATE (c:Category { name: $category_name }) "
             "RETURN c"
         )
-        result = tx.run(query, category_name = category_name)
+        result = tx.run(query, category_name=category_name)
         try:
-            return [{"c": record["c"]["name"]}
-                    for record in result]
+            return [{"c": record["c"]["name"]} for record in result]
         # Capture any errors along with the query and data for traceability
         except Neo4jError as exception:
-            logging.error("{query} raised an error: \n {exception}".format(
-                query=query, exception=exception))
+            logging.error("{query} raised an error: \n {exception}".format(query=query, exception=exception))
             raise
 
 
@@ -266,16 +327,10 @@ class App:
     def blog_to_category(self, blog_link, category_name):
         with self.driver.session(database="neo4j") as session:
             if not self.check_blog_exists(blog_link):
-                print("Blog does not exist")
                 return False
             if not self.check_category_exists(category_name):
-                print("Category does not exist")
                 return False
-            result = session.execute_write(
-                self._blog_to_category, blog_link, category_name)
-            for record in result:
-                print("Added Blog: {b} to Category: {c}"
-                      .format(b=record['b'], c=record['c']))
+            result = session.execute_write(self._blog_to_category, blog_link, category_name)
             return True
 
     @staticmethod
@@ -285,31 +340,23 @@ class App:
             "MERGE (b)-[r:IN_CATEGORY]->(c) "
             "RETURN b, c"
         )
-        result = tx.run(query, blog_link = blog_link, category_name = category_name)
+        result = tx.run(query, blog_link=blog_link, category_name=category_name)
         try:
-            return [{"b": record["b"]["title"], "c": record["c"]["name"]}
-                    for record in result]
+            return [{"b": record["b"]["title"], "c": record["c"]["name"]} for record in result]
         # Capture any errors along with the query and data for traceability
         except Neo4jError as exception:
-            logging.error("{query} raised an error: \n {exception}".format(
-                query=query, exception=exception))
+            logging.error("{query} raised an error: \n {exception}".format(query=query, exception=exception))
             raise
 
     def user_to_category(self, user_email, category_name):
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
-                print("User does not exist")
                 return False
             if not self.check_category_exists(category_name):
-                print("Category does not exist")
                 return False
-            result = session.execute_write(
-                self._user_to_category, user_email, category_name)
-            for record in result:
-                print("Added User: {u} to Category: {c}"
-                      .format(u=record['u'], c=record['c']))
+            result = session.execute_write(self._user_to_category, user_email, category_name)
             return True
-        
+
     @staticmethod
     def _user_to_category(tx, user_email, category_name):
         query = (
@@ -317,77 +364,67 @@ class App:
             "MERGE (u)-[r:BROWSES]->(c) "
             "RETURN u, c"
         )
-        result = tx.run(query, user_email = user_email, category_name = category_name)
+        result = tx.run(query, user_email=user_email, category_name=category_name)
         try:
-            return [{"u": record["u"]["email"], "c": record["c"]["name"]}
-                    for record in result]
+            return [{"u": record["u"]["email"], "c": record["c"]["name"]} for record in result]
         # Capture any errors along with the query and data for traceability
         except Neo4jError as exception:
-            logging.error("{query} raised an error: \n {exception}".format(
-                query=query, exception=exception))
+            logging.error("{query} raised an error: \n {exception}".format(query=query, exception=exception))
             raise
 
     def find_all_categories_for_user(self, user_email):
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
-                print("User does not exist")
                 return False
             result = session.execute_read(
                 self._find_all_categories_for_user, user_email)
             return result
-        
+
     @staticmethod
     def _find_all_categories_for_user(tx, user_email):
         query = (
             "MATCH (u:User {email:$user_email})-[r:BROWSES]->(c:Category) "
             "RETURN c.name as name"
         )
-        result = tx.run(query, user_email = user_email)
+        result = tx.run(query, user_email=user_email)
         try:
-            return [{"name": record["c"]["name"]}
-                    for record in result]
+            return [{"name": record["c"]["name"]} for record in result]
         # Capture any errors along with the query and data for traceability
         except Neo4jError as exception:
             logging.error("{query} raised an error: \n {exception}".format(
                 query=query, exception=exception))
             raise
-        
 
-    def user_to_category_browsing(self, user_email, category_name,  session_time, session_date):
+
+    def user_to_category_browsing(self, user_email, category_name, session_time, session_date):
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
-                print("User does not exist")
                 return False
             if not self.check_category_exists(category_name):
-                print("Category does not exist")
                 return False
             if not self.user_to_category(user_email, category_name):
                 self.user_to_category(user_email, category_name)
             result = session.execute_write(
-                self._user_to_category_browsing, user_email, category_name, session_time,session_date)
-            for record in result:
-                print("Added User: {u} to Category: {c}"
-                      .format(u=record['u'], c=record['c']))
+                self._user_to_category_browsing, user_email, category_name, session_time, session_date)
             return True
-        
+
     @staticmethod
-    def _user_to_category_browsing(tx, user_email, category_name, session_time,session_date):
+    def _user_to_category_browsing(tx, user_email, category_name, session_time, session_date):
         query = (
             "MATCH (u:User {email: $user_email})-[r:BROWSES]->(c:Category {name: $category_name}) "
             "SET r.session_time = COALESCE(r.session_time, []) + [$session_time] "
             "SET r.session_date = COALESCE(r.session_date, []) + [$session_date] "
             "RETURN u, c"
-
         )
-        result = tx.run(query, user_email = user_email, category_name = category_name, session_time = session_time, session_date = session_date)
+        result = tx.run(query, user_email=user_email, category_name=category_name, session_time=session_time, session_date=session_date)
         try:
-            return [{"u": record["u"]["email"], "c": record["c"]["name"]}
-                    for record in result]
+            return [{"u": record["u"]["email"], "c": record["c"]["name"]} for record in result]
         # Capture any errors along with the query and data for traceability
         except Neo4jError as exception:
             logging.error("{query} raised an error: \n {exception}".format(
                 query=query, exception=exception))
             raise
+
 
     def get_duration_and_timestamp(self, user_email):
         with self.driver.session(database="neo4j") as session:
@@ -399,21 +436,17 @@ class App:
             return [
                 {"session_time": record["session_time"], "session_date": record["session_date"], "category_name": record["category_name"], "user_email": record["user_email"]}
                 for record in result
-            ]   
+            ]
+
 
     def set_category_score(self, user_email, category_name, score):
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
-                print("User does not exist")
                 return False
             if not self.check_category_exists(category_name):
-                print("Category does not exist")
                 return False
             result = session.execute_write(
                 self._set_category_score, user_email, category_name, score)
-            for record in result:
-                print("Added Score: {u} to Category: {c}"
-                      .format(u=record['score'], c=record['c']))
             return True
 
     @staticmethod
@@ -421,17 +454,17 @@ class App:
         query = (
             "MATCH (u:User {email: $user_email})-[r:BROWSES]->(c:Category {name: $category_name}) "
             "SET r.score = $score "
-            "RETURN u, c,r"
+            "RETURN u, c, r"
         )
-        result = tx.run(query, user_email = user_email, category_name = category_name, score = score)
+        result = tx.run(query, user_email=user_email, category_name=category_name, score=score)
         try:
-            return [{"u": record["u"]["email"], "c": record["c"]["name"], "score": record["r"]["score"]}
-                    for record in result]
+            return [{"u": record["u"]["email"], "c": record["c"]["name"], "score": record["r"]["score"]} for record in result]
         # Capture any errors along with the query and data for traceability
         except Neo4jError as exception:
             logging.error("{query} raised an error: \n {exception}".format(
                 query=query, exception=exception))
-            raise  
+            raise
+
 
     def get_category_score(self, user_email):
         with self.driver.session(database="neo4j") as session:
@@ -444,7 +477,7 @@ class App:
                 {"score": record["score"], "category_name": record["category_name"], "user_email": record["user_email"]}
                 for record in result
             ]
-        
+
     def get_most_liked_not_read_blogs_by_category_score_limit(self, user_email, category_name, skip, limit):
         with self.driver.session(database="neo4j") as session:
             query = (
@@ -453,8 +486,8 @@ class App:
                 "WHERE NOT (u)-[:READS]->(b) "
                 "WITH b, r2, r.score as score, c.name as category_name "
                 "MATCH (u2:User)-[r3:LIKES]->(b) "
-                "WITH b, score, category_name,COUNT(r3) as likes "
-                "RETURN b.author AS author, b.title AS title, b.link AS link, b.summary AS summary, b.read_time as read_time, ID(b) AS id, score, category_name,likes "
+                "WITH b, score, category_name, COUNT(r3) as likes "
+                "RETURN b.author AS author, b.title AS title, b.link AS link, b.summary AS summary, b.read_time as read_time, ID(b) AS id, score, category_name, likes "
                 "ORDER BY likes DESC "
                 "SKIP $skip "
                 "LIMIT $limit "
@@ -464,14 +497,14 @@ class App:
                 "WHERE NOT (u)-[:READS]->(b) "
                 "WITH b, r2, r.score as score, c.name as category_name "
                 "WHERE NOT (u:User)-[r:LIKES]->(b) "
-                "RETURN b.author AS author, b.title AS title, b.link AS link, b.summary AS summary, b.read_time as read_time, ID(b) AS id, score, category_name,0 as likes "
+                "RETURN b.author AS author, b.title AS title, b.link AS link, b.summary AS summary, b.read_time as read_time, ID(b) AS id, score, category_name, 0 as likes "
                 "ORDER BY b.created_at DESC "
                 "SKIP $skip "
                 "LIMIT $limit"
             )
-            result = session.run(query, email=user_email, category_name=category_name,skip = skip, limit=limit)
+            result = session.run(query, email=user_email, category_name=category_name, skip=skip, limit=limit)
             return [
-                {"author": record["author"], "title": record["title"], "link": record["link"], "category_name":record["category_name"], "summary": record["summary"], "time":record["read_time"], "id":record["id"], "likes":record["likes"]}
+                {"author": record["author"], "title": record["title"], "link": record["link"], "category_name": record["category_name"], "summary": record["summary"], "time": record["read_time"], "id": record["id"], "likes": record["likes"]}
                 for record in result
             ]
 
@@ -516,7 +549,6 @@ class App:
             for record in result:
                 if record["session_date"] is not None:
                     duration = 0
-                    print(record["category_name"])
                     for i in range(len(record["session_date"])):
                         original = str(record['session_date'][i])
                         fixed_datetime = original[:-3] 
@@ -536,9 +568,7 @@ class App:
                 "MATCH (b:Blog) WHERE ID(b)=$article_id "
                 "RETURN b.author AS author, b.title AS title, b.link AS link, b.download_link AS pdf_link, b.summary AS summary, b.read_time as read_time, ID(b) AS id, b.text as text"
             )
-            print("here")
             result = session.run(query, article_id=article_id)
-            print(result)
             return [
                 {"author": record["author"], "title": record["title"], "link": record["link"], "pdf_link": record["pdf_link"], "summary": record["summary"], "read_time":record["read_time"], "id":record["id"], "text":record["text"]}
                 for record in result
@@ -548,11 +578,8 @@ class App:
     def user_to_blog(self, user_email, blog_id):
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
-                print("User does not exist")
                 return False
             result = session.write_transaction(self._user_to_blog, user_email, blog_id)
-            for record in result:
-                print("Added User: {u} to Blog: {b}".format(u=record['u'], b=record['b']))
             return True
 
     @staticmethod
@@ -573,11 +600,8 @@ class App:
     def delete_user_to_blog(self, user_email, blog_id):
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
-                print("User does not exist")
                 return False
             result = session.write_transaction(self._delete_user_to_blog, user_email, blog_id)
-            for record in result:
-                print("Deleted User: {u} from Blog: {b}".format(u=record['u'], b=record['b']))
             return True
 
     @staticmethod
@@ -597,7 +621,6 @@ class App:
     def get_user_blogs(self, user_email):
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
-                print("User does not exist")
                 return []
 
             query = (
@@ -621,7 +644,6 @@ class App:
     def isBlogBookmarked(self, user_email, blog_id):
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
-                print("User does not exist")
                 return False
             query = (
                 "MATCH (u:User {email: $user_email})-[r:BOOKMARK]->(b:Blog) "
@@ -634,7 +656,6 @@ class App:
     def isBlogLiked(self, user_email, blog_id):
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
-                print("User does not exist")
                 return False
             query = (
                 "MATCH (u:User {email: $user_email})-[r:LIKES]->(b:Blog) "
@@ -648,16 +669,11 @@ class App:
         with self.driver.session(database="neo4j") as session:
             try:
                 if not self.check_user_exists(user_email):
-                    print("User does not exist")
                     return False
                 result = session.execute_write(
                     self._add_likes_to_blog, user_email, int(blog_id))
-                for record in result:
-                    print("{likecount} likes for Blog"
-                        .format(likecount=record['likecount']))
                 return result
             except Exception as e:
-                print(e)
                 return False
         
     @staticmethod
@@ -685,16 +701,11 @@ class App:
         with self.driver.session(database="neo4j") as session:
             try:
                 if not self.check_user_exists(user_email):
-                    print("User does not exist")
                     return False
                 result = session.execute_write(
                     self._remove_likes_from_blog, user_email, int(blog_id))
-                for record in result:
-                    print("{likecount} likes for Blog"
-                        .format(likecount=record['likecount']))
                 return result
             except Exception as e:
-                print(e)
                 return False
             
     @staticmethod
@@ -722,14 +733,12 @@ class App:
     def get_blogs_by_likes(self, category_name: Optional[str]=None, page: int = 1, page_limit: int = 5):
         with self.driver.session(database="neo4j") as session:
             result = session.execute_read(self._get_blogs_by_likes, category_name, page, page_limit)
-            print("Success")
             return result
 
     @staticmethod
     def _get_blogs_by_likes(tx, category_name: Optional[str]=None, page: int = 1, page_limit: int = 5):
         skip_count = (page - 1) * page_limit
         if category_name:
-            print(skip_count, page_limit)
             query = (
                 "MATCH (u:User)-[r:LIKES]->(b:Blog)-[:BELONGS_TO]->(c:Category{name:$category_name}) "
                 "WITH b, COUNT(r) AS likeCount "
@@ -848,7 +857,6 @@ class App:
                 page,
                 page_limit
             )
-            print("Success")
             return result
         
     @staticmethod
@@ -860,7 +868,6 @@ class App:
         page_limit: int = 5
     ):
         skip_count = (page - 1) * page_limit
-        # print(skip_count)
         if category_name:
             query = (
                 "MATCH (b:Blog)-[:BELONGS_TO]->(c:Category{name:$category_name}) "
@@ -914,6 +921,13 @@ class App:
             logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
             raise
     
+    def get_category_by_blog(self, blog_id):
+        with self.driver.session(database="neo4j") as session:
+            result = session.execute_read(self._get_category_by_blog, blog_id)
+            if result:
+                return result[0]
+            else:
+                return None
     def get_top_categories_for_a_user(self,user_email):
         with self.driver.session(database="neo4j") as session:
             result = session.execute_read(
@@ -983,13 +997,40 @@ class App:
             logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
             raise
 
-    def get_category_by_blog(self, blog_id):
+    def get_all_users(self):
         with self.driver.session(database="neo4j") as session:
-            result = session.execute_read(self._get_category_by_blog, blog_id)
-            if result:
-                return result[0]
-            else:
-                return None
+            result = session.execute_read(self._get_all_users)
+            res = {}
+            for record in result:
+                email = record
+                categories = self.get_top_categories_for_a_user(email)
+                books = []
+                for category in categories:
+                    top_blog = self.get_top_blog_for_a_category(category["category_name"])
+                    if top_blog:
+                        book = {
+                            "title": top_blog[0]["title"],
+                            "author": top_blog[0]["author"],
+                            "category": category["category_name"],
+                            "url": top_blog[0]["link"],
+                            "summary": top_blog[0]["summary"]
+                        }
+                        books.append(book)
+                res[email] = books
+        return res
+
+    @staticmethod
+    def _get_all_users(tx):
+        query = (
+            "MATCH (u:User) WHERE u.registered = True "
+            "RETURN u.email AS email"
+        )
+        result = tx.run(query)
+        try:
+            return [record.get("email") for record in result]
+        except Neo4jError as exception:
+            logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
+            raise
 
     @staticmethod
     def _get_category_by_blog(tx, blog_id):
@@ -1025,7 +1066,6 @@ class App:
             user_email=user_email
         )
         try:
-            print(result)
             if result.peek() is not None:
                 return True
             else:
@@ -1039,10 +1079,8 @@ class App:
     def delete_user(self, user_email):
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
-                print("User does not exist")
                 return False
             result = session.execute_write(self._delete_user, user_email)
-            print("success")
             return True
         
     @staticmethod
@@ -1062,10 +1100,8 @@ class App:
     def delete_user_to_category(self, user_email):
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
-                print("User does not exist")
                 return False
             result = session.execute_write(self._delete_user_to_category, user_email)
-            print("Deleted user to category relationship")
             return True
         
     @staticmethod
@@ -1085,10 +1121,8 @@ class App:
     def user_to_blog_read(self, user_email, blog_id):
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
-                print("User does not exist")
                 return False
             result = session.execute_write(self._user_to_blog_read, user_email, blog_id)
-            print("success")
             return result
 
     @staticmethod
@@ -1111,10 +1145,8 @@ class App:
     def get_history(self, user_email):
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
-                print("User does not exist")
                 return False
             result = session.execute_read(self._get_history, user_email)
-            print("success")
             return result
 
     @staticmethod
@@ -1134,11 +1166,8 @@ class App:
     def delete_history(self, user_email, rid):
         with self.driver.session(database="neo4j") as session:
             if not self.check_user_exists(user_email):
-                print("User does not exist")
                 return False
-            print(int(rid))
             result = session.execute_write(self._delete_history, user_email,int(rid))
-            print("success")
             return result
         
     @staticmethod
@@ -1159,7 +1188,6 @@ class App:
     def get_all_blogs(self):
         with self.driver.session(database="neo4j") as session:
             result = session.execute_read(self._get_all_blogs)
-            print("success")
             return result
     
     @staticmethod
@@ -1178,7 +1206,6 @@ class App:
     def get_count_of_likes(self, blog_id):
         with self.driver.session(database="neo4j") as session:
             result = session.execute_read(self._get_count_of_likes, blog_id)
-            print("success")
             return result
         
     @staticmethod
@@ -1194,76 +1221,3 @@ class App:
         except Neo4jError as exception:
             logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
             raise
-
-if __name__ == "__main__":
-    # Aura queries use an encrypted connection using the "neo4j+s" URI scheme
-    uri = DATABASE_URL
-    user = USER
-    password = PASSWORD
-    app = App(uri, user, password)
-    # app.create_blog("testing title","https://link.springer.com/content/pdf/10.1007/s42757-022-0154-6.pdf?pdf=button","https://link.springer.com/content/pdf/10.1007/s42757-022-0154-6.pdf?pdf=button")
-    # Creation of nodes
-    # app.create_user("Sa@gmail.com","Sample")
-    # app.create_user("nikhil@gmail.com","Nikhil")
-    # app.create_blog("Sampleblog","Samplelink","Sampleauthor")
-    # app.create_category("Samplecategory")
-    # app.create_category("bc")
-    # app.create_category("mc")
-    # app.create_category("ent")
-    # app.create_category("dsnjdsnjdsnnkjds")
-    # app.add_author("Sampleauthor")
-
-    # # Creation of relationships (For new blogs)
-    # app.blog_to_category("Samplelink","Samplecategory")
-    # app.blog_to_author("Samplelink","Sampleauthor")
-    # app.author_to_category("Sampleauthor","Samplecategory")
-
-    # # Creation of relationships (Users)
-    # app.user_to_blog_bookmark("Sample@gmail.com","Samplelink")
-    # app.user_to_blog_bookmark("Sample@gmail.com","Sampleauthor")
-    # app.user_to_category("nikhil@gmail.com","dsnjdsnjdsnnkjds")
-    # app.user_to_category_browsing("nikhil@gmail.com","dsnjdsnjdsnnkjds",29)
-    # app.user_to_category("nikhil@gmail.com","bc")
-    # app.user_to_category_browsing("nikhil@gmail.com","bc",18)
-    # app.user_to_category_browsing("nikhil@gmail.com","ent",1)
-    # app.user_to_category("nikhil@gmail.com","mc")
-    # app.get_categories_ordered_by_browsing_duration("nikhil@gmail.com")
-    # app.add_likes_to_blog("sahil@gmail.com","https://link.springer.com/content/pdf/10.1007/s42757-022-0144-8.pdf?pdf=button")
-    # app.add_likes_to_blog("nikhil@gmail.com","https://link.springer.com/content/pdf/10.1007/s42757-022-0156-4.pdf?pdf=button")
-    # app.blog_to_category("https://link.springer.com/content/pdf/10.1007/s42757-022-0156-4.pdf?pdf=button","bc")
-    # app.blog_to_category("https://link.springer.com/content/pdf/10.1007/s42757-022-0144-8.pdf?pdf=button","bc")
-    # ans = app.get_blogs_by_likes()
-    # print(ans)
-    # for i in ans:
-    #     print(i["pdf_link"])
-    # summary = read_article("https://link.springer.com/content/pdf/10.1007/s00120-023-02043-2.pdf?pdf=button")
-    # summary_text = summary.summary
-    # lines = summary_text.splitlines()
-    # cleaned_lines = [line.lstrip("- ") for line in lines]
-    # cleaned_summary = "\n".join(cleaned_lines)
-    # print(cleaned_summary)
-    # app.user_to_category_browsing("nikhil@gmail.com","dsnjdsnjdsnnkjds",92)
-    # app.delete_user_to_category("sahil@gmail.com")
-    # ans = app.get_category_by_blog("https://link.springer.com/content/pdf/10.1007/s42757-022-0144-8.pdf?pdf=button")
-    # app.user_to_blog_read("sahil@gmail.com",58)
-    # app.user_to_blog_read("sahil@gmail.com",56)
-    # app.user_to_blog_read("sahil@gmail.com",57)
-    # app.user_to_blog_read("sahil@gmail.com",53)
-    # print(app.get_history("sahil@gmail.com"))
-    # print(ans)
-    # app.create_blog("Myblg","Samplelink","Sampleauthor","https://link.springer.com/content/pdf/10.1007/s42757-022-0144-8.pdf?pdf=button","sample_category")
-    # app.create_user("sam@gmail.com","Sam")
-    # app.remove_likes_from_blog("sam@gmail.com",30)
-    # app.get_blogs_by_likes()
-    # app.add_likes_to_blog("sahilsingh1221177@gmail.com",30)
-    # app.remove_likes_from_blog("sahilsingh1221177@gmail.com",30)
-    # app.get_blogs_by_likes("Physics")
-    # app.get_blogs_by_category_and_limit("Engineering",2)
-    # app.find_all_categories_for_user("sahilsinghh1221177@gmail.com")
-    # app.get_hot_blogs("Environment")
-    # print(datetime.now()-timedelta(days=7))
-    # app.user_to_category_browsing("sahilsingh1221177@gmail.com","Chemistry","400",datetime.now())
-    # print(app.get_duration_and_timestamp("sahilsingh1221177@gmail.com"))
-    # print(app.get_session_data("kaabil@gmail.com"))
-    print(app.check_user_browses_any_category("sahilsi1177@gmail.com"))
-    app.close()

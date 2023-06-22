@@ -9,6 +9,7 @@ import { FaArrowCircleRight, FaEnvelope } from 'react-icons/fa';
 import { AuthContext } from '@/Providers/AuthProvider';
 import { NextPageWithLayout } from '../_app';
 import Head from 'next/head';
+import { auth } from '@/firebase/clientApp';
 
 const RegisterMail: NextPageWithLayout = () => {
   const currentUser = useContext(AuthContext);
@@ -51,7 +52,26 @@ const RegisterMail: NextPageWithLayout = () => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserEmail(event.target.value);
   };
+  const registerUser = async () => {
+    try {
+      const email = auth.currentUser?.email;
+      const resp = await fetch(`http://127.0.0.1:5000/registerMail?email=${email}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+        }),
+      });
 
+      const data = await resp.json();
+      console.log(data);
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+    }
+    router.push('/')
+  };
   return (
     <>
     <Head>
@@ -96,7 +116,7 @@ const RegisterMail: NextPageWithLayout = () => {
         size="lg"
         borderRadius="7"
         bg="red.500"
-        onClick={() => router.push('/')}
+        onClick={registerUser}
       >
         Register
       </Button>

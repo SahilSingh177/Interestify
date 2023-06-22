@@ -27,12 +27,6 @@ const Index = () => {
   const currentUser = useContext(AuthContext);
 
   useEffect(() => {
-    if (!currentUser) {
-      router.push('http://localhost:3000/login');
-    }
-  }, [currentUser, router]);
-
-  useEffect(() => {
     const checkCategories = async () => {
       try {
         const response = await fetch('http://127.0.0.1:5000/hasSelectedCategories', {

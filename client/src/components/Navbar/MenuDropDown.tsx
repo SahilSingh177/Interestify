@@ -67,7 +67,7 @@ const MenuDropDown = () => {
             Reset Categories
           </MenuItem >
           <MenuItem icon={<FaEnvelope />} as='a' cursor="pointer" onClick={openResetModal}>
-            Unsubscribe
+            Weekly mail
           </MenuItem>
           <MenuDivider mb={0} />
           <MenuItem icon={<FaSignOutAlt />} onClick={openModal}
