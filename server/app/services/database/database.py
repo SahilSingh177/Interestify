@@ -10,7 +10,7 @@ from neo4j.exceptions import Neo4jError
 # from dotenv import load_dotenv
 from pathlib import Path
 
-from read_article import read_article
+from .read_article import read_article
 
 # load_dotenv()
 

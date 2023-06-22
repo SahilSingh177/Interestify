@@ -42,6 +42,14 @@ def register_user():
     # create_user function
     return jsonify({"message": "User registered successfully"})
 
+@app.route('/hasSelectedCategories',methods=['POST'])
+def hasSelectedCategories():
+    data = request.json
+    email = data['email']
+    hasSelected = database.check_user_browses_any_category(email)
+    return jsonify(hasSelected)
+
+
 @app.route('/search', methods=['POST'])
 def search():
     data = request.json

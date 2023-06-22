@@ -3,8 +3,11 @@ import { Stack, InputGroup, InputLeftElement, Input, Icon, Heading } from '@chak
 import AllCategories from '@/components/Category/AllCategories'
 import { FaSearch } from 'react-icons/fa'
 import { categoriesData } from '@/Handlers/CategoriesData'
+import { auth } from '@/firebase/clientApp'
+import useAuthRedirect from '@/hooks/useAuthRedirect'
 
 const categories = () => {
+    useAuthRedirect();
     const [data,setData] = useState<string[]>(categoriesData);
     const [inputText, setInputText] = useState<string>('');
     

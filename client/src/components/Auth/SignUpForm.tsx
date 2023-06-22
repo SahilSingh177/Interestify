@@ -3,7 +3,7 @@ import { Button, Flex, Input, FormLabel, Box } from "@chakra-ui/react";
 import { useCreateUserWithEmailAndPassword, useUpdateProfile } from 'react-firebase-hooks/auth';
 import { auth } from '../../firebase/clientApp';
 import Redirect from "./Redirect";
-import ShowAlert from "../Alert/Alert";
+import ShowAlert from "../Alert/ShowAlert";
 import { useRouter } from "next/router";
 
 const SignupForm = () => {

@@ -5,14 +5,20 @@ import { categoriesData } from '@/Handlers/CategoriesData'
 import { useRouter } from 'next/router'
 import { FaArrowCircleRight } from 'react-icons/fa'
 import { AuthContext } from '@/Providers/AuthProvider'
+import { auth } from '@/firebase/clientApp'
+import ShowAlert from '../Alert/ShowAlert'
 
 
 const AllCategories = ({ filteredData }: { filteredData: string[] }) => {
+  const isNewUser =
+      auth.currentUser?.metadata.creationTime === auth.currentUser?.metadata.lastSignInTime;
   const currentUser = useContext(AuthContext);
   const Router = useRouter();
   const [clickedCategories, setClickedCategories] = useState<string[]>([]);
+  const [error,setError]=useState<string>('');
 
   const handleCategoryClick = (categoryName: string) => {
+    setError('');
     setClickedCategories(prevClickedCategories => {
       const isCategorySelected = prevClickedCategories.includes(categoryName);
       if (isCategorySelected) return prevClickedCategories.filter(category => category !== categoryName);
@@ -22,8 +28,8 @@ const AllCategories = ({ filteredData }: { filteredData: string[] }) => {
 
   const submitCategories = async () => {
     const email = currentUser?.email;
-    if (email && clickedCategories.length >= 5) {
-      Router.push('http://localhost:3000/welcome/register_mail');
+    if (email && clickedCategories.length >= 1) {
+      Router.push(isNewUser?'http://localhost:3000/welcome/register_mail':'http://localhost:3000/');
       const payload = {
         email: email,
         updated_preferences: clickedCategories
@@ -35,6 +41,9 @@ const AllCategories = ({ filteredData }: { filteredData: string[] }) => {
         },
         body: JSON.stringify(payload)
       });
+    }
+    else{
+      setError('Please select atleast 1 category to proceed');
     }
   };
 
@@ -51,6 +60,9 @@ const AllCategories = ({ filteredData }: { filteredData: string[] }) => {
         })}
       </Flex>
       <Icon onClick={() => submitCategories()} cursor="pointer" boxSize="5vw" as={FaArrowCircleRight} position="fixed" bottom="2vw" right="2vw"></Icon>
+      {
+        error && <ShowAlert type='warning' title="Sorry" message={error}></ShowAlert>
+      }
     </Box>
   )
 }
