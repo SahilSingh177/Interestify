@@ -2,16 +2,16 @@ from datetime import datetime
 import os
 import threading
 from flask import Flask, request, jsonify
-from .services.database.database import App
-from .services.springer import start_scraping_thread
+from services.database.database import App
+from services.springer import start_scraping_thread
 import dotenv
 from flask_cors import CORS
-from .services import user_preference
-from .services import similar_articles
+from services import user_preference
+from services import similar_articles
 from services.email_automation import schedule_task
 
 app = Flask(__name__)
-CORS(app, origins=['http://localhost:3000'])
+CORS(app, origins='*')
 initialized = False
 
 dotenv.load_dotenv()
