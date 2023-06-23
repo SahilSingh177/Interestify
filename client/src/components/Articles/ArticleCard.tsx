@@ -115,7 +115,6 @@ const ArticleCard: React.FC<Props> = ({
   return (
     <>
       <Card
-        bg="white"
         direction={["column","row"]}
         overflow="hidden"
         size="md"

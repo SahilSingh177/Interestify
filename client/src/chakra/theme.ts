@@ -1,13 +1,8 @@
 import { extendTheme, type ThemeConfig } from "@chakra-ui/react";
 import { Button } from "./button";
 
-const config: ThemeConfig = {
-  initialColorMode: 'dark',
-  useSystemColorMode: false,
-}
 
 export const theme = extendTheme({
-  config,
   colors: {
     brand: {
       100: "#FF3C00",
