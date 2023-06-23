@@ -44,7 +44,7 @@ const OauthButtons = ({ imageSrc, providerName }: Props) => {
     auth.currentUser?.metadata.creationTime === auth.currentUser?.metadata.lastSignInTime;
   
     if (isNewUser && auth.currentUser) {
-      await fetch('http://127.0.0.1:5000/registerUser', {
+      await fetch('https://nikhilranjan.pythonanywhere.com/registerUser', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,8 +63,9 @@ const OauthButtons = ({ imageSrc, providerName }: Props) => {
     <Button
       variant="oauth"
       mb={2}
-      height="10vh"
-      fontSize={{ lg: 'lg', md: 'md', sm: 'sm', base: 'x-small' }}
+      height={['8vh','8vh','8vh','10vh']}
+      width={['75vw','75vw','75vw','25vw']}
+      fontSize={['lg','2xl','2xl','lg']}
       onClick={onSubmit}
     >
       <Avatar src={imageSrc} size={{ base: 'xs', md: 'sm' }} mr={4} />

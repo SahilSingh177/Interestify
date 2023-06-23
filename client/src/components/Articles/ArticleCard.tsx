@@ -88,7 +88,7 @@ const ArticleCard: React.FC<Props> = ({
       if (!currentUser) return;
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/isArticleLiked?email=${currentUser.email}&blog_id=${articleId}`
+          `https://nikhilranjan.pythonanywhere.com/isArticleLiked?email=${currentUser.email}&blog_id=${articleId}`
         );
         const bodyData = await response.json();
         setHasLiked(bodyData.message);
@@ -100,7 +100,7 @@ const ArticleCard: React.FC<Props> = ({
       if (!currentUser) return;
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/isArticleBookmarked?email=${currentUser.email}&blog_id=${articleId}`
+          `https://nikhilranjan.pythonanywhere.com/isArticleBookmarked?email=${currentUser.email}&blog_id=${articleId}`
         );
         const bodyData = await response.json();
         setIsBookMarked(bodyData.message);
