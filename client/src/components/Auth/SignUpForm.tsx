@@ -44,7 +44,7 @@ const SignupForm = () => {
       await updateProfile({ displayName: signupForm.username });
       await updateProfile({ photoURL: '/assets/default_profile_photo.png' });
   
-      await fetch("http://127.0.0.1:5000/registerUser", {
+      await fetch("https://nikhilranjan.pythonanywhere.com/registerUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -71,7 +71,8 @@ const SignupForm = () => {
 
 
   return (
-    <Flex width="50vw" padding="5vw 10vw">
+    <Flex width={['100vw','100vw','100vw','50vw']} padding="10vw" paddingTop={['5vh','5vh','5vh','10vh']} 
+    alignItems='center' justifyContent='center'>
       <form onSubmit={onSubmit} >
         <FormLabel color="white">Username</FormLabel>
         <Input
@@ -79,7 +80,7 @@ const SignupForm = () => {
           name="username"
           placeholder="username"
           type="text"
-          width="25vw"
+          width={['75vw','75vw','75vw','25vw']}
           height="7.5vh"
           mb={2}
           onChange={onChange}
@@ -92,7 +93,7 @@ const SignupForm = () => {
           name="email"
           placeholder="email"
           type="email"
-          width="25vw"
+          width={['75vw','75vw','75vw','25vw']}
           height="7.5vh"
           mb={2}
           onChange={onChange}
@@ -105,7 +106,7 @@ const SignupForm = () => {
           name="password"
           placeholder="password"
           type="password"
-          width="25vw"
+          width={['75vw','75vw','75vw','25vw']}
           height="7.5vh"
           mb={2}
           onChange={onChange}
@@ -117,16 +118,18 @@ const SignupForm = () => {
           name="confirmPassword"
           placeholder="Confirm Password"
           type="password"
-          width="25vw"
+          width={['75vw','75vw','75vw','25vw']}
           height="7.5vh"
           mb={2}
           onChange={onChange}
           bg="blue.800"
           border="blue.400"
         />
+        <Flex width='full' alignItems='center' justifyContent='center'>
         <Button variant="success" width="25vw" height="50px" mt={5} mb={2} size="lg" type="submit" isLoading={loading}>
           Sign Up
         </Button>
+        </Flex>
         <Redirect view="signup"></Redirect>
       </form>
 

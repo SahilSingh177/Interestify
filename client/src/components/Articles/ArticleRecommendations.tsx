@@ -17,7 +17,7 @@ const ArticleRecommendations = ({ ArticleId }: { ArticleId: string }) => {
 
   const getSimilarBlogs = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/getSimilarArticles?article_id=${ArticleId}`);
+      const response = await fetch(`https://nikhilranjan.pythonanywhere.com/getSimilarArticles?article_id=${ArticleId}`);
       const bodyData = await response.json();
       setIsLoading(false);
       setData(bodyData);

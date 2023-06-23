@@ -37,7 +37,7 @@ const History = () => {
 
   const fetchData = async () => {
     try {
-      let response = await fetch(`http://127.0.0.1:5000/history?email=${email}`);
+      let response = await fetch(`https://nikhilranjan.pythonanywhere.com/history?email=${email}`);
       const bodyData = await response.json();
       const filteredData = bodyData.data;
       setData(filteredData);
@@ -60,7 +60,7 @@ const History = () => {
       setData(initialData);
     } else {
       try {
-        const resp = await fetch('http://127.0.0.1:5000/searchHistory', {
+        const resp = await fetch('https://nikhilranjan.pythonanywhere.com/searchHistory', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

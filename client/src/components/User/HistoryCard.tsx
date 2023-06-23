@@ -47,7 +47,7 @@ const HistoryCard = ({
     setIsDeleted(true);
     try {
       let response = await fetch(
-        `http://127.0.0.1:5000/deletehistory?email=${email}&rid=${rid}`,
+        `https://nikhilranjan.pythonanywhere.com/deletehistory?email=${email}&rid=${rid}`,
         { next: { revalidate: 60 } }
       );
       const bodyData = await response.json();

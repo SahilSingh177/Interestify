@@ -59,11 +59,11 @@ const Category = ({
 
   let endpoint = '';
   if (sortBy === 'best')
-    endpoint = `http://127.0.0.1:5000/getTopArticlesfor?category=${category}&page=${page}`;
+    endpoint = `https://nikhilranjan.pythonanywhere.com/getTopArticlesfor?category=${category}&page=${page}`;
   else if (sortBy === 'recent')
-    endpoint = `http://127.0.0.1:5000/getRecentArticlesfor?category=${category}&page=${page}`;
+    endpoint = `https://nikhilranjan.pythonanywhere.com/getRecentArticlesfor?category=${category}&page=${page}`;
   else
-    endpoint = `http://127.0.0.1:5000/getHotArticlesfor?category=${category}&page=${page}`;
+    endpoint = `https://nikhilranjan.pythonanywhere.com/getHotArticlesfor?category=${category}&page=${page}`;
 
   const fetchData = async () => {
     try {
@@ -190,11 +190,11 @@ export async function getServerSideProps({
     let endpoint = '';
 
     if (sortBy === 'best')
-      endpoint = `http://127.0.0.1:5000/getTopArticlesfor?category=${category_name}&page=1`;
+      endpoint = `https://nikhilranjan.pythonanywhere.com/getTopArticlesfor?category=${category_name}&page=1`;
     else if (sortBy === 'recent')
-      endpoint = `http://127.0.0.1:5000/getRecentArticlesfor?category=${category_name}&page=1`;
+      endpoint = `https://nikhilranjan.pythonanywhere.com/getRecentArticlesfor?category=${category_name}&page=1`;
     else
-      endpoint = `http://127.0.0.1:5000/getHotArticlesfor?category=${category_name}&page=1`;
+      endpoint = `https://nikhilranjan.pythonanywhere.com/getHotArticlesfor?category=${category_name}&page=1`;
 
     const resp = await fetch(endpoint);
     const filteredResp = await resp.json();

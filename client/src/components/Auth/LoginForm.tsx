@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { Button, Flex, Input, Text, FormLabel } from "@chakra-ui/react";
+import { Button, Flex, Input, Text, FormLabel, VStack } from "@chakra-ui/react";
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { auth } from '../../firebase/clientApp';
 import Redirect from "./Redirect";
@@ -51,37 +51,44 @@ const LoginForm = () => {
   };
 
   return (
-    <Flex width="50vw" padding="10vw" alignItems='center'>
+    <Flex width={['100vw','100vw','100vw','50vw']} padding="10vw" paddingTop={['5vh','5vh','5vh','10vh']} alignItems='center' justifyContent='center'>
       <form onSubmit={onSubmit}>
+        <VStack alignItems='flex-start'>
         <FormLabel color="white">Email address</FormLabel>
         <Input
           required
           name="email"
           placeholder="email"
           type="text"
-          width="25vw"
+          width={['75vw','75vw','75vw','25vw']}
           height="7.5vh"
           mb={2}
           onChange={onChange}
           bg="blue.800"
           border="blue.400"
         />
+        </VStack >
+        <VStack alignItems='flex-start'>
         <FormLabel color="white">Password</FormLabel>
         <Input
           required
           name="password"
           placeholder="password"
           type="password"
-          width="25vw"
+          width={['75vw','75vw','75vw','25vw']}
           height="7.5vh"
           mb={2}
           onChange={onChange}
           bg="blue.800"
           border="blue.400"
         />
-        <Button variant="success" size='lg' width="25vw" height="50px" mt={5} mb={2} type="submit" isLoading={loading}>
+        </VStack>
+        <Flex width='full' alignItems='center' justifyContent='center'>
+        <Button variant="success" size='lg' width={['50vw','50vw','50vw','25vw']} height={['70px','70px','50px','50px']} mt={5} mb={2} type="submit" isLoading={loading}
+        >
           Log In
         </Button>
+        </Flex>
         <Redirect view="login"></Redirect>
       </form>
       {customErrorMessage && (
