@@ -29,7 +29,6 @@ const LoginForm = () => {
 
     if (error) {
       if (error.code === 'auth/wrong-password') {
-        console.log('yayy')
         setCustomErrorMessage('Wrong password. Please try again.');
       } else {
         console.log(error);
@@ -51,7 +50,7 @@ const LoginForm = () => {
   };
 
   return (
-    <Flex width={['100vw','100vw','100vw','50vw']} padding="10vw" paddingTop={['5vh','5vh','5vh','10vh']} alignItems='center' justifyContent='center'>
+    <Flex width={['100vw','100vw','100vw','50vw']} padding="10vw" paddingTop={['0','0','0','10vh']} alignItems='center' justifyContent='center'>
       <form onSubmit={onSubmit}>
         <VStack alignItems='flex-start'>
         <FormLabel color="white">Email address</FormLabel>
@@ -84,7 +83,7 @@ const LoginForm = () => {
         />
         </VStack>
         <Flex width='full' alignItems='center' justifyContent='center'>
-        <Button variant="success" size='lg' width={['50vw','50vw','50vw','25vw']} height={['70px','70px','50px','50px']} mt={5} mb={2} type="submit" isLoading={loading}
+        <Button variant="success"  width={['30vw','50vw','50vw','25vw']} height={['50px','70px','50px','50px']} mt={5} mb={2} type="submit" isLoading={loading}
         >
           Log In
         </Button>

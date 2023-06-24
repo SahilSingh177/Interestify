@@ -1,8 +1,0 @@
-# Wait 60 seconds before connecting using these details, or login to https://console.neo4j.io to validate the Aura Instance is available
-NEO4J_URI=neo4j+s://58ad0a3e.databases.neo4j.io
-NEO4J_USERNAME=neo4j
-NEO4J_PASSWORD=C3a6el-mB51BQGsGnWGARmZiog15X1Ag8vOMH9iBpLY
-AURA_INSTANCEID=58ad0a3e
-AURA_INSTANCENAME=Instance01
-CREATE FULLTEXT INDEX titlesAndDescriptions FOR (n:Movie|Book) ON EACH [n.title, n.description]
-CREATE FULLTEXT INDEX CategoryName FOR (n:Category) ON EACH [n.name]

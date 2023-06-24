@@ -8,15 +8,15 @@ import Head from 'next/head';
 const Login = () => {
   return (
     <>
-    <Head>
+      <Head>
         <title>Interestify - Login</title>
       </Head>
-    
-    <Flex flexDirection={['column','column','column','row']} minHeight='90vh' justifyContent="center" bgImage="/assets/auth_bg.avif" backgroundSize='cover'>
-      <OAuth view="login"></OAuth>
-      <AuthDivider></AuthDivider>
-      <LoginForm></LoginForm>
-    </Flex>
+
+      <Flex minWidth='100vw' flexDirection={['column', 'column', 'column', 'row']} minHeight='90vh' justifyContent="center" bgImage="/assets/auth_bg.avif" backgroundSize='cover'>
+        <OAuth view="login"></OAuth>
+        <AuthDivider></AuthDivider>
+        <LoginForm></LoginForm>
+      </Flex>
     </>
   );
 };

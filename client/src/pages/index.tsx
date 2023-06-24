@@ -29,7 +29,7 @@ const Index = () => {
   useEffect(() => {
     const checkCategories = async () => {
       try {
-        const response = await fetch('https://nikhilranjan.pythonanywhere.com/hasSelectedCategories', {
+        const response = await fetch('http://nikhilranjan.pythonanywhere.com/hasSelectedCategories', {
           method: 'POST',
           headers: {
             "Content-Type": "application/json",
@@ -39,7 +39,6 @@ const Index = () => {
           }),
         });
         const data = await response.json();
-        console.log(data);
 
         if (!data) {
           router.push('/welcome/categories');
@@ -63,11 +62,11 @@ const Index = () => {
       let response;
       if (!email) {
         response = await fetch(
-          `https://nikhilranjan.pythonanywhere.com/getTopArticles?page=${page}`
+          `http://nikhilranjan.pythonanywhere.com/getTopArticles?page=${page}`
         );
       } else {
         response = await fetch(
-          `https://nikhilranjan.pythonanywhere.com/getTopArticles?email=${email}&page=${page}`
+          `http://nikhilranjan.pythonanywhere.com/getTopArticles?email=${email}&page=${page}`
         );
       }
       const jsonData = await response.json();
@@ -97,7 +96,7 @@ const Index = () => {
         <Flex
           flexDirection={{ lg: "row", base: "column" }}
           marginTop={['5vh','5vh','5vh','10vh']}
-          width={`calc(100vw - 12px)`}
+          width={['100vw','100vw','100vw',`calc(100vw - 12px)`]}
           justifyContent={{ lg: "space-evenly", base: "column" }}
           alignItems={{ lg: "flex-start", base: "center" }}
           minHeight={`calc(100vh-80px)`}

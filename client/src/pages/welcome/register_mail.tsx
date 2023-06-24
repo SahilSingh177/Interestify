@@ -8,6 +8,7 @@ import {
 import { FaArrowCircleRight, FaEnvelope } from 'react-icons/fa';
 import { AuthContext } from '@/Providers/AuthProvider';
 import { NextPageWithLayout } from '../_app';
+import Image from 'next/image';
 import Head from 'next/head';
 import { auth } from '@/firebase/clientApp';
 
@@ -24,7 +25,7 @@ const RegisterMail: NextPageWithLayout = () => {
   useEffect(() => {
     const checkCategories = async () => {
       try {
-        const response = await fetch('https://nikhilranjan.pythonanywhere.com/hasSelectedCategories', {
+        const response = await fetch('http://nikhilranjan.pythonanywhere.com/hasSelectedCategories', {
           method: 'POST',
           headers: {
             "Content-Type": "application/json",
@@ -34,7 +35,6 @@ const RegisterMail: NextPageWithLayout = () => {
           }),
         });
         const data = await response.json();
-        console.log(data);
 
         if (!data) {
           router.push('/welcome/categories');
@@ -55,7 +55,7 @@ const RegisterMail: NextPageWithLayout = () => {
   const registerUser = async () => {
     try {
       const email = auth.currentUser?.email;
-      const resp = await fetch(`https://nikhilranjan.pythonanywhere.com/registerMail?email=${email}`, {
+      const resp = await fetch(`http://nikhilranjan.pythonanywhere.com/registerMail?email=${email}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -66,7 +66,6 @@ const RegisterMail: NextPageWithLayout = () => {
       });
 
       const data = await resp.json();
-      console.log(data);
     } catch (error) {
       console.error("Error fetching search results:", error);
     }
@@ -78,9 +77,6 @@ const RegisterMail: NextPageWithLayout = () => {
         <title>Interestify - Select Categories</title>
       </Head>
       <Stack
-        bgImage="/assets/mail_bg.jpg"
-        backgroundRepeat="none"
-        backgroundSize="cover"
         height="100vh"
         width="100vw"
         justifyContent="center"
@@ -88,10 +84,12 @@ const RegisterMail: NextPageWithLayout = () => {
         paddingLeft={["5%", "5%", "15%", "25%"]}
         paddingRight={["5%", "5%", "15%", "25%"]}
       >
-        <Heading fontSize={["4xl", "4xl", "6xl", "6xl"]} fontWeight="extrabold" textAlign="center" color="gray.700">
+        <Image src="/assets/mail_bg.jpg" alt="mail image" layout="fill" objectFit="cover" objectPosition="center" />
+
+        <Heading zIndex={1} fontSize={["4xl", "4xl", "6xl", "6xl"]} fontWeight="extrabold" textAlign="center" color="gray.700">
           SUBSCRIBE TO OUR MAIL SERVICE
         </Heading>
-        <Text marginTop="3" color="gray.700" fontSize={["xl", "xl", "2xl", "2xl"]} fontWeight="bold" textAlign="center">
+        <Text zIndex={1} marginTop="3" color="gray.700" fontSize={["xl", "xl", "2xl", "2xl"]} fontWeight="bold" textAlign="center">
           Get top personalized articles in your inbox every Sunday
         </Text>
         <Box width={['100%', '70%']} position="relative">
@@ -126,7 +124,7 @@ const RegisterMail: NextPageWithLayout = () => {
         <Icon
           onClick={() => router.push('/')}
           cursor="pointer"
-          boxSize={["10vw","10vw","5vw","5vw"]}
+          boxSize={["10vw", "10vw", "5vw", "5vw"]}
           as={FaArrowCircleRight}
           position="fixed"
           bottom="2vw"

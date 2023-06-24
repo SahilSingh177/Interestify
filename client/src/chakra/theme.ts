@@ -1,13 +1,13 @@
 import { extendTheme, type ThemeConfig } from "@chakra-ui/react";
 import { Button } from "./button";
 
+const config:ThemeConfig = {
+  initialColorMode: 'light',
+  useSystemColorMode: false,
+}
 
 export const theme = extendTheme({
-  colors: {
-    brand: {
-      100: "#FF3C00",
-    },
-  },
+  config,
   fonts: {
     body: "Open Sans, sans-serif",
   },

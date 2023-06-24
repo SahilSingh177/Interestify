@@ -87,7 +87,7 @@ const Profile = () => {
   let dataArray: number[] = [];
 
   const fetchData = async () => {
-    const resp = await fetch(`https://nikhilranjan.pythonanywhere.com/getCategoryData?email=${currentUser?.email}`);
+    const resp = await fetch(`http://nikhilranjan.pythonanywhere.com/getCategoryData?email=${currentUser?.email}`);
     const data = await resp.json();
     for (const categoryData of data) {
       stringArray.push(categoryData['category_name']);
@@ -114,7 +114,8 @@ const Profile = () => {
       <Head>
         <title>Activity</title>
       </Head>
-      <Flex bg='gray.50' height='100vh' flexDirection='column' width={`(100vw - 12px)`} alignItems='center' justifyContent='space-around' padding='5vh 5vw' maxHeight='90vh'>
+      <Flex bg='gray.50' height='100vh' flexDirection='column' 
+      width={['100vw','100vw','100vw',`calc(100vw - 12px)`]} alignItems='center' justifyContent='space-around' padding='5vh 5vw' maxHeight='90vh'>
         <Heading>YOUR ACTIVITY</Heading>
         <Bar options={options} data={data} style={{
           maxHeight: '80vh'

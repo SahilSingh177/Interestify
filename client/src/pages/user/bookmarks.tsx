@@ -47,7 +47,7 @@ const Bookmarks = () => {
     const email = auth.currentUser?.email;
     try {
       const response = await fetch(
-        `https://nikhilranjan.pythonanywhere.com/getBookMarks?email=${email}`
+        `http://nikhilranjan.pythonanywhere.com/getBookMarks?email=${email}`
       );
       const bodyData = await response.json();
       const filteredData = bodyData.data;
@@ -73,7 +73,7 @@ const Bookmarks = () => {
       setData(initialData);
     } else {
       try {
-        const resp = await fetch("https://nikhilranjan.pythonanywhere.com/searchBookmark", {
+        const resp = await fetch("http://nikhilranjan.pythonanywhere.com/searchBookmark", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -101,7 +101,7 @@ const Bookmarks = () => {
         <title>Bookmarks</title>
       </Head>
     <Stack
-      width="calc(100vw - 12px)"
+      width={['100vw','100vw','100vw',`calc(100vw - 12px)`]}
       minHeight="90vh"
       bg="gray.50"
       alignItems="center"

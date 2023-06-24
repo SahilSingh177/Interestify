@@ -20,7 +20,7 @@ const SearchModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void
              setSearchResults([]);
              return;
         }
-        const resp = await fetch('https://nikhilranjan.pythonanywhere.com/search', {
+        const resp = await fetch('http://nikhilranjan.pythonanywhere.com/search', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ const SearchModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void
                                     <Icon as={FaSearch} color='teal.400'/>
                                 </Flex>
                             </InputLeftElement>
-                            <Input onChange={GetSearchResults} borderColor="white" focusBorderColor="white" type='tel' placeholder='Search Interestify' />
+                            <Input onChange={GetSearchResults} borderColor="white" focusBorderColor="white" type='text' placeholder='Search Interestify' />
                         </InputGroup>
                     </ModalBody>
                     {

@@ -33,9 +33,9 @@ const Navbar: React.FC = () => {
     <Flex
       bg={isHomePage && !currentUser && !isScrolledPastThreshold ? "#ffdf00" : "white"}
       position="fixed"
-      width="100vw"
+      width={['100vw','100vw','100vw',`calc(100vw - 12px)`]} 
       maxWidth="100vw"
-      height="10vh "
+      height="10vh"
       padding="10px 5vw"
       zIndex="200"
       justifyContent="space-between"
@@ -44,7 +44,7 @@ const Navbar: React.FC = () => {
       overflowY="hidden"
     >
       <Link href="/">
-        <Image src="/assets/logo-no-background.svg" height='10vh'></Image>
+        <Image src="/assets/logo-no-background.svg" height={['8vh','8vh','10vh','10vh']}></Image>
 
       </Link>
         <SearchBar></SearchBar>

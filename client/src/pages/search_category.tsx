@@ -24,7 +24,6 @@ const search_category = () => {
             bgPosition="center"
             bgRepeat="no-repeat"
             height='90vh'
-            width='100vw'
         >
             <VStack minHeight='8vh' justifyContent='center' width='70%' bg='white' marginTop='10vh' borderRadius={15} padding={0}>
                 <Flex height='8vh' width='100%' justifyContent='center' alignItems='center'>

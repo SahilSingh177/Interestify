@@ -24,7 +24,7 @@ const ResetMailModal = ({
     try {
       const email = auth.currentUser?.email;
       if (subsciptionStatus === "Subscribe") {
-        await fetch("https://nikhilranjan.pythonanywhere.com/registerMail", {
+        await fetch("http://nikhilranjan.pythonanywhere.com/registerMail", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -37,7 +37,7 @@ const ResetMailModal = ({
         // Close the modal
         onClose();
       } else {
-        await fetch("https://nikhilranjan.pythonanywhere.com/unregisterMail", {
+        await fetch("http://nikhilranjan.pythonanywhere.com/unregisterMail", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -60,10 +60,9 @@ const ResetMailModal = ({
       try {
         const email = auth.currentUser?.email;
         const resp = await fetch(
-          `https://nikhilranjan.pythonanywhere.com/checkUserRegistration?email=${email}`
+          `http://nikhilranjan.pythonanywhere.com/checkUserRegistration?email=${email}`
         );
         const data = await resp.json();
-        console.log(data);
         if (data === false) {
           setSubsciptionStatus("Subscribe");
         } else {

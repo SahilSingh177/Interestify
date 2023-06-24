@@ -58,7 +58,7 @@ const Article: React.FC<Props> = ({
 
     const updateCategoryTime = async ({ timeSpent }: { timeSpent: number }) => {
       try {
-        await fetch('https://nikhilranjan.pythonanywhere.com/updateCategoryScore', {
+        await fetch('http://nikhilranjan.pythonanywhere.com/updateCategoryScore', {
           method: 'POST',
           headers: {
             "Content-Type": "application/json",
@@ -77,7 +77,6 @@ const Article: React.FC<Props> = ({
     return () => {
       const endTime = Date.now();
       const duration = endTime - startTime;
-      console.log(`Time spent on page: ${duration} milliseconds`);
       updateCategoryTime({ timeSpent: duration });
       console.log('yayyyy')
     };
@@ -87,7 +86,7 @@ const Article: React.FC<Props> = ({
 
     const updateBlogList = async () => {
       if (!currentUser) return;
-      await fetch("https://nikhilranjan.pythonanywhere.com/registerBlog", {
+      await fetch("http://nikhilranjan.pythonanywhere.com/registerBlog", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -115,7 +114,7 @@ const Article: React.FC<Props> = ({
       if (!currentUser) return;
       try {
         const response = await fetch(
-          `https://nikhilranjan.pythonanywhere.com/isArticleLiked?email=${currentUser.email}&blog_id=${ArticleId}`
+          `http://nikhilranjan.pythonanywhere.com/isArticleLiked?email=${currentUser.email}&blog_id=${ArticleId}`
         );
         const bodyData = await response.json();
         setHasLiked(bodyData.message);
@@ -128,7 +127,7 @@ const Article: React.FC<Props> = ({
       if(!currentUser) return;
       try {
         const response = await fetch(
-          `https://nikhilranjan.pythonanywhere.com/isArticleBookmarked?email=${currentUser.email}&blog_id=${ArticleId}`
+          `http://nikhilranjan.pythonanywhere.com/isArticleBookmarked?email=${currentUser.email}&blog_id=${ArticleId}`
         );
         const bodyData = await response.json();
         console.log(bodyData);
