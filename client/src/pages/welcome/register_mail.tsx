@@ -125,7 +125,7 @@ const RegisterMail: NextPageWithLayout = () => {
                 <InputLeftAddon bg="red.500" color="white">
                   Email:
                 </InputLeftAddon>
-                <Input placeholder="Enter Your Email" value={email} readOnly />
+                <Input placeholder={email?email:'Enter Your Email'} readOnly />
                 <InputRightElement pointerEvents="none">
                   <Icon as={FaEnvelope} color="red.500" />
                 </InputRightElement>
