@@ -25,7 +25,7 @@ const RegisterMail: NextPageWithLayout = () => {
   useEffect(() => {
     const checkCategories = async () => {
       try {
-        const response = await fetch('http://nikhilranjan.pythonanywhere.com/hasSelectedCategories', {
+        const response = await fetch('https://nikhilranjan.pythonanywhere.com/hasSelectedCategories', {
           method: 'POST',
           headers: {
             "Content-Type": "application/json",
@@ -55,7 +55,7 @@ const RegisterMail: NextPageWithLayout = () => {
   const registerUser = async () => {
     try {
       const email = auth.currentUser?.email;
-      const resp = await fetch(`http://nikhilranjan.pythonanywhere.com/registerMail?email=${email}`, {
+      const resp = await fetch(`https://nikhilranjan.pythonanywhere.com/registerMail?email=${email}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -58,7 +58,7 @@ const Article: React.FC<Props> = ({
 
     const updateCategoryTime = async ({ timeSpent }: { timeSpent: number }) => {
       try {
-        await fetch('http://nikhilranjan.pythonanywhere.com/updateCategoryScore', {
+        await fetch('https://nikhilranjan.pythonanywhere.com/updateCategoryScore', {
           method: 'POST',
           headers: {
             "Content-Type": "application/json",
@@ -86,7 +86,7 @@ const Article: React.FC<Props> = ({
 
     const updateBlogList = async () => {
       if (!currentUser) return;
-      await fetch("http://nikhilranjan.pythonanywhere.com/registerBlog", {
+      await fetch("https://nikhilranjan.pythonanywhere.com/registerBlog", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -114,7 +114,7 @@ const Article: React.FC<Props> = ({
       if (!currentUser) return;
       try {
         const response = await fetch(
-          `http://nikhilranjan.pythonanywhere.com/isArticleLiked?email=${currentUser.email}&blog_id=${ArticleId}`
+          `https://nikhilranjan.pythonanywhere.com/isArticleLiked?email=${currentUser.email}&blog_id=${ArticleId}`
         );
         const bodyData = await response.json();
         setHasLiked(bodyData.message);
@@ -127,7 +127,7 @@ const Article: React.FC<Props> = ({
       if(!currentUser) return;
       try {
         const response = await fetch(
-          `http://nikhilranjan.pythonanywhere.com/isArticleBookmarked?email=${currentUser.email}&blog_id=${ArticleId}`
+          `https://nikhilranjan.pythonanywhere.com/isArticleBookmarked?email=${currentUser.email}&blog_id=${ArticleId}`
         );
         const bodyData = await response.json();
         console.log(bodyData);

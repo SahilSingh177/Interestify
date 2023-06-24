@@ -34,7 +34,7 @@ const SearchCategoriesModal = ({ inputText }: { inputText: string }) => {
     }
 
     try {
-      const resp = await fetch('http://nikhilranjan.pythonanywhere.com/searchCategory', {
+      const resp = await fetch('https://nikhilranjan.pythonanywhere.com/searchCategory', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

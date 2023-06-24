@@ -43,7 +43,7 @@ const OauthButtons = ({ imageSrc, providerName }: Props) => {
     auth.currentUser?.metadata.creationTime === auth.currentUser?.metadata.lastSignInTime;
   
     if (isNewUser && auth.currentUser) {
-      await fetch('http://nikhilranjan.pythonanywhere.com/registerUser', {
+      await fetch('https://nikhilranjan.pythonanywhere.com/registerUser', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
