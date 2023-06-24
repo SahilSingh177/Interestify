@@ -251,9 +251,8 @@ class App:
 
     @staticmethod
     def _searchCategory(tx, text):
-        text += '~'
         query = (
-            'CALL db.index.fulltext.queryNodes("CategoryName", $searchTerm) YIELD node, score '
+            'CALL db.index.fulltext.queryNodes("CategoryName", $searchTerm+"*") YIELD node, score '
             'RETURN node.name AS name, score'
         )
         result = tx.run(query, searchTerm=text)
@@ -379,8 +378,6 @@ class App:
                 return False
             if not self.check_category_exists(category_name):
                 return False
-            if not self.user_to_category(user_email, category_name):
-                self.user_to_category(user_email, category_name)
             result = session.execute_write(
                 self._user_to_category_browsing, user_email, category_name, session_time, session_date)
             return True
@@ -388,9 +385,10 @@ class App:
     @staticmethod
     def _user_to_category_browsing(tx, user_email, category_name, session_time, session_date):
         query = (
-            "MATCH (u:User {email: $user_email})-[r:BROWSES]->(c:Category {name: $category_name}) "
-            "SET r.session_time = COALESCE(r.session_time, []) + [$session_time] "
-            "SET r.session_date = COALESCE(r.session_date, []) + [$session_date] "
+            "MATCH (u:User {email: $user_email}) "
+            "MERGE (u)-[r:BROWSES]->(c:Category {name: $category_name}) "
+            "SET r.session_time = COALESCE(r.session_time, []) + [$session_time], "
+            "r.session_date = COALESCE(r.session_date, []) + [$session_date] "
             "RETURN u, c"
         )
         result = tx.run(query, user_email=user_email, category_name=category_name, session_time=session_time, session_date=session_date)
