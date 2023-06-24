@@ -71,7 +71,7 @@ const ArticlePage = () => {
         alignItems="center"
         justifyContent='center'
         height={['80vh', '80vh', '80vh', '75vh']}
-        width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
+        width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]}
       >
         <Loading />
       </Flex>
