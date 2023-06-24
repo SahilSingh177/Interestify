@@ -49,9 +49,6 @@ const RegisterMail: NextPageWithLayout = () => {
 
   const [userEmail, setUserEmail] = useState('');
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUserEmail(event.target.value);
-  };
   const registerUser = async () => {
     try {
       const email = auth.currentUser?.email;
@@ -100,7 +97,7 @@ const RegisterMail: NextPageWithLayout = () => {
                 <Input
                   placeholder="Enter Your Email"
                   value={userEmail}
-                  onChange={handleChange}
+                  readOnly
                 />
                 <InputRightElement pointerEvents="none">
                   <Icon as={FaEnvelope} color="red.500" />

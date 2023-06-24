@@ -44,13 +44,12 @@ const Navbar: React.FC = () => {
       overflowX="hidden"
       overflowY="hidden"
     >
-      <Box height='10vh' width='16vh' padding='1vh'>
+      <Flex height='10vh' width='16vh' padding='1vh' alignItems='center' justifyContent='center'>
 
       <Link href="/">
-        <Image priority={true} src="/assets/logo-no-background.svg" alt='logo'height='333' width='584' layout='responsive'></Image>
-
+        <Image priority={true} src="/assets/logo-no-background.svg" alt='logo'height='333' width='584'></Image>
       </Link>
-      </Box>
+      </Flex>
         <SearchBar></SearchBar>
       <Flex>
         <AuthButtons />
