@@ -9,7 +9,7 @@ const Banner: React.FC = () => {
   const currentUser = useContext(AuthContext);
 
   return (
-    <Flex flexDirection="column" width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]} overflowX="hidden" height='60vh'>
+    <Flex flexDirection="column" width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]} overflowX="hidden">
       {!currentUser && <Flex flexDirection="row" height="60vh" bg="#ffdf00" marginTop="0" alignItems="center">
         <Stack width="50vw" paddingLeft="10%" height='full' justifyContent='center'>
           <Text fontSize={{ lg: "6xl", md: "4xl", sm: "4xl", base: "3xl" }}>Stay Curious</Text>
@@ -20,7 +20,7 @@ const Banner: React.FC = () => {
             onClick={() => router.push('/signup')}
           >Start Reading</Button>
         </Stack>
-        <VStack width='50vw' height='60vh' position='relative'>
+        <VStack width='50vw' height='60vh' paddingTop='5vh' paddingBottom='5vh' position='relative'>
           <Image alt='reading guy' src="/assets/reading_guy.png" layout="fill" objectFit="cover"></Image>
         </VStack>
       </Flex>}
