@@ -1166,7 +1166,8 @@ class App:
     @staticmethod
     def _category_sub(tx, user_email, category_list,score):
         query=(
-            "MATCH (u:User {email: $user_email})-[r:BROWSES]->(c:Category) "
+            "MATCH (u:User {email: $user_email}) "
+            "OPTIONAL MATCH (u)-[r:BROWSES]->(c:Category) "
             "DELETE r "
             "WITH u "
             "UNWIND $category_names AS category_name "
@@ -1174,7 +1175,6 @@ class App:
             "MERGE (u)-[r:BROWSES]->(c) "
             "SET r.score = $score "
             "RETURN u, collect(c) AS categories, collect(r) AS relationships"
-
         )
         result = tx.run(query, user_email=user_email, category_names=category_list, score=score)
         try:
