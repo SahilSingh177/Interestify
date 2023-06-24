@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react';
 import ArticleCard from '@/components/Articles/ArticleCard';
 import Sidebar from '@/components/Articles/SideBar';
-import { GetServerSidePropsContext } from 'next';
+import Loading from '@/components/loading/Loading'
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Head from 'next/head';
 
@@ -27,58 +27,54 @@ interface Article {
   isLiked: boolean;
 }
 
-const Category = ({
-  category,
-  sortBy,
-  initialData,
-}: {
-  category: string;
-  sortBy: string;
-  initialData: Article[];
-}) => {
+const Category = () => {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState<Article[]>(initialData);
+  const [tabIndex, setTabIndex] = useState<number>(-1);
+  const category = router.query.category_name as string;
+  const sortBy = router.query.sortBy as string;
+  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState<Article[]>([]);
   const [hasMoreData, setHasMoreData] = useState(true);
-  const [page, setPage] = useState(2);
-
-  useEffect(() => {
-    const handleRouteChange = () => {
-      if (router.query.optionalParam !== router.asPath) {
-        setData(initialData);
-        setPage(2);
-        setHasMoreData(true);
-      }
-    };
-    router.events.on('routeChangeComplete', handleRouteChange);
-    return () => {
-      router.events.off('routeChangeComplete', handleRouteChange);
-    };
-  }, [router]);
-
-  let endpoint = '';
-  if (sortBy === 'best')
-    endpoint = `https://nikhilranjan.pythonanywhere.com/getTopArticlesfor?category=${category}&page=${page}`;
-  else if (sortBy === 'recent')
-    endpoint = `https://nikhilranjan.pythonanywhere.com/getRecentArticlesfor?category=${category}&page=${page}`;
-  else
-    endpoint = `https://nikhilranjan.pythonanywhere.com/getHotArticlesfor?category=${category}&page=${page}`;
+  const [page, setPage] = useState(1);
 
   const fetchData = async () => {
     try {
+      let endpoint = '';
+      if (sortBy === 'best')
+        endpoint = `https://nikhilranjan.pythonanywhere.com/getTopArticlesfor?category=${category}&page=${page}`;
+      else if (sortBy === 'recent')
+        endpoint = `https://nikhilranjan.pythonanywhere.com/getRecentArticlesfor?category=${category}&page=${page}`;
+      else
+        endpoint = `https://nikhilranjan.pythonanywhere.com/getHotArticlesfor?category=${category}&page=${page}`;
+
       const response = await fetch(endpoint);
       const jsonData = await response.json();
       if (jsonData.length === 0) {
         setHasMoreData(false);
+        setIsLoading(false);
         return;
       }
       setData((prevData) => [...prevData, ...jsonData]);
+      console.log('setting data');
+      console.log(data)
       setPage((prevPage) => prevPage + 1);
       setIsLoading(false);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
+
+  useEffect(() => {
+    const tab = router.asPath.split('/')[3];
+    if (tab == 'best') setTabIndex(0);
+    else if (tab == 'recent') setTabIndex(1);
+    else setTabIndex(2);
+    setData([]);
+    setPage(1);
+    setHasMoreData(true);
+    setIsLoading(true);
+    fetchData();
+  }, [router]);
 
   return (
     <>
@@ -87,31 +83,46 @@ const Category = ({
       </Head>
       <Flex
         flexDirection={{ lg: "row", base: "column" }}
-        marginTop={['5vh','5vh','5vh','10vh']}
-        width={['100vw','100vw','100vw',`calc(100vw - 12px)`]}
+        marginTop={['5vh', '5vh', '5vh', '10vh']}
+        width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]}
         justifyContent={{ lg: "space-evenly", base: "column" }}
         alignItems={{ lg: "flex-start", base: "center" }}
         minHeight={`calc(100vh-80px)`}
       >
         <Flex
           flexDirection="column"
-          justifyContent={['center','center','center','flex-start']}
+          justifyContent={['center', 'center', 'center', 'flex-start']}
           width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
           overflowX="hidden"
         >
           <Heading size="2xl" paddingLeft={2} marginBottom={10}>
             {category}
           </Heading>
-
-          <Tabs colorScheme="green">
+          <Tabs index={tabIndex} colorScheme="green">
             <TabList>
-              <Tab onClick={() => router.push(`/category/${category}/best`)}> Best </Tab>
-              <Tab onClick={() => router.push(`/category/${category}/recent`)}>Recent</Tab>
-              <Tab onClick={() => router.push(`/category/${category}/hot`)}>Hot</Tab>
+              <Tab onClick={() => router.push(`/category/${category}/best`)}>
+                Best
+              </Tab>
+              <Tab onClick={() => router.push(`/category/${category}/recent`)}>
+                Recent
+              </Tab>
+              <Tab onClick={() => router.push(`/category/${category}/hot`)}>
+                Hot
+              </Tab>
             </TabList>
           </Tabs>
-
-          {data && data.length > 0 && (
+          {isLoading && (
+            <Flex
+              position='relative'
+              alignItems="center"
+              justifyContent='center'
+              height={['70vh', '70vh', '70vh', '60vh']}
+              width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
+            >
+              <Loading />
+            </Flex>
+          )}
+          {data.length > 0 && (
             <InfiniteScroll
               dataLength={data.length}
               next={fetchData}
@@ -124,14 +135,15 @@ const Category = ({
                   height="30vh"
                   width="full"
                 >
-                  <Spinner
-                    margin="auto"
-                    thickness="4px"
-                    speed="0.65s"
-                    emptyColor="gray.200"
-                    color="blue.500"
-                    size="xl"
-                  />
+                  <Flex
+                    position='relative'
+                    alignItems="center"
+                    justifyContent='center'
+                    height={['70vh', '70vh', '70vh', '60vh']}
+                    width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
+                  >
+                    <Loading />
+                  </Flex>
                 </Flex>
               }
             >
@@ -162,39 +174,5 @@ const Category = ({
     </>
   );
 };
-
-export async function getServerSideProps({
-  query,
-}: GetServerSidePropsContext<{ category_name: string; sortBy: string }>) {
-  try {
-
-    const { category_name, sortBy } = query;
-    let endpoint = '';
-
-    if (sortBy === 'best')
-      endpoint = `https://nikhilranjan.pythonanywhere.com/getTopArticlesfor?category=${category_name}&page=1`;
-    else if (sortBy === 'recent')
-      endpoint = `https://nikhilranjan.pythonanywhere.com/getRecentArticlesfor?category=${category_name}&page=1`;
-    else
-      endpoint = `https://nikhilranjan.pythonanywhere.com/getHotArticlesfor?category=${category_name}&page=1`;
-
-    const resp = await fetch(endpoint);
-    const filteredResp = await resp.json();
-    return {
-      props: {
-        initialData: filteredResp,
-        category: category_name,
-        sortBy: sortBy,
-      },
-    };
-  } catch (error) {
-    console.log(error);
-    return {
-      props: {
-        data: null,
-      },
-    };
-  }
-}
 
 export default Category;

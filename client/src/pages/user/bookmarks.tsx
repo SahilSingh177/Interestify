@@ -16,6 +16,7 @@ import { auth } from "@/firebase/clientApp";
 import { AuthContext } from "@/Providers/AuthProvider";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import Loading from "@/components/loading/Loading";
 
 const Bookmarks = () => {
   const currentUser = useContext(AuthContext);
@@ -97,78 +98,74 @@ const Bookmarks = () => {
 
   return (
     <>
-    <Head>
+      <Head>
         <title>Bookmarks</title>
       </Head>
-    <Stack
-      width={['100vw','100vw','100vw',`calc(100vw - 12px)`]}
-      minHeight="90vh"
-      bg="gray.50"
-      alignItems="center"
-      margin="auto"
-      paddingTop="5vh"
-    >
-      <Heading ref={heightRef} marginBottom="5vh">
-        BOOKMARKS
-      </Heading>
-      <InputGroup width={["80%","80%","70%","70%"]} marginBottom={5}>
-        <InputLeftElement pointerEvents="none">
-          <Icon as={FaSearch} />
-        </InputLeftElement>
-        <Input
-          value={inputText}
-          onChange={getSearchResults}
-          borderColor="gray.700"
-          _hover={{ borderColor: "gray.700" }}
-          focusBorderColor="gray.700"
-          type="tel"
-          placeholder="Search Bookmarks"
-        />
-      </InputGroup>
-      {isLoading && (
-        <Stack height="full">
-          {[...Array(3)].map((_, index) => (
-            <Skeleton
-              key={index}
-              borderRadius={8}
-              marginBottom={5}
-              endColor="gray.200"
-              startColor="gray.100"
-              width="80vw"
-              height="18vh"
-            />
-          ))}
-        </Stack>
-      )}
-      {!isLoading && data?.length === 0 && (
-        <Flex
-          width={`calc(100vw - 12px)`}
-          height={`calc(80vh - ${heightRef.current?.offsetHeight}px - 8px)`}
-          flexGrow={1}
-          alignItems="center"
-          justifyContent="center"
-          overflow="hidden"
-        >
-          <Player
-            autoplay
-            loop
-            src="/empty.json"
-            style={{ height: "100%", width: "100%" }}
+      <Stack
+        width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]}
+        minHeight="90vh"
+        bg="gray.50"
+        alignItems="center"
+        margin="auto"
+        paddingTop="5vh"
+      >
+        <Heading ref={heightRef} marginBottom="5vh">
+          BOOKMARKS
+        </Heading>
+        <InputGroup width={["80%", "80%", "70%", "70%"]} marginBottom={5}>
+          <InputLeftElement pointerEvents="none">
+            <Icon as={FaSearch} />
+          </InputLeftElement>
+          <Input
+            value={inputText}
+            onChange={getSearchResults}
+            borderColor="gray.700"
+            _hover={{ borderColor: "gray.700" }}
+            focusBorderColor="gray.700"
+            type="tel"
+            placeholder="Search Bookmarks"
           />
-        </Flex>
-      )}
-      {initialData?.map((article, id) => (
-        <BookmarkCard
-          key={id}
-          article_id={article.id}
-          link={article.link}
-          title={article.title}
-          author={article.author}
-          toBeDisplayed={data?.includes(article) || false}
-          category={article.category}
-        />
-      ))}
-    </Stack>
+        </InputGroup>
+        {isLoading && (
+            <Flex
+              position='relative'
+              alignItems="center"
+              justifyContent='center'
+              height='60vh'
+              width="100vw"
+            >
+              <Loading />
+            </Flex>
+          )}
+        {!isLoading && data?.length === 0 && (
+          <Flex
+            width={`calc(100vw - 12px)`}
+            height={`calc(80vh - ${heightRef.current?.offsetHeight}px - 8px)`}
+            flexGrow={1}
+            alignItems="center"
+            justifyContent="center"
+            overflow="hidden"
+          >
+            <Player
+              autoplay
+              loop
+              src="/empty.json"
+              style={{ height: "100%", width: "100%" }}
+            />
+          </Flex>
+        )}
+        {initialData?.map((article, id) => (
+          <BookmarkCard
+            key={id}
+            article_id={article.id}
+            link={article.link}
+            title={article.title}
+            author={article.author}
+            toBeDisplayed={data?.includes(article) || false}
+            category={article.category}
+          />
+        ))}
+      </Stack>
     </>
   );
 };

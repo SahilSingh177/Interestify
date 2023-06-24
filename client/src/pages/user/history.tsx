@@ -7,6 +7,7 @@ import { AuthContext } from "@/Providers/AuthProvider";
 import { FaSearch } from "react-icons/fa";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import Loading from "@/components/loading/Loading";
 
 const History = () => {
   const currentUser = useContext(AuthContext);
@@ -82,63 +83,59 @@ const History = () => {
 
   return (
     <>
-    <Head>
+      <Head>
         <title>History</title>
       </Head>
-    <Stack
-      width={['100vw','100vw','100vw',`calc(100vw - 12px)`]}
-      minHeight='90vh'
-      bg="gray.50"
-      alignItems="center"
-      margin="auto"
-      paddingTop="5vh"
-    >
-      <Heading marginBottom="5vh" ref={heightRef}>HISTORY</Heading>
-      <InputGroup width={["80%","80%","70%","70%"]} marginBottom={5}>
-        <InputLeftElement pointerEvents="none">
-          <Icon as={FaSearch} />
-        </InputLeftElement>
-        <Input value={inputText} onChange={getSearchResults} borderColor="gray.700" _hover={{borderColor:'gray.700'}} focusBorderColor="gray.700" type="tel" placeholder="Search History" />
-      </InputGroup>
-      {isLoading &&
-        <Stack height="full">
-          {[...Array(3)].map((_, index) => (
-            <Skeleton
-              key={index}
-              borderRadius={8}
-              marginBottom={5}
-              endColor="gray.200"
-              startColor="gray.100"
-              width="80vw"
-              height="18vh"
+      <Stack
+        width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]}
+        minHeight='90vh'
+        bg="gray.50"
+        alignItems="center"
+        margin="auto"
+        paddingTop="5vh"
+      >
+        <Heading marginBottom="5vh" ref={heightRef}>HISTORY</Heading>
+        <InputGroup width={["80%", "80%", "70%", "70%"]} marginBottom={5}>
+          <InputLeftElement pointerEvents="none">
+            <Icon as={FaSearch} />
+          </InputLeftElement>
+          <Input value={inputText} onChange={getSearchResults} borderColor="gray.700" _hover={{ borderColor: 'gray.700' }} focusBorderColor="gray.700" type="tel" placeholder="Search History" />
+        </InputGroup>
+        {isLoading && (
+            <Flex
+              position='relative'
+              alignItems="center"
+              justifyContent='center'
+              height='60vh'
+              width="100vw"
+            >
+              <Loading />
+            </Flex>
+          )}
+        {!isLoading && !data &&
+          <Flex width={`calc(100vw - 12px)`} height={`calc(80vh - ${heightRef.current?.offsetHeight}px - 8px)`} alignItems='center' justifyContent='center' overflow='hidden'>
+            <Player
+              autoplay
+              loop
+              src="/empty.json"
+              style={{ height: '100%', width: '100%' }}
+            /></Flex>
+        }
+        {initialData &&
+          initialData.map((article, id) => (
+            <HistoryCard
+              key={id}
+              articleId={article.id}
+              link={article.link}
+              Title={article.title}
+              Author={article.author}
+              Category={article.category}
+              date={article.date}
+              rid={article.rid}
+              toBeDisplayed={data?.includes(article) || false}
             />
           ))}
-        </Stack>
-      }
-      {!isLoading && !data &&
-        <Flex width={`calc(100vw - 12px)`} height={`calc(80vh - ${heightRef.current?.offsetHeight}px - 8px)`} alignItems='center' justifyContent='center' overflow='hidden'>
-          <Player
-            autoplay
-            loop
-            src="/empty.json"
-            style={{ height: '100%', width: '100%' }}
-          /></Flex>
-      }
-      {initialData &&
-        initialData.map((article, id) => (
-          <HistoryCard
-            key={id}
-            articleId={article.id}
-            link={article.link}
-            Title={article.title}
-            Author={article.author}
-            Category={article.category}
-            date={article.date}
-            rid={article.rid}
-            toBeDisplayed={data?.includes(article)||false}
-          />
-        ))}
-    </Stack>
+      </Stack>
     </>
   );
 };

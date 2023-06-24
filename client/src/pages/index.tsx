@@ -9,6 +9,7 @@ import { Spinner } from "@chakra-ui/react";
 import { auth } from "@/firebase/clientApp";
 import { AuthContext } from "@/Providers/AuthProvider";
 import Head from "next/head";
+import Loading from "@/components/loading/Loading";
 
 interface Article {
   id: string;
@@ -91,36 +92,33 @@ const Index = () => {
       <Head>
         <title>Interestify</title>
       </Head>
-      <Stack>
+      <Stack minHeight='90vh'>
         <Banner></Banner>
         <Flex
           flexDirection={{ lg: "row", base: "column" }}
-          marginTop={['5vh','5vh','5vh','10vh']}
-          width={['100vw','100vw','100vw',`calc(100vw - 12px)`]}
+          marginTop={['5vh', '5vh', '5vh', '10vh']}
+          width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]}
           justifyContent={{ lg: "space-evenly", base: "column" }}
           alignItems={{ lg: "flex-start", base: "center" }}
           minHeight={`calc(100vh-80px)`}
         >
           <Flex
             minHeight="full"
+
             flexDirection="column"
             width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
             overflowX="hidden"
           >
             {isLoading && (
-              <Stack height="full">
-                {[...Array(3)].map((_, index) => (
-                  <Skeleton
-                    key={index}
-                    borderRadius={8}
-                    marginBottom={5}
-                    endColor="gray.200"
-                    startColor="gray.100"
-                    width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
-                    height="30vh"
-                  />
-                ))}
-              </Stack>
+              <Flex
+                position='relative'
+                alignItems="center"
+                justifyContent='center'
+                height={['80vh', '80vh', '80vh', '75vh']}
+                width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
+              >
+                <Loading />
+              </Flex>
             )}
             {data.length > 0 && (
               <InfiniteScroll
@@ -135,14 +133,15 @@ const Index = () => {
                     height="30vh"
                     width="full"
                   >
-                    <Spinner
-                      margin="auto"
-                      thickness="4px"
-                      speed="0.65s"
-                      emptyColor="gray.200"
-                      color="blue.500"
-                      size="xl"
-                    />
+                    <Flex
+                      position='relative'
+                      alignItems="center"
+                      justifyContent='center'
+                      height={['70vh', '70vh', '70vh', '60vh']}
+                      width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
+                    >
+                      <Loading />
+                    </Flex>
                   </Flex>
                 }
               >
