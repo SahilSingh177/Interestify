@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Heading, Spinner, Stack, VStack } from '@chakra-ui/react';
+import { Heading, Flex, Stack, VStack } from '@chakra-ui/react';
 import Article from '@/components/Articles/Article';
 import ArticleRecommendations from '@/components/Articles/ArticleRecommendations';
 import { ParsedUrlQuery } from 'querystring';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import Loading from '@/components/loading/Loading';
 
 interface ArticleData {
   Text: string;
@@ -25,8 +26,8 @@ interface articleType {
 }
 
 const ArticlePage = () => {
-  const router=useRouter();
-  const articleId=router.query.article_id as string;
+  const router = useRouter();
+  const articleId = router.query.article_id as string;
   const [isLoading, setIsLoading] = useState(false);
   const [articleData, setArticleData] = useState<ArticleData | null>(null);
   const [error, setError] = useState(false);
@@ -65,14 +66,15 @@ const ArticlePage = () => {
 
   if (isLoading) {
     return (
-      <Spinner
-        margin='auto'
-        thickness='4px'
-        speed='0.65s'
-        emptyColor='gray.200'
-        color='blue.500'
-        size='xl'
-      />
+      <Flex
+        position='relative'
+        alignItems="center"
+        justifyContent='center'
+        height={['80vh', '80vh', '80vh', '75vh']}
+        width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
+      >
+        <Loading />
+      </Flex>
     );
   }
 
