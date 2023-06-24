@@ -128,22 +128,7 @@ def search_category():
         results = database.searchCategory(text=text)
         return jsonify(results)
     except Exception as e:
-        return jsonify(error.str(e)), 500
-
-@app.route('/registerUserPreferences', methods=['POST'])
-def register_user_preferences():
-    try:
-        data = request.json
-        email = data['email']
-        preferences = data['preferences']
-        total_categories = len(preferences)
-        for preference in preferences:
-            database.user_to_category(email, preference)
-            database.set_category_score(email, preference, 1 / total_categories)
-        return jsonify({"message": "User preferences registered successfully"})
-    except Exception as e:
         return jsonify(error=str(e)), 500
-
 
 @app.route('/registerBlog', methods=['POST'])
 def register_blog():
@@ -165,16 +150,12 @@ def update_preferences():
     try:
         data = request.json
         email = data['email']
-        category_preferences = data['updated_preferences']
-        database.delete_user_to_category(email)
-        total_categories = len(category_preferences)
-        for update_preference in category_preferences:
-            database.user_to_category(email, update_preference)
-            database.set_category_score(email, update_preference, 1 / total_categories)
+        preferences = data['updated_preferences']
+        total_categories = len(preferences)
+        database.category_sub(email, preferences,1/total_categories)
         return jsonify({"message": "User preferences updated successfully"})
     except Exception as e:
         return jsonify(error=str(e)), 500
-
 
 @app.route('/getTopArticles', methods=['GET'])
 def get_top_articles():
