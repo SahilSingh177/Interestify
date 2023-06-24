@@ -17,7 +17,7 @@ password = os.getenv("DATABASE_PASSWORD")
 def send_email(recipient_email, subject, html_template, articles):
     try:
         # Email configuration
-        sender_email = os.getenv("SENDER_EMAIL")
+        sender_email = os.getenv("SENDER_MAIL")
         sender_password = os.getenv("SENDER_PASSWORD")
         smtp_server = os.getenv("SMTP_SERVER")
         smtp_port = os.getenv("SMTP_PORT")
@@ -48,67 +48,70 @@ def send_email(recipient_email, subject, html_template, articles):
                 message.attach(html_part)
 
                 # Send the email for each article
-                server.sendmail(sender_email, recipient_email, message.as_string())
-
+            server.sendmail(sender_email, recipient_email, message.as_string())
     except Exception as e:
-        print("An error occurred in send_email:", e)
+        print(e)
 
 def automate_mail():
+    print("Sending email...")
     try:
         subject = 'Interestify Weekly mail!'
         html_template = """
-<html>
-  <head>
-    <title>Blog Cards</title>
-    <style>
-      body {{
-        background-color: #f2f2f2;
-      }}
+        <html>
+            <head>
+                <title>Blog Cards</title>
+                <style>
+                    body {{
+                        background-color: #f2f2f2;
+                    }}
 
-      .blog-card {{
-        background-color: #ececec;
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 20px;
-      }}
+                    .blog-card {{
+                        background-color: #ececec;
+                        border-radius: 10px;
+                        padding: 20px;
+                        margin-bottom: 20px;
+                    }}
 
-      .blog-title {{
-        font-size: 24px;
-        font-weight: bold;
-        color: #333;
-      }}
+                    .blog-title {{
+                        font-size: 24px;
+                        font-weight: bold;
+                        color: #333;
+                    }}
 
-      .blog-author {{
-        font-size: 16px;
-        color: #555;
-      }}
+                    .blog-author {{
+                        font-size: 16px;
+                        color: #555;
+                    }}
 
-      .blog-category {{
-        font-size: 16px;
-        color: #555;
-        margin-bottom: 10px;
-      }}
+                    .blog-category {{
+                        font-size: 16px;
+                        color: #555;
+                        margin-bottom: 10px;
+                    }}
 
-      .break {{
-        height: 2px;
-        background-color: #999;
-        margin: 20px 0;
-      }}
+                    .break {{
+                        height: 2px;
+                        background-color: #999;
+                        margin: 20px 0;
+                    }}
 
-      .read-link {{
-        font-size: 16px;
-        color: #007bff;
-        text-decoration: none;
-      }}
-    </style>
-  </head>
-  <body>
-  Here are the recommended research papers from your top 5 categories:
-  {content}
-  </body>
-</html>
-"""
-
+                    .read-link {{
+                        font-size: 16px;
+                        color: #007bff;
+                        text-decoration: none;
+                    }}
+                </style>
+            </head>
+            <body>
+                <h1>Weekly mail from Interestify!</h1>
+                <hr class="break" />
+                <br />
+                <h2>Presenting the suggested research papers from your most favored categories:</h2>
+                <br />
+                {content}
+            </body>
+        </html>
+        """
 
         database = App(uri, user, password)
         user_books = database.get_all_users()
@@ -123,10 +126,10 @@ def automate_mail():
             for i, book in enumerate(books):
                 content += """
                 <div class="blog-card">
-                   <h2 class="blog-title">{title}</h2>
+                    <h2 class="blog-title">{title}</h2>
                     <p class="blog-author">Author: {author}</p>
                     <p class="blog-category">Category: {category}</p>
-                    <p class="blog-summary">{summary}</p>
+                    <p class="blog-summary">Summary: {summary}</p>
                     <a href="{url}" class="read-link">Read about this</a>
                 </div>
                 """
@@ -146,8 +149,8 @@ def schedule_task():
         # Define the time of execution in IST
         execution_time = '12:00'
 
-        # Schedule the task to run every Saturday at the specified time
-        schedule.every().saturday.at(execution_time).do(automate_mail).tag('send_email')
+        # Schedule the task to run every Sunday at the specified time
+        schedule.every().sunday.at(execution_time).do(automate_mail).tag('send_email')
 
         while True:
             schedule.run_pending()
@@ -155,4 +158,3 @@ def schedule_task():
 
     except Exception as e:
         print("An error occurred in schedule_task:", e)
-

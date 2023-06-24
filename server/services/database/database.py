@@ -348,29 +348,6 @@ class App:
             logging.error("{query} raised an error: \n {exception}".format(query=query, exception=exception))
             raise
 
-    def user_to_category(self, user_email, category_name):
-        with self.driver.session(database="neo4j") as session:
-            if not self.check_user_exists(user_email):
-                return False
-            if not self.check_category_exists(category_name):
-                return False
-            result = session.execute_write(self._user_to_category, user_email, category_name)
-            return True
-
-    @staticmethod
-    def _user_to_category(tx, user_email, category_name):
-        query = (
-            "MATCH (u:User {email:$user_email}), (c:Category {name:$category_name}) "
-            "MERGE (u)-[r:BROWSES]->(c) "
-            "RETURN u, c"
-        )
-        result = tx.run(query, user_email=user_email, category_name=category_name)
-        try:
-            return [{"u": record["u"]["email"], "c": record["c"]["name"]} for record in result]
-        # Capture any errors along with the query and data for traceability
-        except Neo4jError as exception:
-            logging.error("{query} raised an error: \n {exception}".format(query=query, exception=exception))
-            raise
 
     def find_all_categories_for_user(self, user_email):
         with self.driver.session(database="neo4j") as session:
@@ -1073,50 +1050,7 @@ class App:
         except Neo4jError as exception:
             logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
             raise
-    
-    # Deletion
 
-    def delete_user(self, user_email):
-        with self.driver.session(database="neo4j") as session:
-            if not self.check_user_exists(user_email):
-                return False
-            result = session.execute_write(self._delete_user, user_email)
-            return True
-        
-    @staticmethod
-    def _delete_user(tx, user_email):
-        query = (
-            "MATCH (u:User {email: $user_email}) "
-            "DETACH DELETE u "
-        )
-        result = tx.run(query, user_email=user_email)
-        try:
-            return result
-        except Neo4jError as exception:
-            logging.error("{query} raised an error: \n {exception}".format(
-                query=query, exception=exception))
-            raise
-    
-    def delete_user_to_category(self, user_email):
-        with self.driver.session(database="neo4j") as session:
-            if not self.check_user_exists(user_email):
-                return False
-            result = session.execute_write(self._delete_user_to_category, user_email)
-            return True
-        
-    @staticmethod
-    def _delete_user_to_category(tx, user_email):
-        query = (
-            "MATCH (u:User {email: $user_email})-[r:BROWSES]->(c:Category) "
-            "DELETE r "
-        )
-        result = tx.run(query, user_email=user_email)
-        try:
-            return result
-        except Neo4jError as exception:
-            logging.error("{query} raised an error: \n {exception}".format(
-                query=query, exception=exception))
-            raise
 
     def user_to_blog_read(self, user_email, blog_id):
         with self.driver.session(database="neo4j") as session:
@@ -1218,6 +1152,33 @@ class App:
         result = tx.run(query, blog_id=blog_id)
         try:
             return result.single()["count"]
+        except Neo4jError as exception:
+            logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
+            raise
+
+    def category_sub(self, user_email, category_list,score):
+        with self.driver.session(database="neo4j") as session:
+            if not self.check_user_exists(user_email):
+                return False
+            result = session.execute_write(self._category_sub, user_email, category_list,score)
+            return result
+        
+    @staticmethod
+    def _category_sub(tx, user_email, category_list,score):
+        query=(
+            "MATCH (u:User {email: $user_email})-[r:BROWSES]->(c:Category) "
+            "DELETE r "
+            "WITH u "
+            "UNWIND $category_names AS category_name "
+            "MATCH (c:Category {name: category_name}) "
+            "MERGE (u)-[r:BROWSES]->(c) "
+            "SET r.score = $score "
+            "RETURN u, collect(c) AS categories, collect(r) AS relationships"
+
+        )
+        result = tx.run(query, user_email=user_email, category_names=category_list, score=score)
+        try:
+            return result
         except Neo4jError as exception:
             logging.error("{query} raised an error:\n{exception}".format(query=query, exception=exception))
             raise
