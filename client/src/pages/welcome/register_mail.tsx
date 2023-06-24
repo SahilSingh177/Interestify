@@ -146,7 +146,7 @@ const RegisterMail: NextPageWithLayout = () => {
           You can unsubscribe anytime.
         </Text>
         <Icon
-          onClick={registerUser}
+          onClick={() => router.push("/")}
           cursor="pointer"
           boxSize={["10vw", "10vw", "5vw", "5vw"]}
           as={FaArrowCircleRight}

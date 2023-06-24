@@ -130,19 +130,6 @@ def search_category():
     except Exception as e:
         return jsonify(error=str(e)), 500
 
-@app.route('/registerUserPreferences', methods=['POST'])
-def register_user_preferences():
-    try:
-        data = request.json
-        email = data['email']
-        preferences = data['preferences']
-        total_categories = len(preferences)
-        database.category_sub(email, preferences,1/total_categories)
-        return jsonify({"message": "User preferences registered successfully"})
-    except Exception as e:
-        return jsonify(error=str(e)), 500
-
-
 @app.route('/registerBlog', methods=['POST'])
 def register_blog():
     try:
