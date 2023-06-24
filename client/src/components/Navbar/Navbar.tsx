@@ -2,9 +2,10 @@ import React from "react";
 import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from "@/Providers/AuthProvider";
 import { useRouter } from "next/router";
-import { Avatar, Flex, Image, useBreakpointValue } from "@chakra-ui/react";
+import { Flex, Box } from "@chakra-ui/react";
 import AuthButtons from "./AuthButtons";
 import Link from 'next/link';
+import Image from "next/image";
 import SearchBar from "./SearchBar";
 
 const Navbar: React.FC = () => {
@@ -43,10 +44,13 @@ const Navbar: React.FC = () => {
       overflowX="hidden"
       overflowY="hidden"
     >
+      <Box height='10vh' width='16vh' padding='1vh'>
+
       <Link href="/">
-        <Image src="/assets/logo-no-background.svg" height={['8vh','8vh','10vh','10vh']}></Image>
+        <Image priority={true} src="/assets/logo-no-background.svg" alt='logo'height='333' width='584' layout='responsive'></Image>
 
       </Link>
+      </Box>
         <SearchBar></SearchBar>
       <Flex>
         <AuthButtons />
