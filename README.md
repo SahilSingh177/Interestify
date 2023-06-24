@@ -1,7 +1,3 @@
-<div align="center">
-  <img src="interestify_logo.png" alt="Interestify Logo" width="200">
-</div>
-
 <h1 align="center">Interestify</h1>
 
 <p align="center">
@@ -9,7 +5,11 @@
 </p>
 
 <div align="center">
-  <img src="screenshot.png" alt="Interestify Screenshot">
+  
+
+https://github.com/SahilSingh177/Interestify/assets/96344003/130e3750-f7c6-4a57-8ebe-d906f292c96d
+
+
 </div>
 
 ## Features
