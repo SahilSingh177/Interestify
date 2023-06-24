@@ -11,7 +11,7 @@ const signup = () => {
       <Head>
         <title>Interestify - Sign Up</title>
       </Head>
-      <Flex flexDirection={['column', 'column', 'column', 'row']} minHeight='90vh' justifyContent="center" bgImage="/auth_bg.avif" backgroundSize='cover'>
+      <Flex flexDirection={['column', 'column', 'column', 'row']} minHeight='90vh' justifyContent="center" bgImage="/assets/auth_bg.avif" backgroundSize='cover'>
         <OAuth view="signup"></OAuth>
         <AuthDivider></AuthDivider>
         <SignupForm></SignupForm>
