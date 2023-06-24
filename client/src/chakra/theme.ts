@@ -16,6 +16,9 @@ export const theme = extendTheme({
   },
   styles: {
     global: () => ({
+      '*': {
+        WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)',
+      },
       body: {
         bg: "white",
       },

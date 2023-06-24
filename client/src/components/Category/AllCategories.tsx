@@ -10,9 +10,8 @@ import ShowAlert from '../Alert/ShowAlert'
 import { imageLinks } from '@/Handlers/CategoriesData'
 
 
-const AllCategories = ({ filteredData }: { filteredData: string[] }) => {
-  const isNewUser =
-      auth.currentUser?.metadata.creationTime === auth.currentUser?.metadata.lastSignInTime;
+const AllCategories = ({ filteredData }: { filteredData: string[]}) => {
+  const [hasSelected,setHasSelected] =useState<boolean>(false);
   const currentUser = useContext(AuthContext);
   const Router = useRouter();
   const [clickedCategories, setClickedCategories] = useState<string[]>([]);
@@ -39,17 +38,36 @@ const AllCategories = ({ filteredData }: { filteredData: string[] }) => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
-      Router.push(isNewUser?'/welcome/register_mail':'/');
+      Router.push(!hasSelected?'/welcome/register_mail':'/');
     }
     else{
       setError('Please select atleast 1 category to proceed');
     }
   };
 
+  const checkCategories = async () => {
+    try {
+      const response = await fetch('https://nikhilranjan.pythonanywhere.com/hasSelectedCategories', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          "email": currentUser?.email,
+        }),
+      });
+      const data = await response.json();
+      setHasSelected(data);
+    } catch (error) {
+      console.error('Error checking categories:', error);
+    }
+  };
+
   useEffect(() => {
-  }, [clickedCategories])
+    checkCategories();
+  }, [])
 
   return (
     <Box>
