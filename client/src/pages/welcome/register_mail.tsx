@@ -1,16 +1,26 @@
-import React, { useState, useEffect, useContext } from 'react';
-import type { ReactElement } from 'react'
-import { useRouter } from 'next/router';
+import React, {useEffect, useContext } from "react";
+import type { ReactElement } from "react";
+import { useRouter } from "next/router";
 import {
-  Stack, Text, Input, SimpleGrid, GridItem, Heading,
-  InputGroup, InputLeftAddon, InputRightElement, Icon, Box, Button
-} from '@chakra-ui/react';
-import { FaArrowCircleRight, FaEnvelope } from 'react-icons/fa';
-import { AuthContext } from '@/Providers/AuthProvider';
-import { NextPageWithLayout } from '../_app';
-import Image from 'next/image';
-import Head from 'next/head';
-import { auth } from '@/firebase/clientApp';
+  Stack,
+  Text,
+  Input,
+  SimpleGrid,
+  GridItem,
+  Heading,
+  InputGroup,
+  InputLeftAddon,
+  InputRightElement,
+  Icon,
+  Box,
+  Button,
+} from "@chakra-ui/react";
+import { FaArrowCircleRight, FaEnvelope } from "react-icons/fa";
+import { AuthContext } from "@/Providers/AuthProvider";
+import { NextPageWithLayout } from "../_app";
+import Image from "next/image";
+import Head from "next/head";
+import { auth } from "@/firebase/clientApp";
 
 const RegisterMail: NextPageWithLayout = () => {
   const currentUser = useContext(AuthContext);
@@ -18,44 +28,42 @@ const RegisterMail: NextPageWithLayout = () => {
 
   useEffect(() => {
     if (!currentUser) {
-      router.push('/login');
+      router.push("/login");
     }
   }, [currentUser, router]);
 
   useEffect(() => {
     const checkCategories = async () => {
       try {
-        const response = await fetch('https://nikhilranjan.pythonanywhere.com/hasSelectedCategories', {
-          method: 'POST',
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            "email": currentUser?.email,
-          }),
-        });
+        const response = await fetch(
+          "https://nikhilranjan.pythonanywhere.com/hasSelectedCategories",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: currentUser?.email,
+            }),
+          }
+        );
         const data = await response.json();
 
         if (!data) {
-          router.push('/welcome/categories');
+          router.push("/welcome/categories");
         }
       } catch (error) {
-        console.error('Error checking categories:', error);
+        console.error("Error checking categories:", error);
       }
     };
 
     checkCategories();
   }, []);
-
-  const [userEmail, setUserEmail] = useState('');
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUserEmail(event.target.value);
-  };
+  const email = auth.currentUser?.email;
   const registerUser = async () => {
     try {
       const email = auth.currentUser?.email;
-      const resp = await fetch(`https://nikhilranjan.pythonanywhere.com/registerMail?email=${email}`, {
+      await fetch("https://nikhilranjan.pythonanywhere.com/registerMail", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -65,11 +73,10 @@ const RegisterMail: NextPageWithLayout = () => {
         }),
       });
 
-      const data = await resp.json();
     } catch (error) {
       console.error("Error fetching search results:", error);
     }
-    router.push('/')
+    router.push("/");
   };
   return (
     <>
@@ -84,24 +91,41 @@ const RegisterMail: NextPageWithLayout = () => {
         paddingLeft={["5%", "5%", "15%", "25%"]}
         paddingRight={["5%", "5%", "15%", "25%"]}
       >
-        <Image src="/assets/mail_bg.jpg" alt="mail image" layout="fill" objectFit="cover" objectPosition="center" />
+        <Image
+          src="/assets/mail_bg.jpg"
+          alt="mail image"
+          layout="fill"
+          objectFit="cover"
+          objectPosition="center"
+        />
 
-        <Heading zIndex={1} fontSize={["4xl", "4xl", "6xl", "6xl"]} fontWeight="extrabold" textAlign="center" color="gray.700">
+        <Heading
+          zIndex={1}
+          fontSize={["4xl", "4xl", "6xl", "6xl"]}
+          fontWeight="extrabold"
+          textAlign="center"
+          color="gray.700"
+        >
           SUBSCRIBE TO OUR MAIL SERVICE
         </Heading>
-        <Text zIndex={1} marginTop="3" color="gray.700" fontSize={["xl", "xl", "2xl", "2xl"]} fontWeight="bold" textAlign="center">
+        <Text
+          zIndex={1}
+          marginTop="3"
+          color="gray.700"
+          fontSize={["xl", "xl", "2xl", "2xl"]}
+          fontWeight="bold"
+          textAlign="center"
+        >
           Get top personalized articles in your inbox every Sunday
         </Text>
-        <Box width={['100%', '70%']} position="relative">
+        <Box width={["100%", "70%"]} position="relative">
           <SimpleGrid gap={[6, 12]} p={[6, 12]} columns={[1, 2]}>
             <GridItem colSpan={[1, 2]}>
               <InputGroup variant="custom" colorScheme="purple">
-                <InputLeftAddon bg="red.500" color="white">Email:</InputLeftAddon>
-                <Input
-                  placeholder="Enter Your Email"
-                  value={userEmail}
-                  onChange={handleChange}
-                />
+                <InputLeftAddon bg="red.500" color="white">
+                  Email:
+                </InputLeftAddon>
+                <Input placeholder="Enter Your Email" value={email} readOnly />
                 <InputRightElement pointerEvents="none">
                   <Icon as={FaEnvelope} color="red.500" />
                 </InputRightElement>
@@ -114,7 +138,7 @@ const RegisterMail: NextPageWithLayout = () => {
           size="lg"
           borderRadius="7"
           bg="red.500"
-          onClick={() => router.push('/')}
+          onClick={registerUser}
         >
           Register
         </Button>
@@ -122,7 +146,7 @@ const RegisterMail: NextPageWithLayout = () => {
           You can unsubscribe anytime.
         </Text>
         <Icon
-          onClick={() => router.push('/')}
+          onClick={registerUser}
           cursor="pointer"
           boxSize={["10vw", "10vw", "5vw", "5vw"]}
           as={FaArrowCircleRight}
@@ -136,11 +160,7 @@ const RegisterMail: NextPageWithLayout = () => {
 };
 
 RegisterMail.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <>
-      {page}
-    </>
-  )
-}
+  return <>{page}</>;
+};
 
 export default RegisterMail;
