@@ -248,6 +248,7 @@ def get_similar_articles():
         article_id = int(request.args['article_id'])
         return jsonify(similar_articles.get_recommendations(article_id))
     except Exception as e:
+        print('ok')
         return jsonify(error=str(e)), 500
 
 
