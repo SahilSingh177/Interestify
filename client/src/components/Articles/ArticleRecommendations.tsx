@@ -10,14 +10,13 @@ interface articleType {
 }
 
 const ArticleRecommendations = ({ ArticleId }: { ArticleId: string }) => {
-  console.log(ArticleId)
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [data, setData] = useState<articleType[]>([]);
   const router = useRouter();
 
   const getSimilarBlogs = async () => {
     try {
-      const response = await fetch(`https://nikhilranjan.pythonanywhere.com/getSimilarArticles?article_id=${ArticleId}`);
+      const response = await fetch(`http://nikhilranjan.pythonanywhere.com/getSimilarArticles?article_id=${ArticleId}`);
       const bodyData = await response.json();
       setIsLoading(false);
       setData(bodyData);

@@ -1,10 +1,9 @@
-import React, { useState, useContext } from 'react';
+import React from 'react';
 import { Button, Avatar } from '@chakra-ui/react';
 import { auth } from '@/firebase/clientApp';
-import { useSignInWithEmailAndPassword, useSignInWithGoogle } from 'react-firebase-hooks/auth';
+import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
 import { useSignInWithFacebook } from 'react-firebase-hooks/auth';
 import { useRouter } from 'next/router';
-import { AuthContext } from '@/Providers/AuthProvider';
 
 type Props = {
   imageSrc: string;
@@ -44,7 +43,7 @@ const OauthButtons = ({ imageSrc, providerName }: Props) => {
     auth.currentUser?.metadata.creationTime === auth.currentUser?.metadata.lastSignInTime;
   
     if (isNewUser && auth.currentUser) {
-      await fetch('https://nikhilranjan.pythonanywhere.com/registerUser', {
+      await fetch('http://nikhilranjan.pythonanywhere.com/registerUser', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -61,11 +60,12 @@ const OauthButtons = ({ imageSrc, providerName }: Props) => {
 
   return (
     <Button
+      margin="auto"
       variant="oauth"
       mb={2}
       height={['8vh','8vh','8vh','10vh']}
       width={['75vw','75vw','75vw','25vw']}
-      fontSize={['lg','2xl','2xl','lg']}
+      fontSize={['sm','md','2xl','md']}
       onClick={onSubmit}
     >
       <Avatar src={imageSrc} size={{ base: 'xs', md: 'sm' }} mr={4} />

@@ -6,11 +6,9 @@ export const toggleLike = async (
     if (!currentUser.email) return;
     try {
         if (hasLiked) {
-            await fetch(`https://nikhilranjan.pythonanywhere.com/dislikeArticle?email=${currentUser.email}&blog_id=${articleId}`);
-            console.log('SUCCESSFULLY UNLIKED');
+            await fetch(`http://nikhilranjan.pythonanywhere.com/dislikeArticle?email=${currentUser.email}&blog_id=${articleId}`);
         } else {
-            await fetch(`https://nikhilranjan.pythonanywhere.com/likeArticle?email=${currentUser.email}&blog_id=${articleId}`);
-            console.log('SUCCESSFULLY LIKED');
+            await fetch(`http://nikhilranjan.pythonanywhere.com/likeArticle?email=${currentUser.email}&blog_id=${articleId}`);
         }
     }
     catch (error) {

@@ -44,7 +44,7 @@ const SignupForm = () => {
       await updateProfile({ displayName: signupForm.username });
       await updateProfile({ photoURL: '/assets/default_profile_photo.png' });
   
-      await fetch("https://nikhilranjan.pythonanywhere.com/registerUser", {
+      await fetch("http://nikhilranjan.pythonanywhere.com/registerUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -71,7 +71,8 @@ const SignupForm = () => {
 
 
   return (
-    <Flex width={['100vw','100vw','100vw','50vw']} padding="10vw" paddingTop={['5vh','5vh','5vh','10vh']} 
+    <Flex width={['100vw','100vw','100vw','50vw']} padding="10vw" paddingTop={['0','0','0','10vh']
+  } 
     alignItems='center' justifyContent='center'>
       <form onSubmit={onSubmit} >
         <FormLabel color="white">Username</FormLabel>

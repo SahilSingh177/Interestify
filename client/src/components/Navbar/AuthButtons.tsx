@@ -17,13 +17,10 @@ const AuthButtons = () => {
         as={Link}
         href="/login"
         variant="transparent"
-        size="lg"
         fontWeight="bold"
         bg="none"
         color="black"
-        height="45px"
-        display={{ base: "none", sm: "flex" }}
-        width={{ base: "120px", md: "110px" }}
+        size={['sm', 'sm', 'md', 'lg']}
         mr={2}
       >
         Sign In
@@ -33,16 +30,13 @@ const AuthButtons = () => {
         as={Link}
         href="/signup"
         variant="success"
-        size="lg"
-        height="45px"
-        display={{ base: "none", sm: "flex" }}
-        width={{ base: "120px", md: "110px" }}
+        size={['sm', 'sm', 'md', 'lg']}
       >
         Get Started
       </Button>}
 
       {currentUser &&
-        <MenuDropDown/>
+        <MenuDropDown />
       }
     </>
   );

@@ -13,7 +13,6 @@ const Redirect = ({ view }: Props) => {
     <Flex justifyContent="center">
       <Link href={redirect} style={{ color: 'gray' }}>{text}</Link>
     </Flex>
-    //chakra white not working would fix later
   )
 }
 

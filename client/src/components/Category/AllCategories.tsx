@@ -34,7 +34,7 @@ const AllCategories = ({ filteredData }: { filteredData: string[] }) => {
         email: email,
         updated_preferences: clickedCategories
       };
-      await fetch('https://nikhilranjan.pythonanywhere.com/updatePreferences', {
+      await fetch('http://nikhilranjan.pythonanywhere.com/updatePreferences', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

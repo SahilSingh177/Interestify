@@ -18,7 +18,6 @@ const SearchCategoriesModal = ({ inputText }: { inputText: string }) => {
     if (inputText.length < 2) {
       setIsOpen(false);
     } else {
-      console.log(inputText);
       getSearchResults();
       setIsOpen(true);
     }
@@ -35,7 +34,7 @@ const SearchCategoriesModal = ({ inputText }: { inputText: string }) => {
     }
 
     try {
-      const resp = await fetch('https://nikhilranjan.pythonanywhere.com/searchCategory', {
+      const resp = await fetch('http://nikhilranjan.pythonanywhere.com/searchCategory', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -46,7 +45,6 @@ const SearchCategoriesModal = ({ inputText }: { inputText: string }) => {
       });
 
       const data = await resp.json();
-      console.log(data);
       setSearchResults(data);
     } catch (error) {
       console.error('Error fetching search results:', error);

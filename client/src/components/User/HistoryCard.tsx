@@ -47,7 +47,7 @@ const HistoryCard = ({
     setIsDeleted(true);
     try {
       let response = await fetch(
-        `https://nikhilranjan.pythonanywhere.com/deletehistory?email=${email}&rid=${rid}`,
+        `http://nikhilranjan.pythonanywhere.com/deletehistory?email=${email}&rid=${rid}`,
         { next: { revalidate: 60 } }
       );
       const bodyData = await response.json();
@@ -65,6 +65,7 @@ const HistoryCard = ({
       size="md"
       marginBottom={5}
       width="80%"
+      style={{ WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)' }}
     >
       <VStack width="full">
         <CardBody width="full">

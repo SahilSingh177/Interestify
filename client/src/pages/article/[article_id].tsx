@@ -31,7 +31,7 @@ const ArticlePage = ({ articleData }: { articleData: ArticleData }) => {
       <Head>
         <title>Articles</title>
       </Head>
-      <Stack direction={["column",'column','column','row']} width="calc(100vw - 12px)" maxWidth="100vw" overflowX='hidden'>
+      <Stack direction={["column",'column','column','row']} width={['100vw','100vw','100vw',`calc(100vw - 12px)`]} maxWidth="100vw" overflowX='hidden'>
         {isLoading && (
           <Spinner
             margin='auto'
@@ -72,7 +72,7 @@ export async function getServerSideProps({ params }: GetServerSidePropsContext<P
   try {
 
     const articleId = params?.article_id;
-    const response = await fetch(`https://nikhilranjan.pythonanywhere.com/getArticle?article_id=${articleId}`);
+    const response = await fetch(`http://nikhilranjan.pythonanywhere.com/getArticle?article_id=${articleId}`);
     const data = await response.json();
     const filteredData = data.data[0];
 
@@ -87,7 +87,7 @@ export async function getServerSideProps({ params }: GetServerSidePropsContext<P
       ArticleLink: filteredData['link'],
       ArticleId: filteredData['id'],
     };
-
+    console.log(formattedData);
     return {
       props: {
         articleData: formattedData,

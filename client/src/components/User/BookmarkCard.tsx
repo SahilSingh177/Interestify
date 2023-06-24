@@ -48,7 +48,7 @@ const BookmarkCard = ({ author, article_id, link, title, toBeDisplayed, category
   };
 
   return isBookMarked && toBeDisplayed ? (
-    <Card bg="white" direction={{ md: 'row', sm: 'column' }} overflow="hidden" size="md" marginBottom={5} cursor="pointer" width="80%">
+    <Card bg="white" direction={{ md: 'row', sm: 'column' }} overflow="hidden" size="md" marginBottom={5} cursor="pointer" width="80%" style={{ WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)' }}>
       <VStack width="full">
         <CardBody width="full">
           <HStack>

@@ -88,7 +88,7 @@ const ArticleCard: React.FC<Props> = ({
       if (!currentUser) return;
       try {
         const response = await fetch(
-          `https://nikhilranjan.pythonanywhere.com/isArticleLiked?email=${currentUser.email}&blog_id=${articleId}`
+          `http://nikhilranjan.pythonanywhere.com/isArticleLiked?email=${currentUser.email}&blog_id=${articleId}`
         );
         const bodyData = await response.json();
         setHasLiked(bodyData.message);
@@ -100,7 +100,7 @@ const ArticleCard: React.FC<Props> = ({
       if (!currentUser) return;
       try {
         const response = await fetch(
-          `https://nikhilranjan.pythonanywhere.com/isArticleBookmarked?email=${currentUser.email}&blog_id=${articleId}`
+          `http://nikhilranjan.pythonanywhere.com/isArticleBookmarked?email=${currentUser.email}&blog_id=${articleId}`
         );
         const bodyData = await response.json();
         setIsBookMarked(bodyData.message);
@@ -120,6 +120,7 @@ const ArticleCard: React.FC<Props> = ({
         size="md"
         marginBottom={5}
         cursor="pointer"
+        style={{ WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)' }}
       >
         <VStack width="full">
           <CardBody width="full" onClick={() => Router.push(`/article/${articleId}`)}>

@@ -29,12 +29,13 @@ const SearchBar = () => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+  if(!currentUser) return null;
   return (
-    <InputGroup margin="auto 5vw" onClick={openModal}>
+    <InputGroup  margin="auto 5vw" onClick={openModal}>
       <InputLeftElement pointerEvents='none'>
         <Icon as={FaSearch} />
       </InputLeftElement>
-      <Input borderColor={currentUser ? "gray.300" : "black"} focusBorderColor={currentUser ? "gray.300" : "black"} type='tel' placeholder='Search Interestify' onChange={openModal} readOnly />
+      <Input borderColor={currentUser ? "gray.300" : "black"} focusBorderColor={currentUser ? "gray.300" : "black"} type='text' placeholder='Search Interestify' onChange={openModal} readOnly />
       <SearchModal isOpen={isModalOpen} onClose={closeModal} />
     </InputGroup>
   )
