@@ -9,6 +9,7 @@ import pickle
 
 dotenv.load_dotenv()
 
+# Initialize Redis client
 redis_host = os.getenv("REDIS_HOST")
 redis_port = os.getenv("REDIS_PORT")
 redis_password = os.getenv("REDIS_PASSWORD")
@@ -33,6 +34,7 @@ def get_all_blogs():
     cached_data = redis_client.get(cache_key)
     if cached_data:
         data = pickle.loads(cached_data)
+        print('cached')
     else:
         data = app.get_all_blogs()
         redis_client.set(cache_key, pickle.dumps(data))

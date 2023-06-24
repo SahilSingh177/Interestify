@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Heading, Spinner, Stack, VStack } from '@chakra-ui/react';
 import Article from '@/components/Articles/Article';
 import ArticleRecommendations from '@/components/Articles/ArticleRecommendations';
 import { ParsedUrlQuery } from 'querystring';
-import { GetServerSidePropsContext } from 'next';
-import Router from 'next/router';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 
 interface ArticleData {
   Text: string;
@@ -20,42 +19,79 @@ interface ArticleData {
 }
 
 interface articleType {
-  id: string,
-  link: string,
-  title: string,
+  id: string;
+  link: string;
+  title: string;
 }
 
-interface Params extends ParsedUrlQuery {
-  article_id: string;
-}
-
-const ArticlePage = 
-({ articleData,similarArticles }: { articleData: ArticleData,similarArticles:articleType[] }) => {
+const ArticlePage = () => {
+  const router=useRouter();
+  const articleId=router.query.article_id as string;
   const [isLoading, setIsLoading] = useState(false);
+  const [articleData, setArticleData] = useState<ArticleData | null>(null);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`https://nikhilranjan.pythonanywhere.com/getArticle?article_id=${articleId}`);
+        const data = await response.json();
+        const filteredData = data.data[0];
+
+        const formattedData: ArticleData = {
+          Text: filteredData['text'],
+          Author: filteredData['author'],
+          Category: filteredData['category'],
+          Title: filteredData['title'],
+          Summary: filteredData['summary'],
+          ReadingTime: filteredData['read_time'],
+          PDFLink: filteredData['pdf_link'],
+          ArticleLink: filteredData['link'],
+          ArticleId: filteredData['id'],
+        };
+
+        setArticleData(formattedData);
+      } catch (error) {
+        console.log(error);
+        setError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [articleId]);
+
+  if (isLoading) {
+    return (
+      <Spinner
+        margin='auto'
+        thickness='4px'
+        speed='0.65s'
+        emptyColor='gray.200'
+        color='blue.500'
+        size='xl'
+      />
+    );
+  }
+
+  if (error) {
+    return (
+      <VStack spacing={10}>
+        <Heading size="2xl">INTERNAL SERVER ERROR</Heading>
+        <Heading size="xl">We'll be back soon</Heading>
+        <iframe width="100%" src="https://giphy.com/embed/ykaNntbZ3hfsWotKmA" />
+      </VStack>
+    );
+  }
 
   return (
     <>
       <Head>
         <title>Articles</title>
       </Head>
-      <Stack direction={["column",'column','column','row']} width={['100vw','100vw','100vw',`calc(100vw - 12px)`]} maxWidth="100vw" overflowX='hidden'>
-        {isLoading && (
-          <Spinner
-            margin='auto'
-            thickness='4px'
-            speed='0.65s'
-            emptyColor='gray.200'
-            color='blue.500'
-            size='xl'
-          />
-        )}
-        {!isLoading && !articleData && (
-          <VStack spacing={10}>
-            <Heading size="2xl">INTERNAL SERVER ERROR</Heading>
-            <Heading size="xl">We'll be back soon</Heading>
-            <iframe width="100%" src="https://giphy.com/embed/ykaNntbZ3hfsWotKmA" />
-          </VStack>
-        )}
+      <Stack direction={["column", 'column', 'column', 'row']} width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]} maxWidth="100vw" overflowX='hidden'>
         {articleData && (
           <Article
             ArticleId={articleData.ArticleId}
@@ -69,60 +105,11 @@ const ArticlePage =
             ArticleLink={articleData.ArticleLink}
           />
         )}
-        <ArticleRecommendations similarArticles={similarArticles}/>
+        <ArticleRecommendations ArticleId={articleData?.ArticleId || ''} />
       </Stack>
     </>
   );
 };
 
-export async function getServerSideProps({ params }: GetServerSidePropsContext<Params>) {
-  try {
-    const articleId = params?.article_id;
-
-    const [response, similarArticlesResp] = await Promise.all([
-      fetch(`https://nikhilranjan.pythonanywhere.com/getArticle?article_id=${articleId}`),
-      fetch(`https://nikhilranjan.pythonanywhere.com/getSimilarArticles?article_id=${articleId}`)
-    ]);
-
-    const [data, similarArticles] = await Promise.all([
-      response.json(),similarArticlesResp.json()
-    ]);
-
-    const filteredData = data.data[0];
-
-    const formattedData: ArticleData = {
-      Text: filteredData['text'],
-      Author: filteredData['author'],
-      Category: filteredData['category'],
-      Title: filteredData['title'],
-      Summary: filteredData['summary'],
-      ReadingTime: filteredData['read_time'],
-      PDFLink: filteredData['pdf_link'],
-      ArticleLink: filteredData['link'],
-      ArticleId: filteredData['id'],
-    };
-
-    if (!formattedData) {
-      throw new Error('Failed to fetch article data');
-    }
-
-    return {
-      props: {
-        articleData: formattedData,
-        similarArticles: similarArticles
-      },
-    };
-  } catch (error) {
-    console.log(error);
-
-    return {
-      props: {
-        articleData: null,
-        similarArticles: null
-      },
-    };
-  }
-}
 
 export default ArticlePage;
-
