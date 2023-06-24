@@ -19,11 +19,18 @@ interface ArticleData {
   ArticleId: string;
 }
 
+interface articleType {
+  id: string,
+  link: string,
+  title: string,
+}
+
 interface Params extends ParsedUrlQuery {
   article_id: string;
 }
 
-const ArticlePage = ({ articleData }: { articleData: ArticleData }) => {
+const ArticlePage = 
+({ articleData,similarArticles }: { articleData: ArticleData,similarArticles:articleType[] }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   return (
@@ -62,7 +69,7 @@ const ArticlePage = ({ articleData }: { articleData: ArticleData }) => {
             ArticleLink={articleData.ArticleLink}
           />
         )}
-        <ArticleRecommendations ArticleId={articleData.ArticleId} />
+        <ArticleRecommendations similarArticles={similarArticles}/>
       </Stack>
     </>
   );
@@ -70,10 +77,17 @@ const ArticlePage = ({ articleData }: { articleData: ArticleData }) => {
 
 export async function getServerSideProps({ params }: GetServerSidePropsContext<Params>) {
   try {
-
     const articleId = params?.article_id;
-    const response = await fetch(`https://nikhilranjan.pythonanywhere.com/getArticle?article_id=${articleId}`);
-    const data = await response.json();
+
+    const [response, similarArticlesResp] = await Promise.all([
+      fetch(`https://nikhilranjan.pythonanywhere.com/getArticle?article_id=${articleId}`),
+      fetch(`https://nikhilranjan.pythonanywhere.com/getSimilarArticles?article_id=${articleId}`)
+    ]);
+
+    const [data, similarArticles] = await Promise.all([
+      response.json(),similarArticlesResp.json()
+    ]);
+
     const filteredData = data.data[0];
 
     const formattedData: ArticleData = {
@@ -87,20 +101,28 @@ export async function getServerSideProps({ params }: GetServerSidePropsContext<P
       ArticleLink: filteredData['link'],
       ArticleId: filteredData['id'],
     };
-    console.log(formattedData);
+
+    if (!formattedData) {
+      throw new Error('Failed to fetch article data');
+    }
+
     return {
       props: {
         articleData: formattedData,
+        similarArticles: similarArticles
       },
     };
   } catch (error) {
     console.log(error);
+
     return {
       props: {
         articleData: null,
+        similarArticles: null
       },
     };
   }
 }
 
 export default ArticlePage;
+

@@ -120,7 +120,6 @@ const ArticleCard: React.FC<Props> = ({
         size="md"
         marginBottom={5}
         cursor="pointer"
-        style={{ WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)' }}
       >
         <VStack width="full">
           <CardBody width="full" onClick={() => Router.push(`/article/${articleId}`)}>

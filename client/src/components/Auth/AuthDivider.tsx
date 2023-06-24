@@ -6,7 +6,6 @@ const AuthDivider: React.FC = () => {
     return (
         <>
             <Box
-                mx={2}
                 paddingTop={['0', '0', '0', '5vh']}
                 paddingBottom={['0', '0', '0', '5vh']}
                 paddingLeft={['5vw', '5vw', '5vw', '0']}
