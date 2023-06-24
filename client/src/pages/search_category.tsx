@@ -41,7 +41,7 @@ const search_category = () => {
                             borderColor="white"
                             _hover={{ borderColor: "white" }}
                             focusBorderColor="white"
-                            type="tel"
+                            type="text"
                             placeholder="Search Categories"
                             onChange={handleChange}
                         />
