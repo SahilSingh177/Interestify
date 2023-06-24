@@ -12,7 +12,7 @@ const Login = () => {
         <title>Interestify - Login</title>
       </Head>
 
-      <Flex minWidth='100vw' flexDirection={['column', 'column', 'column', 'row']} minHeight='90vh' justifyContent="center" bgImage="/auth_bg.avif" backgroundSize='cover'>
+      <Flex flexDirection={['column', 'column', 'column', 'row']} minHeight='90vh' justifyContent="center" bgImage="/assets/auth_bg.avif" backgroundSize='cover'>
         <OAuth view="login"></OAuth>
         <AuthDivider></AuthDivider>
         <LoginForm></LoginForm>
