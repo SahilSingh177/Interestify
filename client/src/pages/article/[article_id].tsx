@@ -72,7 +72,7 @@ export async function getServerSideProps({ params }: GetServerSidePropsContext<P
   try {
 
     const articleId = params?.article_id;
-    const response = await fetch(`http://nikhilranjan.pythonanywhere.com/getArticle?article_id=${articleId}`);
+    const response = await fetch(`https://nikhilranjan.pythonanywhere.com/getArticle?article_id=${articleId}`);
     const data = await response.json();
     const filteredData = data.data[0];
 

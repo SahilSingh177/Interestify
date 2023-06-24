@@ -29,7 +29,7 @@ const Index = () => {
   useEffect(() => {
     const checkCategories = async () => {
       try {
-        const response = await fetch('http://nikhilranjan.pythonanywhere.com/hasSelectedCategories', {
+        const response = await fetch('https://nikhilranjan.pythonanywhere.com/hasSelectedCategories', {
           method: 'POST',
           headers: {
             "Content-Type": "application/json",
@@ -62,11 +62,11 @@ const Index = () => {
       let response;
       if (!email) {
         response = await fetch(
-          `http://nikhilranjan.pythonanywhere.com/getTopArticles?page=${page}`
+          `https://nikhilranjan.pythonanywhere.com/getTopArticles?page=${page}`
         );
       } else {
         response = await fetch(
-          `http://nikhilranjan.pythonanywhere.com/getTopArticles?email=${email}&page=${page}`
+          `https://nikhilranjan.pythonanywhere.com/getTopArticles?email=${email}&page=${page}`
         );
       }
       const jsonData = await response.json();
