@@ -85,7 +85,7 @@ const HistoryCard = ({
           </HStack>
           <HStack justifyContent="flex-end" width="full" mt={3}>
             <Link
-              href={link}
+              href={`/article/${articleId}`}
               isExternal
               color="teal"
               cursor="pointer"

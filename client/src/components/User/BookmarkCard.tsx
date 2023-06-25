@@ -1,5 +1,4 @@
 import React, { useState, useContext, useMemo } from 'react';
-import { useRouter } from 'next/router';
 import { AuthContext } from '@/Providers/AuthProvider';
 import {
   Card,
@@ -15,7 +14,6 @@ import {
   Link,
 } from '@chakra-ui/react';
 import { FaBookmark } from 'react-icons/fa';
-// import { getRandomColour } from '@/Handlers/getRandomColour';
 import { toggleBookmark } from '@/Handlers/toggleBookmark';
 
 type Props = {
@@ -64,7 +62,7 @@ const BookmarkCard = ({ author, article_id, link, title, toBeDisplayed, category
 
         <CardFooter width="full">
           <HStack spacing={4} justifyContent="flex-end" width="full">
-            <Link href={link} isExternal color="teal" _hover={{ textDecoration: 'none' }}>
+            <Link href={`/article/${article_id}`} isExternal color="teal" _hover={{ textDecoration: 'none' }}>
               Read Full Article Here
             </Link>
             <Spacer />
