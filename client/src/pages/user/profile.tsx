@@ -12,6 +12,7 @@ import {
 import { Bar } from 'react-chartjs-2';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import Loading from '@/components/loading/Loading';
 
 ChartJS.register(
   CategoryScale,
@@ -63,6 +64,7 @@ export const options = {
 };
 
 const Profile = () => {
+
   const colours = ["#faf0e6", "#e6f0fa", "#c7ded9", "#a4c7bf", "	#46637b"];
   const getRandomColour = () => {
     const randomIndex = Math.floor(Math.random() * colours.length);
@@ -83,6 +85,7 @@ const Profile = () => {
   };
 
   const currentUser = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   let stringArray: string[] = [];
   let dataArray: number[] = [];
 
@@ -93,6 +96,7 @@ const Profile = () => {
       stringArray.push(categoryData['category_name']);
       dataArray.push(categoryData['duration']);
     }
+    setIsLoading(false);
     setLabels(stringArray);
     setLabelData(dataArray);
     setBarColors(Array.from({ length: dataArray.length }, () => getRandomColour()));
@@ -107,15 +111,26 @@ const Profile = () => {
 
   useEffect(() => {
     fetchData();
-  }, [currentUser?.email]);
+  }, []);
 
   return (
     <>
       <Head>
         <title>Activity</title>
       </Head>
-      <Flex bg='gray.50' height='100vh' flexDirection='column' 
-      width={['100vw','100vw','100vw',`calc(100vw - 12px)`]} alignItems='center' justifyContent='space-around' padding='5vh 5vw' maxHeight='90vh'>
+      {isLoading && (
+        <Flex
+          position='relative'
+          alignItems="center"
+          justifyContent='center'
+          height='60vh'
+          width="100vw"
+        >
+          <Loading />
+        </Flex>
+      )}
+      <Flex bg='gray.50' height='100vh' flexDirection='column'
+        width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]} alignItems='center' justifyContent='space-around' padding='5vh 5vw' maxHeight='90vh'>
         <Heading>YOUR ACTIVITY</Heading>
         <Bar options={options} data={data} style={{
           maxHeight: '80vh'
