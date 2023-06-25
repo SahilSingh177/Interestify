@@ -41,11 +41,11 @@ const Category = () => {
     try {
       let endpoint = '';
       if (sortBy === 'best')
-        endpoint = `https://nikhilranjan.pythonanywhere.com/getTopArticlesfor?category=${category}&page=${page}`;
+        endpoint = `http://127.0.0.1:5000/getTopArticlesfor?category=${category}&page=${page}`;
       else if (sortBy === 'recent')
-        endpoint = `https://nikhilranjan.pythonanywhere.com/getRecentArticlesfor?category=${category}&page=${page}`;
+        endpoint = `http://127.0.0.1:5000/getRecentArticlesfor?category=${category}&page=${page}`;
       else
-        endpoint = `https://nikhilranjan.pythonanywhere.com/getHotArticlesfor?category=${category}&page=${page}`;
+        endpoint = `http://127.0.0.1:5000/getHotArticlesfor?category=${category}&page=${page}`;
 
       const response = await fetch(endpoint);
       const jsonData = await response.json();

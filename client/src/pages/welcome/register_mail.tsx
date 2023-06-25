@@ -36,7 +36,7 @@ const RegisterMail: NextPageWithLayout = () => {
     const checkCategories = async () => {
       try {
         const response = await fetch(
-          "https://nikhilranjan.pythonanywhere.com/hasSelectedCategories",
+          "http://127.0.0.1:5000/hasSelectedCategories",
           {
             method: "POST",
             headers: {
@@ -63,7 +63,7 @@ const RegisterMail: NextPageWithLayout = () => {
   const registerUser = async () => {
     try {
       const email = auth.currentUser?.email;
-      await fetch("https://nikhilranjan.pythonanywhere.com/registerMail", {
+      await fetch("http://127.0.0.1:5000/registerMail", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

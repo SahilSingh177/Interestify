@@ -48,7 +48,7 @@ const Bookmarks = () => {
     const email = auth.currentUser?.email;
     try {
       const response = await fetch(
-        `https://nikhilranjan.pythonanywhere.com/getBookMarks?email=${email}`
+        `http://127.0.0.1:5000/getBookMarks?email=${email}`
       );
       const bodyData = await response.json();
       const filteredData = bodyData.data;
@@ -74,7 +74,7 @@ const Bookmarks = () => {
       setData(initialData);
     } else {
       try {
-        const resp = await fetch("https://nikhilranjan.pythonanywhere.com/searchBookmark", {
+        const resp = await fetch("http://127.0.0.1:5000/searchBookmark", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

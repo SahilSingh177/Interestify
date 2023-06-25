@@ -44,7 +44,7 @@ const SignupForm = () => {
       await updateProfile({ displayName: signupForm.username });
       await updateProfile({ photoURL: '/assets/default_profile_photo.png' });
   
-      await fetch("https://nikhilranjan.pythonanywhere.com/registerUser", {
+      await fetch("http://127.0.0.1:5000/registerUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
