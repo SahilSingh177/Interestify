@@ -32,7 +32,7 @@ const Profile = () => {
   const [labels, setLabels] = useState<string[]>([]);
   const [labelData, setLabelData] = useState<number[]>([]);
   const [barColors, setBarColors] = useState<string[]>([]);
-  const [timeUnit, setTimeUnit] = useState<string>('');
+  const [timeUnit, setTimeUnit] = useState<string>('milliseconds');
 
   const data = {
     labels,
@@ -54,26 +54,30 @@ const Profile = () => {
       `https://nikhilranjan.pythonanywhere.com/getCategoryData?email=${currentUser?.email}`
     );
     const data = await resp.json();
+
+    let divisor = 1;
+    let maxi = 0;
+    for (const c of data){
+      maxi=Math.max(maxi,c['duration']);
+    }
+
+    if(maxi>=3600000) {
+      divisor=3600000;
+      setTimeUnit('hours');
+    }
+    else if(maxi>=60000){
+       divisor=60000;
+       setTimeUnit('minutes');
+    }
+    else if(maxi>=1000){
+       divisor=1000;
+       setTimeUnit('seconds');
+    }
+    
     for (const categoryData of data) {
       stringArray.push(categoryData['category_name']);
       const durationInMilliseconds = categoryData['duration'];
-      let formattedDuration;
-
-      if (durationInMilliseconds >= 3600000) {
-        formattedDuration = durationInMilliseconds / 3600000;
-        setTimeUnit('hours');
-      } else if (durationInMilliseconds >= 60000) {
-        formattedDuration = durationInMilliseconds / 60000;
-        setTimeUnit('minutes');
-      } else if (durationInMilliseconds >= 1000) {
-        formattedDuration = durationInMilliseconds / 1000;
-        setTimeUnit('seconds');
-      } else {
-        formattedDuration = durationInMilliseconds + ' ms';
-        setTimeUnit('milliseconds');
-      }
-
-      dataArray.push(formattedDuration);
+      dataArray.push(durationInMilliseconds/divisor);
     }
     setIsLoading(false);
     setLabels(stringArray);
