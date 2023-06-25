@@ -48,7 +48,7 @@ Interestify takes personalized browsing to the next level by offering interest-b
 To run the Interestify backend, ensure that you have the following:
 
 - Python 3.x
-- 
+- Node.js
 - Neo4j database
 - Firebase account
 - Redis cloud keys
