@@ -52,7 +52,7 @@ const categories: NextPageWithLayout = () => {
       <Head>
         <title>Interestify - Select Categories</title>
       </Head>
-      <Stack width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]} minHeight='100vh' bgImage='/assets/category_bg.jpg' backgroundSize="contain 100% auto" bgRepeat='repeat-y' alignItems="center" >
+      <Stack width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]} minHeight='100vh' alignItems="center" bg='gray.50'>
         <Heading marginTop="5vh" textAlign='center'>SELCT YOUR FAVOURITE CATEGORIES</Heading>
         <InputGroup width="60vw" margin="5vh 5vw 0 5vw">
           <InputLeftElement

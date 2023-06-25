@@ -73,6 +73,7 @@ const Index = () => {
       const jsonData = await response.json();
       if (jsonData.length === 0) {
         setHasMoreData(false);
+        setIsLoading(false);
         return;
       }
       setData((prevData) => [...prevData, ...jsonData]);
