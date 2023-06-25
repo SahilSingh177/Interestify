@@ -27,6 +27,7 @@ def initialize():
     global initialized
     if not initialized:
         app.logger.info("Starting scraping thread...")
+        schedule_task()
         start_scraping_thread()
         initialized = True
 
@@ -437,11 +438,4 @@ def run_flask_app():
 
 
 if __name__ == "__main__":
-    task_thread = threading.Thread(target=schedule_task)
-    app_thread = threading.Thread(target=run_flask_app)
-
-    task_thread.start()
-    app_thread.start()
-
-    task_thread.join()
-    app_thread.join()
+    run_flask_app()
