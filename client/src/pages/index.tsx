@@ -30,7 +30,7 @@ const Index = () => {
   useEffect(() => {
     const checkCategories = async () => {
       try {
-        const response = await fetch('https://nikhilranjan.pythonanywhere.com/hasSelectedCategories', {
+        const response = await fetch('http://127.0.0.1:5000/hasSelectedCategories', {
           method: 'POST',
           headers: {
             "Content-Type": "application/json",
@@ -63,11 +63,11 @@ const Index = () => {
       let response;
       if (!email) {
         response = await fetch(
-          `https://nikhilranjan.pythonanywhere.com/getTopArticles?page=${page}`
+          `http://127.0.0.1:5000/getTopArticles?page=${page}`
         );
       } else {
         response = await fetch(
-          `https://nikhilranjan.pythonanywhere.com/getTopArticles?email=${email}&page=${page}`
+          `http://127.0.0.1:5000/getTopArticles?email=${email}&page=${page}`
         );
       }
       const jsonData = await response.json();

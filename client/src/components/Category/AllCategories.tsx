@@ -33,7 +33,7 @@ const AllCategories = ({ filteredData }: { filteredData: string[]}) => {
         email: email,
         updated_preferences: clickedCategories
       };
-      await fetch('https://nikhilranjan.pythonanywhere.com/updatePreferences', {
+      await fetch('http://127.0.0.1:5000/updatePreferences', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -49,7 +49,7 @@ const AllCategories = ({ filteredData }: { filteredData: string[]}) => {
 
   const checkCategories = async () => {
     try {
-      const response = await fetch('https://nikhilranjan.pythonanywhere.com/hasSelectedCategories', {
+      const response = await fetch('http://127.0.0.1:5000/hasSelectedCategories', {
         method: 'POST',
         headers: {
           "Content-Type": "application/json",

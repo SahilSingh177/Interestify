@@ -24,7 +24,7 @@ const ResetMailModal = ({
     try {
       const email = auth.currentUser?.email;
       if (subsciptionStatus === "Subscribe") {
-        await fetch("https://nikhilranjan.pythonanywhere.com/registerMail", {
+        await fetch("http://127.0.0.1:5000/registerMail", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -37,7 +37,7 @@ const ResetMailModal = ({
         // Close the modal
         onClose();
       } else {
-        await fetch("https://nikhilranjan.pythonanywhere.com/unregisterMail", {
+        await fetch("http://127.0.0.1:5000/unregisterMail", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -60,7 +60,7 @@ const ResetMailModal = ({
       try {
         const email = auth.currentUser?.email;
         const resp = await fetch(
-          `https://nikhilranjan.pythonanywhere.com/checkUserRegistration?email=${email}`
+          `http://127.0.0.1:5000/checkUserRegistration?email=${email}`
         );
         const data = await resp.json();
         if (data === false) {

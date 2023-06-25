@@ -5,8 +5,8 @@ export const toggleBookmark = async (
     ) => {
     const email = currentUser.email;
     if (!isBookMarked) {
-        await fetch(`https://nikhilranjan.pythonanywhere.com/addBookmark?email=${email}&id=${ArticleId}`);
+        await fetch(`http://127.0.0.1:5000/addBookmark?email=${email}&id=${ArticleId}`);
     } else {
-        await fetch(`https://nikhilranjan.pythonanywhere.com/deleteBookmark?email=${email}&id=${ArticleId}`);
+        await fetch(`http://127.0.0.1:5000/deleteBookmark?email=${email}&id=${ArticleId}`);
     }
 };

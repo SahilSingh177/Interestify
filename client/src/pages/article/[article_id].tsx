@@ -36,7 +36,7 @@ const ArticlePage = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`https://nikhilranjan.pythonanywhere.com/getArticle?article_id=${articleId}`);
+        const response = await fetch(`http://127.0.0.1:5000/getArticle?article_id=${articleId}`);
         const data = await response.json();
         const filteredData = data.data[0];
 
@@ -112,6 +112,5 @@ const ArticlePage = () => {
     </>
   );
 };
-
 
 export default ArticlePage;
