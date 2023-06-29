@@ -59,7 +59,7 @@ Interestify takes personalized browsing to the next level by offering interest-b
 To run the Interestify backend, ensure that you have the following:
 
 - Python 3.x
-- Neo4j database (please provide your own API keys for Neo4j)
+- Node.js
 
 ## Installation and Setup
 
@@ -82,12 +82,32 @@ To run the Interestify backend, ensure that you have the following:
      ```shell
      pip install -r requirements.txt
       ```
-    
-  3. Start the backend server:
+  3. Go to your Google account.
+     Search for "app passwords" and select "mail" as the app and "Windows computer" as the device.
+     Click "generate" to create a password.
+     Copy the generated password for use in your env file as your email password.
+
+  4. Create a file named ".env" in the server directory and provide necessary your own API keys and credentials as listed:
+     ```
+      DATABASE_URL=<your_database_url>
+      DATABASE_USER=<your_database_username>
+      DATABASE_PASSWORD=<your_database_password>
+      SENDER_MAIL=<your_sender_email>
+      SENDER_PASSWORD=<your_sender_email_password>
+      SMTP_SERVER=<your_smtp_server>
+      SMTP_PORT=<your_smtp_port>
+      COHERE_API_KEY=<your_cohere_api_key>
+      REDIS_HOST=<your_redis_host>
+      REDIS_PORT=<your_redis_port>
+      REDIS_PASSWORD=<your_redis_password>
+     ```
+  5. Replace the placeholders (e.g., <your_database_url>) with the actual values corresponding to your setup.
+  6. Start the backend server:
 
      ```
      python main.py
      ```
+     
 
 # For running frontend
 
@@ -99,7 +119,18 @@ To run the Interestify backend, ensure that you have the following:
      ```shell
      npm install
      ```
-3. Run the frontend:
+3. Create a file named ".env" in the server directory and provide necessary your own API keys and credentials for firebase as listed:
+   ```
+    NEXT_PUBLIC_FIREBASE_API_KEY=<your-api-key>
+    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=<your-auth-domain>
+    NEXT_PUBLIC_FIREBASE_PROJECT_ID=<your-project-id>
+    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=<your-storage-bucket>
+    NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=<your-messaging-sender-id>
+    NEXT_PUBLIC_FIREBASE_APP_ID=<your-app-id>
+    NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=<your-measurement-id>
+   ```
+4. Replace the <your-api-key>, <your-auth-domain>, <your-project-id>, <your-storage-bucket>, <your-messaging-sender-id>, <your-app-id>, and <your-measurement-id> placeholders with the corresponding values for your Firebase configuration.
+4. Run the frontend:
 
    ```shell
    npm run dev
