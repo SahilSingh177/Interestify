@@ -220,7 +220,14 @@ const Article: React.FC<Props> = ({
 
       <Divider bg="gray.400" borderColor="gray.600" />
 
-      <Text fontSize={['sm','sm','md','md']} width='inherit' wordBreak='break-word' lineHeight={2} padding={2} textAlign='start'>
+      <Text
+        fontSize={["sm", "sm", "md", "md"]}
+        width="inherit"
+        wordBreak="break-word"
+        lineHeight={2}
+        padding={2}
+        textAlign="start"
+      >
         {Content}
       </Text>
 

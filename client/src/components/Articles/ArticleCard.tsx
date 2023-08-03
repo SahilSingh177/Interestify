@@ -115,7 +115,7 @@ const ArticleCard: React.FC<Props> = ({
           >
             <HStack>
               <Heading
-                size={["md", "md", "lg", "lg"]}
+                fontSize={["md", "md", "1.7rem", "1.7rem"]}
                 width={["100%", "100%", "90%", "90%"]}
               >
                 {Title ? Title : "Title"}
@@ -138,7 +138,7 @@ const ArticleCard: React.FC<Props> = ({
               {Summary ? Summary : "Summary"}
             </Text>
           </CardBody>
-          <CardFooter width="full" paddingTop={0} fontSize={['sm','sm','md','md']}>
+          <CardFooter width="full" paddingTop={0} fontSize={['sm','sm','sm','sm']}>
             <HStack spacing={4} width="full">
               <HStack spacing={1}>
                 <Icon
