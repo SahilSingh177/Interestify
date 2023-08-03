@@ -48,7 +48,7 @@ const Bookmarks = () => {
     const email = auth.currentUser?.email;
     try {
       const response = await fetch(
-        `http://127.0.0.1:5000/getBookMarks?email=${email}`
+        `https://nikhilranjan.pythonanywhere.com/getBookMarks?email=${email}`
       );
       const bodyData = await response.json();
       const filteredData = bodyData.data;
@@ -74,7 +74,7 @@ const Bookmarks = () => {
       setData(initialData);
     } else {
       try {
-        const resp = await fetch("http://127.0.0.1:5000/searchBookmark", {
+        const resp = await fetch("https://nikhilranjan.pythonanywhere.com/searchBookmark", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -122,7 +122,6 @@ const Bookmarks = () => {
             borderColor="gray.700"
             _hover={{ borderColor: "gray.700" }}
             focusBorderColor="gray.700"
-            type="tel"
             placeholder="Search Bookmarks"
           />
         </InputGroup>
@@ -140,17 +139,19 @@ const Bookmarks = () => {
         {!isLoading && data?.length === 0 && (
           <Flex
             width={`calc(100vw - 12px)`}
-            height={`calc(80vh - ${heightRef.current?.offsetHeight}px - 8px)`}
+            // height={`calc(80vh - ${heightRef.current?.offsetHeight}px - 8px)`}
+            height='60vh'
+            flexDirection='column'
             flexGrow={1}
             alignItems="center"
             justifyContent="center"
-            overflow="hidden"
+            // overflow="hidden"
           >
             <Player
               autoplay
               loop
               src="/empty.json"
-              style={{ height: "100%", width: "100%" }}
+              style={{ height: "60vh" }}
             />
           </Flex>
         )}

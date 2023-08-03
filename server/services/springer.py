@@ -1,12 +1,14 @@
+import os
+import time
+import atexit
+import threading
+
 import requests
 from bs4 import BeautifulSoup
-import time
 import concurrent.futures
-import threading
-import atexit
-from .database.database import App
+
 import dotenv
-import os
+from .database.database import App
 
 dotenv.load_dotenv()
 

@@ -1,5 +1,5 @@
-import React, { useState, useContext, useMemo } from 'react';
-import { AuthContext } from '@/Providers/AuthProvider';
+import React, { useState, useContext, useMemo } from "react";
+import { AuthContext } from "@/Providers/AuthProvider";
 import {
   Card,
   CardBody,
@@ -12,9 +12,9 @@ import {
   Heading,
   Text,
   Link,
-} from '@chakra-ui/react';
-import { FaBookmark } from 'react-icons/fa';
-import { toggleBookmark } from '@/Handlers/toggleBookmark';
+} from "@chakra-ui/react";
+import { FaBookmark } from "react-icons/fa";
+import { toggleBookmark } from "@/Handlers/toggleBookmark";
 
 type Props = {
   author: string;
@@ -25,7 +25,14 @@ type Props = {
   category: string;
 };
 
-const BookmarkCard = ({ author, article_id, link, title, toBeDisplayed, category }: Props) => {
+const BookmarkCard = ({
+  author,
+  article_id,
+  link,
+  title,
+  toBeDisplayed,
+  category,
+}: Props) => {
   const currentUser = useContext(AuthContext);
   const [isBookMarked, setIsBookMarked] = useState<boolean>(true);
 
@@ -46,27 +53,49 @@ const BookmarkCard = ({ author, article_id, link, title, toBeDisplayed, category
   };
 
   return isBookMarked && toBeDisplayed ? (
-    <Card bg="white" direction={{ md: 'row', sm: 'column' }} overflow="hidden" size="md" marginBottom={5} cursor="pointer" width="80%" style={{ WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)' }}>
-      <VStack width="full">
+    <Card
+      bg="white"
+      direction={{ md: "row", sm: "column" }}
+      overflow="hidden"
+      size="md"
+      marginBottom={5}
+      cursor="pointer"
+      width={["90%","90%","90%","80%"]}
+      style={{ WebkitTapHighlightColor: "rgba(0, 0, 0, 0)" }}
+    >
+      <VStack width="full" spacing={0}>
         <CardBody width="full">
           <HStack>
-            <Heading size="md" width={["100%","100%","90%","90%"]}>
+            <Heading   size={["sm", "md", "md", "md"]} width={["100%", "100%", "90%", "90%"]}>
               {title}
             </Heading>
             <Spacer />
-            <Tag size="sm" display={["none","none","block","block"]} variant="solid" colorScheme={getRandomColour}>
+            <Tag
+              size="sm"
+              display={["none", "none", "block", "block"]}
+              variant="solid"
+              colorScheme={getRandomColour}
+              height="fit-content"
+              paddingTop={1}
+              paddingBottom={1}
+            >
               {category}
             </Tag>
           </HStack>
         </CardBody>
 
-        <CardFooter width="full">
+        <CardFooter width="full" fontSize={['sm','sm','md','md']}>
           <HStack spacing={4} justifyContent="flex-end" width="full">
-            <Link href={`/article/${article_id}`} isExternal color="teal" _hover={{ textDecoration: 'none' }}>
+            <Link
+              href={`/article/${article_id}`}
+              isExternal
+              color="teal"
+              _hover={{ textDecoration: "none" }}
+            >
               Read Full Article Here
             </Link>
             <Spacer />
-            <Text fontSize="sm" color="gray.500">
+            <Text color="gray.500">
               By {author}
             </Text>
             <Icon as={FaBookmark} onClick={handleBookmark} />

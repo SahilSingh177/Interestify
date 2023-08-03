@@ -5,7 +5,6 @@ import Banner from "@/components/Navbar/Banner";
 import ArticleCard from "@/components/Articles/ArticleCard";
 import SideBar from "@/components/Articles/SideBar";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { Spinner } from "@chakra-ui/react";
 import { auth } from "@/firebase/clientApp";
 import { AuthContext } from "@/Providers/AuthProvider";
 import Head from "next/head";
@@ -20,7 +19,8 @@ interface Article {
   summary: string;
   time: string;
   likes: number;
-  liked: boolean;
+  isLiked: boolean;
+  isBookmarked: boolean;
 }
 
 const Index = () => {
@@ -30,7 +30,7 @@ const Index = () => {
   useEffect(() => {
     const checkCategories = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/hasSelectedCategories', {
+        const response = await fetch('https://nikhilranjan.pythonanywhere.com/hasSelectedCategories', {
           method: 'POST',
           headers: {
             "Content-Type": "application/json",
@@ -63,14 +63,15 @@ const Index = () => {
       let response;
       if (!email) {
         response = await fetch(
-          `http://127.0.0.1:5000/getTopArticles?page=${page}`
+          `https://nikhilranjan.pythonanywhere.com/getTopArticles?page=${page}`
         );
       } else {
         response = await fetch(
-          `http://127.0.0.1:5000/getTopArticles?email=${email}&page=${page}`
+          `https://nikhilranjan.pythonanywhere.com/getTopArticles?email=${email}&page=${page}`
         );
       }
       const jsonData = await response.json();
+      console.log(jsonData);
       if (jsonData.length === 0) {
         setHasMoreData(false);
         setIsLoading(false);
@@ -86,7 +87,7 @@ const Index = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [currentUser?.email]);
 
   return (
     <>
@@ -156,6 +157,8 @@ const Index = () => {
                     ReadingTime={articleInfo.time}
                     ArticleLink={articleInfo.link}
                     Likes={articleInfo.likes}
+                    isLiked = {articleInfo.isLiked}
+                    isBookmarked = {articleInfo.isBookmarked}
                     key={id}
                   ></ArticleCard>
                 ))}

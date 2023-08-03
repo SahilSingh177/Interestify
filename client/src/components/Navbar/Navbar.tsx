@@ -9,7 +9,6 @@ import Image from "next/image";
 import SearchBar from "./SearchBar";
 
 const Navbar: React.FC = () => {
-  // const transformScale = useBreakpointValue({ base: 'scale(1.3)', md: 'scale(0.9)', sm: 'scale(0.7)',lg:'2.5' });
   const currentUser = useContext(AuthContext);
   const router = useRouter();
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -44,14 +43,14 @@ const Navbar: React.FC = () => {
       overflowX="hidden"
       overflowY="hidden"
     >
-      <Flex height='10vh' width='16vh' padding='1vh' alignItems='center' justifyContent='center'>
+      <Flex height='10vh' width={currentUser?.email?['25vh','25vh','25vh','18vh']:['15vh','15vh','16vh','16vh']}  alignItems='center' justifyContent='center'>
 
       <Link href="/">
-        <Image priority={true} src="/assets/logo-no-background.svg" alt='logo'height='333' width='584'></Image>
+        <Image priority={true} src="/assets/logo-no-background.svg" alt='logo'height='326' width='557'></Image>
       </Link>
       </Flex>
         <SearchBar></SearchBar>
-      <Flex>
+      <Flex justifyContent='center'>
         <AuthButtons />
       </Flex>
     </Flex>

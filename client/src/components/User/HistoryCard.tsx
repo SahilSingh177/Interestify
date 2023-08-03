@@ -1,4 +1,4 @@
-import React, {useState, useContext} from "react";
+import React, { useState, useContext, useMemo } from "react";
 import { useRouter } from "next/router";
 import { AuthContext } from "@/Providers/AuthProvider";
 import {
@@ -23,7 +23,6 @@ type Props = {
   link: string;
   date: string;
   rid: string;
-  toBeDisplayed: boolean;
 };
 
 const HistoryCard = ({
@@ -34,20 +33,24 @@ const HistoryCard = ({
   link,
   date,
   rid,
-  toBeDisplayed,
 }: Props) => {
+  const colours = ["red", "orange", "yellow", "teal", "cyan", "purple", "pink"];
+  const getRandomColour = useMemo(() => {
+    const randomIndex = Math.floor(Math.random() * colours.length);
+    return colours[randomIndex];
+  }, []);
   const currentUser = useContext(AuthContext);
   const Router = useRouter();
   const handleClick = (articleId: string) => {
     Router.push(`/article/${articleId}`);
   };
-  const [isDeleted, setIsDeleted] = useState<boolean>(false)
+  const [isDeleted, setIsDeleted] = useState<boolean>(false);
   const email = currentUser?.email;
   const deleteHistory = async () => {
     setIsDeleted(true);
     try {
       let response = await fetch(
-        `http://127.0.0.1:5000/deletehistory?email=${email}&rid=${rid}`,
+        `https://nikhilranjan.pythonanywhere.com/deletehistory?email=${email}&rid=${rid}`,
         { next: { revalidate: 60 } }
       );
       const bodyData = await response.json();
@@ -56,34 +59,47 @@ const HistoryCard = ({
       console.error(error);
     }
   };
-  return (
-    !isDeleted && toBeDisplayed?
+  return !isDeleted ? (
     <Card
       bg="white"
       direction={{ md: "row", sm: "column" }}
       overflow="hidden"
       size="md"
+      margin="auto"
       marginBottom={5}
-      width="80%"
-      style={{ WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)' }}
+      width={["90%","90%","90%","80%"]}
+      style={{ WebkitTapHighlightColor: "rgba(0, 0, 0, 0)" }}
     >
       <VStack width="full">
         <CardBody width="full">
           <HStack>
             <Heading
-              size="md"
-              width={["100%","100%","90%","90%"]}
+              size={["sm", "md", "md", "md"]}
+              width={["100%", "100%", "90%", "90%"]}
               cursor="pointer"
               onClick={() => handleClick(articleId)}
             >
               {Title}
             </Heading>
             <Spacer />
-            <Tag display={["none","none","block","block"]} size="sm" variant="solid" colorScheme="teal">
+            <Tag
+              display={["none", "none", "block", "block"]}
+              size="sm"
+              variant="solid"
+              colorScheme={getRandomColour}
+              height="fit-content"
+              paddingTop={1}
+              paddingBottom={1}
+            >
               {Category ? Category : "Unknown"}
             </Tag>
           </HStack>
-          <HStack justifyContent="flex-end" width="full" mt={3}>
+          <HStack
+            justifyContent="flex-end"
+            width="full"
+            mt={3}
+            fontSize={['sm','sm','md','md']}
+          >
             <Link
               href={`/article/${articleId}`}
               isExternal
@@ -94,21 +110,19 @@ const HistoryCard = ({
               Read Full Article Here
             </Link>
             <Spacer />
-            <Text fontSize="sm" color="gray.500">
-              By {Author}
-            </Text>
+            <Text color="gray.500">By {Author}</Text>
           </HStack>
-          <HStack mt={3}>
-            <Text fontSize="md" color="gray.500" alignItems="end">
+          <HStack mt={3} fontSize={['sm','sm','md','md']}>
+            <Text color="gray.500" alignItems="end">
               Read on: {date}
             </Text>
             <Spacer />
-            <Icon as={FaTrash} cursor="pointer" onClick={deleteHistory}/>
+            <Icon as={FaTrash} cursor="pointer" onClick={deleteHistory} />
           </HStack>
         </CardBody>
       </VStack>
-    </Card>: null
-  );
+    </Card>
+  ) : null;
 };
 
 export default HistoryCard;

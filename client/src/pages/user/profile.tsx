@@ -50,7 +50,7 @@ const Profile = () => {
   let dataArray: any[] = [];
 
   const fetchData = async () => {
-    const resp = await fetch(`http://127.0.0.1:5000/getCategoryData?email=${currentUser?.email}`);
+    const resp = await fetch(`https://nikhilranjan.pythonanywhere.com/getCategoryData?email=${currentUser?.email}`);
     const data = await resp.json();
 
     let divisor = 1;

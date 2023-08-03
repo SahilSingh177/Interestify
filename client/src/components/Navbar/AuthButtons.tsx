@@ -2,8 +2,6 @@ import React from "react";
 import { useContext } from "react";
 import Link from 'next/link';
 import { Button } from "@chakra-ui/react";
-import { auth } from "@/firebase/clientApp";
-import { useSignOut } from 'react-firebase-hooks/auth'
 import MenuDropDown from "./MenuDropDown";
 import { AuthContext } from "@/Providers/AuthProvider";
 

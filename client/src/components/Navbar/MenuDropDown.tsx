@@ -41,7 +41,7 @@ const MenuDropDown = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isResetModalOpen, setIsResetModalOpen] = useState<boolean>(false);
   return (
-    <Box zIndex="500" >
+    <Box zIndex="500" height='full'>
       <SignOutModal isOpen={isModalOpen} onClose={closeModal} ></SignOutModal>
       <ResetMailModal isOpen={isResetModalOpen} onClose={closeResetModal} ></ResetMailModal>
       <Menu isLazy={true} strategy="fixed">

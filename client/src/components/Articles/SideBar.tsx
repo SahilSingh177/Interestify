@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import React, { useContext, useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import {
   Flex,
   Stack,
@@ -7,10 +7,11 @@ import {
   Button,
   Divider,
   Center,
-  Badge
-} from '@chakra-ui/react';
-import { AuthContext } from '@/Providers/AuthProvider';
-import { categoriesData } from '@/Handlers/CategoriesData';
+  Badge,
+} from "@chakra-ui/react";
+import { AuthContext } from "@/Providers/AuthProvider";
+import { categoriesData } from "@/Handlers/CategoriesData";
+import ShowAlert from "../Alert/ShowAlert";
 
 type Props = {};
 
@@ -18,47 +19,66 @@ const Sidebar: React.FC<Props> = () => {
   const currentUser = useContext(AuthContext);
   const Router = useRouter();
   const [isFixed, setIsFixed] = useState(false);
+  const [isAlertVisible, setIsAlertVisible] = useState<boolean>(false);
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollHeight = window.scrollY;
       const windowHeight = window.innerHeight;
-      const calculatedHeight =  !currentUser ? 0.63 * windowHeight : 0.03 * windowHeight;
+      const calculatedHeight = !currentUser
+        ? 0.63 * windowHeight
+        : 0.03 * windowHeight;
 
       setIsFixed(scrollHeight > calculatedHeight);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
   return (
     <Flex
-      marginTop='3vh'
-      width={{ lg: "30vw", base: `calc(100vw - 12px)`}}
+      marginTop="3vh"
+      width={{ lg: "30vw", base: `calc(100vw - 12px)` }}
       flexDirection="column"
       alignItems="center"
       justifyContent={{ lg: "flex-start", base: "center" }}
     >
       <Flex width="30vw" height={0} />
+      <ShowAlert
+        type="warning"
+        message="Please login first"
+        title=""
+        isVisible={isAlertVisible}
+        onClose={() => setIsAlertVisible(false)}
+      />
       <Stack
         spacing="1vh"
-        position={{ lg: isFixed ? 'fixed' : 'static', base: "static" }}
-        top={isFixed ? '20vh' : 'auto'}
+        position={{ lg: isFixed ? "fixed" : "static", base: "static" }}
+        top={isFixed ? "20vh" : "auto"}
         right="auto"
         left="auto"
         width={{ lg: "30vw", base: `calc(90vw - 12px)` }}
       >
-        <Text fontWeight="medium" fontSize="2xl" marginBottom={5} textAlign="center">
+        <Text
+          fontWeight="medium"
+          fontSize="2xl"
+          marginBottom={5}
+          textAlign="center"
+        >
           Discover more of what matters to you
         </Text>
         <Flex flexWrap="wrap" justifyContent="center">
           {categoriesData.slice(0, 10).map((category, id) => (
             <Badge
               key={id}
-              onClick={() => Router.push(`/category/${category}/best`)}
+              onClick={() => {
+                if (currentUser?.email)
+                  Router.push(`/category/${category}/best`);
+                else setIsAlertVisible(true);
+              }}
               marginLeft={5}
               marginBottom={5}
               padding={2}
@@ -72,8 +92,11 @@ const Sidebar: React.FC<Props> = () => {
           ))}
         </Flex>
         <Center>
-          <Button variant="success" width="60%" onClick={()=>
-                    Router.push('/search_category')}>
+          <Button
+            variant="success"
+            width="60%"
+            onClick={() => Router.push("/search_category")}
+          >
             See more topics
           </Button>
         </Center>

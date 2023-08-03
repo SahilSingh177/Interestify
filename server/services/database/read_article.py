@@ -1,9 +1,9 @@
+import os
 import requests
 import PyPDF2
-import os
+import dotenv
 import cohere
 import readtime
-import dotenv
 
 dotenv.load_dotenv()
 

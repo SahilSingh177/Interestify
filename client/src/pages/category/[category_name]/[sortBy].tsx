@@ -14,6 +14,7 @@ import Sidebar from '@/components/Articles/SideBar';
 import Loading from '@/components/loading/Loading'
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Head from 'next/head';
+import { auth } from '@/firebase/clientApp';
 
 interface Article {
   id: string;
@@ -25,6 +26,7 @@ interface Article {
   time: string;
   likes: number;
   isLiked: boolean;
+  isBookmarked: boolean;
 }
 
 const Category = () => {
@@ -37,15 +39,16 @@ const Category = () => {
   const [hasMoreData, setHasMoreData] = useState(true);
   const [page, setPage] = useState(1);
 
-  const fetchData = async () => {
+  const fetchData = async (pageNumber:number) => {
     try {
+      const email = auth.currentUser?.email;
       let endpoint = '';
       if (sortBy === 'best')
-        endpoint = `http://127.0.0.1:5000/getTopArticlesfor?category=${category}&page=${page}`;
+        endpoint = `https://nikhilranjan.pythonanywhere.com/getTopArticlesfor?email=${email}&category=${category}&page=${pageNumber}`;
       else if (sortBy === 'recent')
-        endpoint = `http://127.0.0.1:5000/getRecentArticlesfor?category=${category}&page=${page}`;
+        endpoint = `https://nikhilranjan.pythonanywhere.com/getRecentArticlesfor?email=${email}&category=${category}&page=${pageNumber}`;
       else
-        endpoint = `http://127.0.0.1:5000/getHotArticlesfor?category=${category}&page=${page}`;
+        endpoint = `https://nikhilranjan.pythonanywhere.com/getHotArticlesfor?email=${email}&category=${category}&page=${pageNumber}`;
 
       const response = await fetch(endpoint);
       const jsonData = await response.json();
@@ -54,9 +57,7 @@ const Category = () => {
         setIsLoading(false);
         return;
       }
-      setData((prevData) => [...prevData, ...jsonData]);
-      console.log('setting data');
-      console.log(data)
+      setData((prevData) => [...prevData,...jsonData]);
       setPage((prevPage) => prevPage + 1);
       setIsLoading(false);
     } catch (error) {
@@ -64,16 +65,20 @@ const Category = () => {
     }
   };
 
+  const resetData=async()=>{
+    setData([]);
+    setPage(1);
+    setHasMoreData(true);
+    setIsLoading(true);
+    await fetchData(1);
+  }
+
   useEffect(() => {
     const tab = router.asPath.split('/')[3];
     if (tab == 'best') setTabIndex(0);
     else if (tab == 'recent') setTabIndex(1);
     else setTabIndex(2);
-    setData([]);
-    setPage(1);
-    setHasMoreData(true);
-    setIsLoading(true);
-    fetchData();
+    resetData();
   }, [router]);
 
   return (
@@ -125,7 +130,7 @@ const Category = () => {
           {data.length > 0 && (
             <InfiniteScroll
               dataLength={data.length}
-              next={fetchData}
+              next={()=>fetchData(page)}
               hasMore={hasMoreData}
               loader={
                 <Flex
@@ -157,6 +162,8 @@ const Category = () => {
                   ReadingTime={articleInfo.time}
                   ArticleLink={articleInfo.link}
                   Likes={articleInfo.likes}
+                  isLiked={articleInfo.isLiked}
+                  isBookmarked={articleInfo.isBookmarked}
                   key={id}
                 ></ArticleCard>
               ))}

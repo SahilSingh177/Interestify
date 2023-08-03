@@ -27,7 +27,7 @@ import AuthorCard from "../Author/AuthorCard";
 import { AuthContext } from "@/Providers/AuthProvider";
 import { toggleBookmark } from "@/Handlers/toggleBookmark";
 import { toggleLike } from "@/Handlers/toggleLike";
-
+import ShowAlert from "../Alert/ShowAlert";
 
 type Props = {
   ArticleId: string;
@@ -39,6 +39,8 @@ type Props = {
   ReadingTime: string;
   PDFLink: string;
   ArticleLink: string;
+  isLiked: boolean;
+  isBookmarked: boolean;
 };
 
 const Article: React.FC<Props> = ({
@@ -48,9 +50,11 @@ const Article: React.FC<Props> = ({
   Title,
   ReadingTime,
   ArticleId,
+  isLiked,
+  isBookmarked,
 }: Props) => {
-
   const currentUser = useContext(AuthContext);
+  const [isAlertVisible, setIsAlertVisible] = useState<boolean>(false);
   const [articleProgress, setArticleProgress] = useState<number>(0);
 
   useEffect(() => {
@@ -58,17 +62,20 @@ const Article: React.FC<Props> = ({
 
     const updateCategoryTime = async ({ timeSpent }: { timeSpent: number }) => {
       try {
-        await fetch('http://127.0.0.1:5000/updateCategoryScore', {
-          method: 'POST',
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            "email": currentUser?.email,
-            "category_name": Category,
-            "duration": timeSpent
-          }),
-        });
+        await fetch(
+          "https://nikhilranjan.pythonanywhere.com/updateCategoryScore",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: currentUser?.email,
+              category_name: Category,
+              duration: timeSpent,
+            }),
+          }
+        );
       } catch (error) {
         console.error("Error updating category time:", error);
       }
@@ -78,15 +85,14 @@ const Article: React.FC<Props> = ({
       const endTime = Date.now();
       const duration = endTime - startTime;
       updateCategoryTime({ timeSpent: duration });
-      console.log('yayyyy')
+      console.log("yayyyy");
     };
   }, []);
 
   useEffect(() => {
-
     const updateBlogList = async () => {
       if (!currentUser) return;
-      await fetch("http://127.0.0.1:5000/registerBlog", {
+      await fetch("https://nikhilranjan.pythonanywhere.com/registerBlog", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -110,38 +116,7 @@ const Article: React.FC<Props> = ({
       setArticleProgress(progress);
     };
 
-    const fetchHasLiked = async () => {
-      if (!currentUser) return;
-      try {
-        const response = await fetch(
-          `http://127.0.0.1:5000/isArticleLiked?email=${currentUser.email}&blog_id=${ArticleId}`
-        );
-        const bodyData = await response.json();
-        setHasLiked(bodyData.message);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    
-    const fetchHasBookmarked = async () => {
-      if(!currentUser) return;
-      try {
-        const response = await fetch(
-          `http://127.0.0.1:5000/isArticleBookmarked?email=${currentUser.email}&blog_id=${ArticleId}`
-        );
-        const bodyData = await response.json();
-        console.log(bodyData);
-        setIsBookMarked(bodyData.message);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    const promises = [
-      fetchHasBookmarked(),
-      fetchHasLiked(),
-      updateBlogList()
-    ];
+    const promises = [updateBlogList()];
 
     Promise.all(promises);
     window.addEventListener("scroll", handleScroll);
@@ -151,11 +126,16 @@ const Article: React.FC<Props> = ({
   }, [ArticleId]);
 
   const Router = useRouter();
-  const [hasLiked, setHasLiked] = useState<boolean>(false); //liked or not should be fetched from backend
-  const [isBookMarked, setIsBookMarked] = useState<boolean>(false);
+  const [hasLiked, setHasLiked] = useState<boolean>(isLiked ? isLiked : false); //liked or not should be fetched from backend
+  const [isBookMarked, setIsBookMarked] = useState<boolean>(
+    isBookmarked ? isBookmarked : false
+  );
 
   const handleBookmark = async () => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      setIsAlertVisible(true);
+      return;
+    }
     try {
       setIsBookMarked(!isBookMarked);
       await toggleBookmark(isBookMarked, ArticleId, currentUser);
@@ -165,7 +145,10 @@ const Article: React.FC<Props> = ({
   };
 
   const handleLike = async () => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      setIsAlertVisible(true);
+      return;
+    }
     try {
       setHasLiked(!hasLiked);
       await toggleLike(hasLiked, ArticleId, currentUser);
@@ -178,29 +161,38 @@ const Article: React.FC<Props> = ({
     <VStack
       spacing={5}
       alignItems="flex-start"
-      width={["90vw","90vw","90vw","55vw"]}
+      width={["90vw", "90vw", "90vw", "55vw"]}
       maxWidth="100vw"
-      minHeight='90vh'
+      minHeight="90vh"
       marginLeft="5vw"
       marginRight="5vw"
-      marginTop={['5vh','5vh','5vh','15vh']}
+      marginTop={["5vh", "5vh", "5vh", "15vh"]}
       bg="whiteAlpha.500"
       overflowX="hidden"
     >
+      <ShowAlert
+        type="warning"
+        message="Please login first"
+        title=""
+        isVisible={isAlertVisible}
+        onClose={() => setIsAlertVisible(false)}
+      />
       <CircularProgress
         position="fixed"
         bottom="2vh"
         left="2vh"
         value={Math.floor(articleProgress)}
         color="green.400"
-        display={['none','none','block','block']}
+        display={["none", "none", "block", "block"]}
       >
         <CircularProgressLabel>
           {Math.floor(articleProgress)}
         </CircularProgressLabel>
       </CircularProgress>
 
-      <Heading color="gray.700" size={["md","md","md","lg"]}>{Title}</Heading>
+      <Heading color="gray.700" size={["md", "md", "md", "lg"]}>
+        {Title}
+      </Heading>
 
       <AuthorCard
         Author={Author}
@@ -228,7 +220,7 @@ const Article: React.FC<Props> = ({
 
       <Divider bg="gray.400" borderColor="gray.600" />
 
-      <Text lineHeight={2} padding={5} overflowX="hidden">
+      <Text fontSize={['sm','sm','md','md']} width='inherit' wordBreak='break-word' lineHeight={2} padding={2} textAlign='start'>
         {Content}
       </Text>
 

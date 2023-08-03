@@ -21,8 +21,8 @@ const CategoryCard = ({ categoryName, onClickHandler, view, imageLink }: Props) 
   return view ? (
     <Card
       bg={isSelected ? 'gray.200' : 'white'}
-      w={{ lg: '18vw', md: '25vw', sm: '35vw', base: '50vw' }}
-      margin={5}
+      w={{ lg: '20vw', md: '25vw', sm: '40vw', base: '40vw' }}
+      marginBottom={7}
       cursor='pointer'
       onClick={() => onClick()}
       position='relative'

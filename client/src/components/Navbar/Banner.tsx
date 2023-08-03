@@ -20,8 +20,8 @@ const Banner: React.FC = () => {
             onClick={() => router.push('/signup')}
           >Start Reading</Button>
         </Stack>
-        <VStack width='50vw' height='60vh' paddingTop='5vh' paddingBottom='5vh' position='relative'>
-          <Image alt='reading guy' src="/assets/reading_guy.png" layout="fill" objectFit="cover"></Image>
+        <VStack width='50vw' height='60vh' padding='5vh' paddingBottom='5vh' position='relative'>
+          <Image priority={true} alt='reading guy' src="/assets/reading_guy.png" layout="fill" objectFit="cover"></Image>
         </VStack>
       </Flex>}
     </Flex>

@@ -6,6 +6,7 @@ import { ParsedUrlQuery } from 'querystring';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Loading from '@/components/loading/Loading';
+import { auth } from '@/firebase/clientApp';
 
 interface ArticleData {
   Text: string;
@@ -17,6 +18,8 @@ interface ArticleData {
   PDFLink: string;
   ArticleLink: string;
   ArticleId: string;
+  isLiked: boolean;
+  isBookmarked: boolean;
 }
 
 interface articleType {
@@ -36,7 +39,15 @@ const ArticlePage = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`http://127.0.0.1:5000/getArticle?article_id=${articleId}`);
+        const email = auth.currentUser?.email;
+        let response;
+        if(!email) {
+          response = await fetch(`https://nikhilranjan.pythonanywhere.com/getArticle?article_id=${articleId}`);
+        }
+        else {
+          response = await fetch(`https://nikhilranjan.pythonanywhere.com/getArticle?email=${email}&article_id=${articleId}`);
+        }
+          
         const data = await response.json();
         const filteredData = data.data[0];
 
@@ -50,6 +61,8 @@ const ArticlePage = () => {
           PDFLink: filteredData['pdf_link'],
           ArticleLink: filteredData['link'],
           ArticleId: filteredData['id'],
+          isLiked: filteredData['isLiked'],
+          isBookmarked: filteredData['isBookmarked'],
         };
 
         setArticleData(formattedData);
@@ -105,6 +118,8 @@ const ArticlePage = () => {
             Summary={articleData.Summary}
             PDFLink={articleData.PDFLink}
             ArticleLink={articleData.ArticleLink}
+            isLiked={articleData.isLiked}
+            isBookmarked={articleData.isBookmarked}
           />
         )}
         <ArticleRecommendations ArticleId={articleData?.ArticleId || ''} />
