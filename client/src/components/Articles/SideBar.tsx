@@ -8,6 +8,7 @@ import {
   Divider,
   Center,
   Badge,
+  useColorModeValue
 } from "@chakra-ui/react";
 import { AuthContext } from "@/Providers/AuthProvider";
 import { categoriesData } from "@/Handlers/CategoriesData";
@@ -63,16 +64,18 @@ const Sidebar: React.FC<Props> = () => {
         width={{ lg: "30vw", base: `calc(90vw - 12px)` }}
       >
         <Text
-          fontWeight="medium"
-          fontSize="2xl"
+          color="gray.700"
+          fontWeight="bold"
+          fontSize="30px"
           marginBottom={5}
           textAlign="center"
         >
-          Discover more of what matters to you
+          Recommended Topics
         </Text>
         <Flex flexWrap="wrap" justifyContent="center">
           {categoriesData.slice(0, 10).map((category, id) => (
             <Badge
+            bg={useColorModeValue('gray.200','#192734')}
               key={id}
               onClick={() => {
                 if (currentUser?.email)
@@ -83,8 +86,7 @@ const Sidebar: React.FC<Props> = () => {
               marginBottom={5}
               padding={2}
               borderRadius={20}
-              fontWeight="light"
-              bg="gray.100"
+              fontWeight="medium"
               cursor="pointer"
             >
               {category}
@@ -95,45 +97,45 @@ const Sidebar: React.FC<Props> = () => {
           <Button
             variant="success"
             width="60%"
+            borderRadius="15px"
             onClick={() => Router.push("/search_category")}
+            fontSize='md'
+            padding='10px 3px'
+            fontWeight='semibold'
           >
             See more topics
           </Button>
         </Center>
         <Divider margin="10px 0" size="4px" borderColor="black" />
-        <Flex flexWrap="wrap" justifyContent="center">
+        <Flex flexWrap="wrap" justifyContent="center" color={useColorModeValue('gray.700','gray.200')}>
           <Text
-            color="gray.700"
-            fontSize="sm"
+            fontSize="smaller"
             cursor="pointer"
-            _hover={{ color: "gray.600" }}
+            _hover={{ color: "gray.500" }}
             margin="0px 16px 12px 0px"
           >
             Help
           </Text>
           <Text
-            color="gray.700"
-            fontSize="sm"
+            fontSize="smaller"
             cursor="pointer"
-            _hover={{ color: "gray.600" }}
+            _hover={{ color: "gray.500" }}
             margin="0px 16px 12px 0px"
           >
             Privacy
           </Text>
           <Text
-            color="gray.700"
-            fontSize="sm"
+            fontSize="smaller"
             cursor="pointer"
-            _hover={{ color: "gray.600" }}
+            _hover={{ color: "gray.500" }}
             margin="0px 16px 12px 0px"
           >
             About
           </Text>
           <Text
-            color="gray.700"
-            fontSize="sm"
+            fontSize="smaller"
             cursor="pointer"
-            _hover={{ color: "gray.600" }}
+            _hover={{ color: "gray.500" }}
             margin="0px 16px 12px 0px"
           >
             Terms & Conditions

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useRouter } from "next/router";
-import { Stack, Flex, Divider, Skeleton } from "@chakra-ui/react";
+import { Stack, Flex, Divider, Skeleton, useColorModeValue } from "@chakra-ui/react";
 import Banner from "@/components/Navbar/Banner";
 import ArticleCard from "@/components/Articles/ArticleCard";
 import SideBar from "@/components/Articles/SideBar";
@@ -94,7 +94,7 @@ const Index = () => {
       <Head>
         <title>Interestify</title>
       </Head>
-      <Stack minHeight='90vh'>
+      <Stack minHeight='90vh' bg={useColorModeValue('white','#15202B')}>
         <Banner></Banner>
         <Flex
           flexDirection={{ lg: "row", base: "column" }}
@@ -106,7 +106,6 @@ const Index = () => {
         >
           <Flex
             minHeight="full"
-
             flexDirection="column"
             width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
             overflowX="hidden"

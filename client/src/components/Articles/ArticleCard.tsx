@@ -11,6 +11,7 @@ import {
   CardFooter,
   Icon,
   Tag,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import {
   FaBookmark,
@@ -108,15 +109,16 @@ const ArticleCard: React.FC<Props> = ({
         cursor="pointer"
         fontSize={['x-small','x-small','sm','sm']}
       >
-        <VStack width="full">
+        <VStack width="full" bg={useColorModeValue('white','#192734')} >
           <CardBody
+            paddingBottom={0}
             width="full"
             onClick={() => Router.push(`/article/${articleId}`)}
           >
             <HStack>
               <Heading
-                fontSize={["md", "md", "1.7rem", "1.7rem"]}
-                width={["100%", "100%", "90%", "90%"]}
+                fontSize={["md", "md", "1.6rem", "1.6rem"]}
+                width={["100%", "100%", "80%", "80%"]}
               >
                 {Title ? Title : "Title"}
               </Heading>
@@ -134,7 +136,8 @@ const ArticleCard: React.FC<Props> = ({
                 {Category ? Category : "Unknown"}
               </Tag>
             </HStack>
-            <Text py="2" fontSize={['sm','sm','md','md']}>
+            
+            <Text py="4" fontSize={['sm','sm','sm','sm']}>
               {Summary ? Summary : "Summary"}
             </Text>
           </CardBody>

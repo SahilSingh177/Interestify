@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { VStack, Heading, Stack, Skeleton } from '@chakra-ui/react';
+import { VStack, Heading, Stack, Skeleton, useColorModeValue } from '@chakra-ui/react';
 import RecommendedCard from './RecommendedCard';
 import { useRouter } from 'next/router';
 
@@ -44,7 +44,7 @@ const ArticleRecommendations = ({ ArticleId }: { ArticleId: string }) => {
         overflowY="scroll"
         borderRadius={10}
       >
-        <Heading margin='5% 0' color='gray.700' >Similar Articles</Heading>
+        <Heading margin='5% 0' color={useColorModeValue('gray.700','gray.100')} >Similar Articles</Heading>
         {isLoading && (
           <Stack height="full">
             {[...Array(4)].map((_, index) => (

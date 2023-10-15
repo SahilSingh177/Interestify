@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { Card, CardBody, HStack, Icon, Text } from "@chakra-ui/react";
+import { Card, CardBody, HStack, Icon, Text, useColorModeValue } from "@chakra-ui/react";
 import { FaBook } from "react-icons/fa";
 
 type Props = {
@@ -13,7 +13,7 @@ const RecommendedCard: React.FC<Props> = ({ articleId, Title }: Props) => {
   return (
     <>
       <Card
-        bg="gray.50"
+        bg={useColorModeValue('gray.50','#192734')}
         size="md"
         cursor="pointer"
         height="-moz-max-content"

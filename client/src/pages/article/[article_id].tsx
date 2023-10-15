@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Heading, Flex, Stack, VStack } from '@chakra-ui/react';
+import { Heading, Flex, Stack, VStack, useColorModeValue } from '@chakra-ui/react';
 import Article from '@/components/Articles/Article';
 import ArticleRecommendations from '@/components/Articles/ArticleRecommendations';
 import { ParsedUrlQuery } from 'querystring';
@@ -106,7 +106,7 @@ const ArticlePage = () => {
       <Head>
         <title>Articles</title>
       </Head>
-      <Stack direction={["column", 'column', 'column', 'row']} width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]} maxWidth="100vw" overflowX='hidden'>
+      <Stack direction={["column", 'column', 'column', 'row']} width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]} maxWidth="100vw" overflowX='hidden' bg='#15202B'>
         {articleData && (
           <Article
             ArticleId={articleData.ArticleId}

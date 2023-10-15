@@ -98,7 +98,7 @@ const HistoryCard = ({
             justifyContent="flex-end"
             width="full"
             mt={3}
-            fontSize={['sm','sm','md','md']}
+            fontSize={['sm','sm','sm','sm']}
           >
             <Link
               href={`/article/${articleId}`}
@@ -112,7 +112,7 @@ const HistoryCard = ({
             <Spacer />
             <Text color="gray.500">By {Author}</Text>
           </HStack>
-          <HStack mt={3} fontSize={['sm','sm','md','md']}>
+          <HStack mt={3} fontSize={['sm','sm','sm','sm']}>
             <Text color="gray.500" alignItems="end">
               Read on: {date}
             </Text>

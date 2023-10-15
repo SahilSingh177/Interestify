@@ -1,6 +1,6 @@
 import React from 'react'
 import Navbar from '../Navbar/Navbar'
-import { Flex, Divider } from '@chakra-ui/react'
+import { Flex, Divider, useColorModeValue } from '@chakra-ui/react'
 import Head from 'next/head'
 
 type Props = {}
@@ -13,8 +13,8 @@ const Layout = ({ children }: React.PropsWithChildren<Props>) => {
       <Flex height="10vh"></Flex>
       <Divider
         orientation="horizontal"
-        bg="black"
-        borderColor="black"
+        bg={useColorModeValue('black','gray.100')}
+        borderColor={useColorModeValue('black','gray.100')}
         position="fixed"
         zIndex="1"
       />

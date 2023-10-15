@@ -2,7 +2,7 @@ import { extendTheme, type ThemeConfig } from "@chakra-ui/react";
 import { Button } from "./button";
 
 const config:ThemeConfig = {
-  initialColorMode: 'dark',
+  initialColorMode: 'light',
   useSystemColorMode: false,
 }
 

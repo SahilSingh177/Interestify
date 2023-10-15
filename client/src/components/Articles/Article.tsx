@@ -13,6 +13,7 @@ import {
   CircularProgress,
   CircularProgressLabel,
   Icon,
+  useColorModeValue
 } from "@chakra-ui/react";
 
 import {
@@ -159,6 +160,7 @@ const Article: React.FC<Props> = ({
 
   return (
     <VStack
+    // bg='#282b2e'
       spacing={5}
       alignItems="flex-start"
       width={["90vw", "90vw", "90vw", "55vw"]}
@@ -167,7 +169,7 @@ const Article: React.FC<Props> = ({
       marginLeft="5vw"
       marginRight="5vw"
       marginTop={["5vh", "5vh", "5vh", "15vh"]}
-      bg="whiteAlpha.500"
+      // bg="whiteAlpha.500"
       overflowX="hidden"
     >
       <ShowAlert
@@ -190,7 +192,7 @@ const Article: React.FC<Props> = ({
         </CircularProgressLabel>
       </CircularProgress>
 
-      <Heading color="gray.700" size={["md", "md", "md", "lg"]}>
+      <Heading color={useColorModeValue('gray.700','gray.100')} size={["md", "md", "md", "lg"]}>
         {Title}
       </Heading>
 

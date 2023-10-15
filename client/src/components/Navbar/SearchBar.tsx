@@ -31,11 +31,12 @@ const SearchBar = () => {
   };
   if(!currentUser) return null;
   return (
-    <InputGroup height='7vh'  marginRight='5vw' marginLeft='1vw' onClick={openModal}>
-      <InputLeftElement pointerEvents='none'  height='7vh'>
+    <InputGroup bg='
+    #f9f9f9' height='6vh'  marginRight='5vw' marginLeft='1vw' onClick={openModal}>
+      <InputLeftElement pointerEvents='none'  height='6vh'>
         <Icon as={FaSearch} />
       </InputLeftElement>
-      <Input height='7vh' borderColor={currentUser ? "gray.300" : "black"} focusBorderColor={currentUser ? "gray.300" : "black"} type='text' placeholder='Search Interestify' onChange={openModal} readOnly />
+      <Input height='6vh' borderColor={currentUser ? "gray.300" : "black"} focusBorderColor={currentUser ? "gray.300" : "black"} type='text' placeholder='Search Interestify' onChange={openModal} readOnly />
       <SearchModal isOpen={isModalOpen} onClose={closeModal} />
     </InputGroup>
   )

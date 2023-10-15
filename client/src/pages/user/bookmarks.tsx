@@ -8,6 +8,7 @@ import {
   InputLeftElement,
   Icon,
   Input,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { FaSearch } from "react-icons/fa";
 import { Player } from "@lottiefiles/react-lottie-player";
@@ -104,7 +105,7 @@ const Bookmarks = () => {
       <Stack
         width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]}
         minHeight="90vh"
-        bg="gray.50"
+        bg={useColorModeValue('gray.50','#15202B')}
         alignItems="center"
         margin="auto"
         paddingTop="5vh"
@@ -119,9 +120,9 @@ const Bookmarks = () => {
           <Input
             value={inputText}
             onChange={getSearchResults}
-            borderColor="gray.700"
-            _hover={{ borderColor: "gray.700" }}
-            focusBorderColor="gray.700"
+            borderColor={useColorModeValue("gray.700","gray.50")}
+            _hover={{ borderColor: useColorModeValue("gray.700","gray.50") }}
+            focusBorderColor={useColorModeValue("gray.700","gray.50")}
             placeholder="Search Bookmarks"
           />
         </InputGroup>

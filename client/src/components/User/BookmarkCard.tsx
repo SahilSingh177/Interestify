@@ -12,6 +12,7 @@ import {
   Heading,
   Text,
   Link,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { FaBookmark } from "react-icons/fa";
 import { toggleBookmark } from "@/Handlers/toggleBookmark";
@@ -54,7 +55,7 @@ const BookmarkCard = ({
 
   return isBookMarked && toBeDisplayed ? (
     <Card
-      bg="white"
+      bg={useColorModeValue('white','#192734')}
       direction={{ md: "row", sm: "column" }}
       overflow="hidden"
       size="md"
@@ -63,7 +64,7 @@ const BookmarkCard = ({
       width={["90%","90%","90%","80%"]}
       style={{ WebkitTapHighlightColor: "rgba(0, 0, 0, 0)" }}
     >
-      <VStack width="full" spacing={0}>
+      <VStack width="full" spacing={0} >
         <CardBody width="full">
           <HStack>
             <Heading   size={["sm", "md", "md", "md"]} width={["100%", "100%", "90%", "90%"]}>
@@ -84,13 +85,13 @@ const BookmarkCard = ({
           </HStack>
         </CardBody>
 
-        <CardFooter width="full" fontSize={['sm','sm','md','md']}>
+        <CardFooter width="full" fontSize={['sm','sm','sm','sm']}>
           <HStack spacing={4} justifyContent="flex-end" width="full">
             <Link
               href={`/article/${article_id}`}
               isExternal
               color="teal"
-              _hover={{ textDecoration: "none" }}
+              _hover={{ textDecoration: "underline" }}
             >
               Read Full Article Here
             </Link>

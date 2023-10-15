@@ -15,6 +15,7 @@ import {
   VStack,
   Spacer,
   Divider,
+  useColorModeValue
 } from "@chakra-ui/react";
 import { FaBook, FaExternalLinkAlt, FaSearch } from "react-icons/fa";
 
@@ -74,10 +75,10 @@ const SearchModal = ({
 
   return (
     <>
-      <Modal size={["xs", "xs", "xl", "2xl"]} isOpen={isOpen} onClose={onClose}>
+      <Modal size={["xs", "xs", "xl", "2xl"]} isOpen={isOpen} onClose={onClose} >
         <ModalOverlay />
         <ModalContent>
-          <ModalBody>
+          <ModalBody bg={useColorModeValue('white','#15202B')}>
             <InputGroup size="lg">
               <InputLeftElement pointerEvents="none">
                 <Flex alignItems="center" justifyContent="center" height="8vh">
@@ -87,8 +88,8 @@ const SearchModal = ({
               <Input
                 textOverflow='ellipsis'
                 onChange={GetSearchResults}
-                borderColor="white"
-                focusBorderColor="white"
+                borderColor={useColorModeValue('white','#15202B')}
+                focusBorderColor={useColorModeValue('white','#15202B')}
                 type="text"
                 placeholder="Search Interestify"
               />
@@ -101,19 +102,20 @@ const SearchModal = ({
                 maxHeight="70vh"
                 overflowY="scroll"
                 paddingBottom="5vh"
+                bg={useColorModeValue('white','#15202B')}
               >
                 <Divider height={0} marginBottom={5}></Divider>
                 {searchResults.map((searchResult, id) => {
                   return (
                     <HStack
-                      fontSize={['sm','sm','md','md']}
+                      fontSize={['sm','sm','sm','sm']}
                       width="90%"
                       cursor="pointer"
                       fontWeight="medium"
-                      _hover={{ bg: "teal.400", color: "white" }}
+                      _hover={{ bg: "teal.400", color: "white"}}
                       borderRadius="md"
                       key={id}
-                      bg="gray.100"
+                      bg={useColorModeValue('gray.100','#192734')}
                       padding={5}
                       onClick={() => Router.push(`/article/${searchResult[1]}`)}
                     >
