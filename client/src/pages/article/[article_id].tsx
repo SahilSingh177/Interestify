@@ -106,7 +106,7 @@ const ArticlePage = () => {
       <Head>
         <title>Articles</title>
       </Head>
-      <Stack direction={["column", 'column', 'column', 'row']} width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]} maxWidth="100vw" overflowX='hidden' bg='#15202B'>
+      <Stack direction={["column", 'column', 'column', 'row']} width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]} maxWidth="100vw" overflowX='hidden'>
         {articleData && (
           <Article
             ArticleId={articleData.ArticleId}
