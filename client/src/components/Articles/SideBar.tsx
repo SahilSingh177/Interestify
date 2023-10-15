@@ -86,7 +86,7 @@ const Sidebar: React.FC<Props> = () => {
               marginBottom={5}
               padding={2}
               borderRadius={20}
-              fontWeight="medium"
+              fontWeight={["normal","normal","medium","medium"]}
               cursor="pointer"
             >
               {category}
