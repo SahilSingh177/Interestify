@@ -32,7 +32,7 @@ const SearchBar = () => {
   if(!currentUser) return null;
   return (
     <InputGroup bg='
-    #f9f9f9' height='6vh'  marginRight='5vw' marginLeft='1vw' onClick={openModal}>
+    gray.50' height='6vh'  marginRight='5vw' marginLeft='1vw' onClick={openModal}>
       <InputLeftElement pointerEvents='none'  height='6vh'>
         <Icon as={FaSearch} />
       </InputLeftElement>
