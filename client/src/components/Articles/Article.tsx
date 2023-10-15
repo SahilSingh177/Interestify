@@ -223,7 +223,7 @@ const Article: React.FC<Props> = ({
       <Divider bg="gray.400" borderColor="gray.600" />
 
       <Text
-        fontSize={["sm", "sm", "md", "md"]}
+        fontSize={["sm", "sm", "15px", "15px"]}
         width="inherit"
         wordBreak="break-word"
         lineHeight={2}
