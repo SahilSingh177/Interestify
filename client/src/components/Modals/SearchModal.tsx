@@ -99,7 +99,7 @@ const SearchModal = ({
             searchResults.length > 0 && (
               <VStack
                 width="full"
-                maxHeight="70vh"
+                maxHeight="65vh"
                 overflowY="scroll"
                 paddingBottom="5vh"
                 bg={useColorModeValue('white','#15202B')}

@@ -47,25 +47,21 @@ const Navbar: React.FC = () => {
       overflowX="hidden"
       overflowY="hidden"
     >
-      <Flex
-        height="8.5vh"
-        width='20vh'
-        position='relative'
-      >
-          <Link href="/">
-            <Image
-              priority={true}
-              src={useColorModeValue(
-                "/assets/logo-no-background.svg",
-                "/assets/logo-white.png"
-              )}
-              alt="logo"
-              layout='fill'
-              objectFit='contain'
-            ></Image>
-          </Link>
+      <Flex height="8.5vh" width="20vh" position="relative">
+        <Link href="/">
+          <Image
+            priority={true}
+            src={useColorModeValue(
+              "/assets/logo-no-background.svg",
+              "/assets/logo-white.png"
+            )}
+            alt="logo"
+            layout="fill"
+            objectFit="contain"
+          ></Image>
+        </Link>
       </Flex>
-      <Spacer/>
+      <Spacer />
       <SearchBar></SearchBar>
       <Flex justifyContent="center">
         <AuthButtons />
