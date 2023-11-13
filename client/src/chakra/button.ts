@@ -51,6 +51,15 @@ export const Button: ComponentStyleConfig = {
         "bg": "green.500",
       }
     },
+    more: {
+      color: "white",
+      fontWeight: "bold",
+      colorScheme:'teal',
+      bg:'teal.500',
+      _hover:{
+        "bg":'teal.600'
+      },
+    },
     danger: {
       color: "white",
       fontWeight: "bold",

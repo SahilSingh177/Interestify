@@ -41,9 +41,10 @@ def get_recommendations(id):
     try:
         cache_key = f"recommendations_{id}"
         cached_data = redis_client.get(cache_key)
-        if cached_data:
+        if False:
             recommendations = pickle.loads(cached_data)
         else:
+            print("ok\n")
             data = get_all_blogs()
             df = pd.DataFrame(data)
             df = df[['id', 'title', 'summary', 'author', 'link']]
@@ -60,7 +61,8 @@ def get_recommendations(id):
             df_indices = [i[0] for i in sig_scores]
             res = []
             for i in df_indices:
-                res.append({'id': int(df['id'][i]), 'title': df['title'][i], 'link': df['link'][i]})
+                res.append({'id': int(df['id'][i]), 'title': df['title'][i], 'link': df['link'][i],'author':df['author'][i]})
+            print(res)
             recommendations = res
             redis_client.set(cache_key, pickle.dumps(recommendations))
             redis_client.expire(cache_key, 12 * 60 * 60)

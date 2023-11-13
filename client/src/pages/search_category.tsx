@@ -28,6 +28,7 @@ const search_category = () => {
         flexDirection="column"
         alignItems="center"
         bgImage="/assets/category_bg_2.jpg"
+        // bgColor='gray.600'
         bgSize="cover"
         bgPosition="center"
         bgRepeat="no-repeat"

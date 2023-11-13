@@ -1,12 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Heading, Flex, Stack, VStack, useColorModeValue } from '@chakra-ui/react';
-import Article from '@/components/Articles/Article';
-import ArticleRecommendations from '@/components/Articles/ArticleRecommendations';
-import { ParsedUrlQuery } from 'querystring';
-import Head from 'next/head';
-import { useRouter } from 'next/router';
-import Loading from '@/components/loading/Loading';
-import { auth } from '@/firebase/clientApp';
+import React, { useState, useEffect } from "react";
+import {
+  Heading,
+  Flex,
+  Stack,
+  VStack,
+  useColorModeValue,
+  Divider
+} from "@chakra-ui/react";
+import Article from "@/components/Home/Article";
+import ArticleRecommendations from "@/components/Home/ArticleRecommendations";
+import { ParsedUrlQuery } from "querystring";
+import Head from "next/head";
+import { useRouter } from "next/router";
+import Loading from "@/components/loading/Loading";
+import { auth } from "@/firebase/clientApp";
 
 interface ArticleData {
   Text: string;
@@ -41,28 +48,31 @@ const ArticlePage = () => {
       try {
         const email = auth.currentUser?.email;
         let response;
-        if(!email) {
-          response = await fetch(`https://nikhilranjan.pythonanywhere.com/getArticle?article_id=${articleId}`);
+        if (!email) {
+          response = await fetch(
+            `https://nikhilranjan.pythonanywhere.com/getArticle?article_id=${articleId}`
+          );
+        } else {
+          response = await fetch(
+            `https://nikhilranjan.pythonanywhere.com/getArticle?email=${email}&article_id=${articleId}`
+          );
         }
-        else {
-          response = await fetch(`https://nikhilranjan.pythonanywhere.com/getArticle?email=${email}&article_id=${articleId}`);
-        }
-          
+
         const data = await response.json();
         const filteredData = data.data[0];
 
         const formattedData: ArticleData = {
-          Text: filteredData['text'],
-          Author: filteredData['author'],
-          Category: filteredData['category'],
-          Title: filteredData['title'],
-          Summary: filteredData['summary'],
-          ReadingTime: filteredData['read_time'],
-          PDFLink: filteredData['pdf_link'],
-          ArticleLink: filteredData['link'],
-          ArticleId: filteredData['id'],
-          isLiked: filteredData['isLiked'],
-          isBookmarked: filteredData['isBookmarked'],
+          Text: filteredData["text"],
+          Author: filteredData["author"],
+          Category: filteredData["category"],
+          Title: filteredData["title"],
+          Summary: filteredData["summary"],
+          ReadingTime: filteredData["read_time"],
+          PDFLink: filteredData["pdf_link"],
+          ArticleLink: filteredData["link"],
+          ArticleId: filteredData["id"],
+          isLiked: filteredData["isLiked"],
+          isBookmarked: filteredData["isBookmarked"],
         };
 
         setArticleData(formattedData);
@@ -80,11 +90,11 @@ const ArticlePage = () => {
   if (isLoading) {
     return (
       <Flex
-        position='relative'
+        position="relative"
         alignItems="center"
-        justifyContent='center'
-        height={['80vh', '80vh', '80vh', '75vh']}
-        width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]}
+        justifyContent="center"
+        height={["80vh", "80vh", "80vh", "75vh"]}
+        width={["100vw", "100vw", "100vw", `calc(100vw - 12px)`]}
       >
         <Loading />
       </Flex>
@@ -106,13 +116,22 @@ const ArticlePage = () => {
       <Head>
         <title>Articles</title>
       </Head>
-      <Stack direction={["column", 'column', 'column', 'row']} width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]} maxWidth="100vw" overflowX='hidden'>
+      <Stack
+        direction={["column", "column", "column", "row"]}
+        width={["100vw", "100vw", "90vw", `calc(85vw - 12px)`]}
+        maxWidth="100vw"
+        overflowX="hidden"
+        margin='auto'
+        position='relative'
+        marginTop={["5vh", "5vh", "5vh", "10vh"]}
+        alignItems='center'
+      >
         {articleData && (
           <Article
             ArticleId={articleData.ArticleId}
             Content={articleData.Text}
             Author={articleData.Author}
-            Category={articleData.Category || 'Unknown'}
+            Category={articleData.Category || "Unknown"}
             Title={articleData.Title}
             ReadingTime={articleData.ReadingTime}
             Summary={articleData.Summary}
@@ -122,7 +141,7 @@ const ArticlePage = () => {
             isBookmarked={articleData.isBookmarked}
           />
         )}
-        <ArticleRecommendations ArticleId={articleData?.ArticleId || ''} />
+        <ArticleRecommendations ArticleId={articleData?.ArticleId || ""} />
       </Stack>
     </>
   );

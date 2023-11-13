@@ -42,12 +42,12 @@ const Sidebar: React.FC<Props> = () => {
   return (
     <Flex
       marginTop="3vh"
-      width={{ lg: "30vw", base: `calc(100vw - 12px)` }}
+      width={{ lg: "27.8375vw", base: `calc(100vw - 12px)` }}
       flexDirection="column"
       alignItems="center"
       justifyContent={{ lg: "flex-start", base: "center" }}
     >
-      <Flex width="30vw" height={0} />
+      <Flex width="27.8375vw" height={0} />
       <ShowAlert
         type="warning"
         message="Please login first"
@@ -61,7 +61,7 @@ const Sidebar: React.FC<Props> = () => {
         top={isFixed ? "20vh" : "auto"}
         right="auto"
         left="auto"
-        width={{ lg: "30vw", base: `calc(90vw - 12px)` }}
+        width={{ lg: "27.8375vw", base: `calc(90vw - 12px)` }}
       >
         <Text
           color="gray.700"
@@ -70,10 +70,10 @@ const Sidebar: React.FC<Props> = () => {
           marginBottom={5}
           textAlign="center"
         >
-          Recommended Topics
+          Recommended 
         </Text>
         <Flex flexWrap="wrap" justifyContent="center">
-          {categoriesData.slice(0, 10).map((category, id) => (
+          {categoriesData.slice(0, 9).map((category, id) => (
             <Badge
             bg={useColorModeValue('gray.200','#192734')}
               key={id}
@@ -94,19 +94,11 @@ const Sidebar: React.FC<Props> = () => {
           ))}
         </Flex>
         <Center>
-          <Button
-            variant="success"
-            width="60%"
-            borderRadius="15px"
-            onClick={() => Router.push("/search_category")}
-            fontSize='md'
-            padding='10px 3px'
-            fontWeight='semibold'
-          >
-            See more topics
+          <Button variant='more' size='md' onClick={() => Router.push("/search_category")}>
+              See More Topics
           </Button>
         </Center>
-        <Divider margin="10px 0" size="4px" borderColor="black" />
+        <Divider margin="10px 0" size="4px" borderColor="gray.500" w='25.8375vw' ml='auto'/>
         <Flex flexWrap="wrap" justifyContent="center" color={useColorModeValue('gray.700','gray.200')}>
           <Text
             fontSize="smaller"

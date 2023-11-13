@@ -10,8 +10,8 @@ import {
   Spinner,
   useColorModeValue
 } from '@chakra-ui/react';
-import ArticleCard from '@/components/Articles/ArticleCard';
-import Sidebar from '@/components/Articles/SideBar';
+import ArticleCard from '@/components/Home/ArticleCard';
+import Sidebar from '@/components/Home/SideBar';
 import Loading from '@/components/loading/Loading'
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Head from 'next/head';
@@ -90,17 +90,19 @@ const Category = () => {
       <Flex
         flexDirection={{ lg: "row", base: "column" }}
         paddingTop={['5vh', '5vh', '5vh', '10vh']}
-        width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]}
+        width={['100vw', '100vw', '100vw', `calc(85vw - 12px)`]}
         justifyContent={{ lg: "space-evenly", base: "column" }}
         alignItems={{ lg: "flex-start", base: "center" }}
         minHeight={`calc(100vh-80px)`}
         bg={useColorModeValue('white','#1f282f')}
+        m='auto'
       >
         <Flex
           flexDirection="column"
           justifyContent={['center', 'center', 'center', 'flex-start']}
-          width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
+          width={{ lg: "62.75%", base: `calc(90vw - 12px)` }}
           overflowX="hidden"
+          mr='2.25%'
         >
           <Heading size="2xl" paddingLeft={2} marginBottom={10}>
             {category}
@@ -123,8 +125,8 @@ const Category = () => {
               position='relative'
               alignItems="center"
               justifyContent='center'
-              height={['70vh', '70vh', '70vh', '60vh']}
-              width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
+              height={['70vh', '70vh', '70vh', '70vh']}
+              width={{ lg: "62.75%", base: `calc(90vw - 12px)` }}
             >
               <Loading />
             </Flex>
@@ -147,7 +149,7 @@ const Category = () => {
                     alignItems="center"
                     justifyContent='center'
                     height={['70vh', '70vh', '70vh', '60vh']}
-                    width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
+                    width={{ lg: "62.75%", base: `calc(90vw - 12px)` }}
                   >
                     <Loading />
                   </Flex>

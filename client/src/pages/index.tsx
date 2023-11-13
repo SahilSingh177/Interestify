@@ -1,14 +1,27 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useRouter } from "next/router";
-import { Stack, Flex, Divider, Skeleton, useColorModeValue } from "@chakra-ui/react";
+import {
+  Stack,
+  Flex,
+  Divider,
+  Icon,
+  Skeleton,
+  useColorModeValue,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
+} from "@chakra-ui/react";
 import Banner from "@/components/Navbar/Banner";
-import ArticleCard from "@/components/Articles/ArticleCard";
-import SideBar from "@/components/Articles/SideBar";
+import ArticleCard from "@/components/Home/ArticleCard";
+import SideBar from "@/components/Home/SideBar";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { auth } from "@/firebase/clientApp";
 import { AuthContext } from "@/Providers/AuthProvider";
 import Head from "next/head";
 import Loading from "@/components/loading/Loading";
+import { FaPlus } from "react-icons/fa";
 
 interface Article {
   id: string;
@@ -30,22 +43,25 @@ const Index = () => {
   useEffect(() => {
     const checkCategories = async () => {
       try {
-        const response = await fetch('https://nikhilranjan.pythonanywhere.com/hasSelectedCategories', {
-          method: 'POST',
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            "email": currentUser?.email,
-          }),
-        });
+        const response = await fetch(
+          "https://nikhilranjan.pythonanywhere.com/hasSelectedCategories",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: currentUser?.email,
+            }),
+          }
+        );
         const data = await response.json();
 
         if (!data) {
-          router.push('/welcome/categories');
+          router.push("/welcome/categories");
         }
       } catch (error) {
-        console.error('Error checking categories:', error);
+        console.error("Error checking categories:", error);
       }
     };
 
@@ -94,29 +110,42 @@ const Index = () => {
       <Head>
         <title>Interestify</title>
       </Head>
-      <Stack minHeight='90vh' bg={useColorModeValue('white','#15202B')}>
+      <Stack minHeight="90vh" bg={useColorModeValue("white", "#15202B")}>
         <Banner></Banner>
         <Flex
           flexDirection={{ lg: "row", base: "column" }}
-          marginTop={['5vh', '5vh', '5vh', '10vh']}
-          width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]}
+          marginTop={["5vh", "5vh", "5vh", "5vh"]}
+          width={["90vw", "90vw", "90vw", `calc(85vw - 12px)`]}
           justifyContent={{ lg: "space-evenly", base: "column" }}
           alignItems={{ lg: "flex-start", base: "center" }}
           minHeight={`calc(100vh-80px)`}
+          m="auto"
         >
           <Flex
             minHeight="full"
             flexDirection="column"
-            width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
+            width={["90%", "90%", "90%", "62.75%"]}
+            mr="2.25%"
             overflowX="hidden"
           >
+            <Tabs colorScheme="black" w="95%" m="auto" mb="3vh" index={1}>
+              <TabList>
+                <Tab color="gray.500">
+                  <Icon
+                    as={FaPlus}
+                    onClick={() => router.push("/search_category")}
+                  />
+                </Tab>
+                <Tab>For You</Tab>
+              </TabList>
+            </Tabs>
             {isLoading && (
               <Flex
-                position='relative'
+                position="relative"
                 alignItems="center"
-                justifyContent='center'
-                height={['80vh', '80vh', '80vh', '75vh']}
-                width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
+                justifyContent="center"
+                height={["80vh", "80vh", "80vh", "75vh"]}
+                width={{ lg: "100%", base: `calc(90vw - 12px)` }}
               >
                 <Loading />
               </Flex>
@@ -135,11 +164,11 @@ const Index = () => {
                     width="full"
                   >
                     <Flex
-                      position='relative'
+                      position="relative"
                       alignItems="center"
-                      justifyContent='center'
-                      height={['70vh', '70vh', '70vh', '60vh']}
-                      width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
+                      justifyContent="center"
+                      height={["70vh", "70vh", "70vh", "60vh"]}
+                      width={{ lg: "62.75%", base: `calc(90vw - 12px)` }}
                     >
                       <Loading />
                     </Flex>
@@ -156,8 +185,8 @@ const Index = () => {
                     ReadingTime={articleInfo.time}
                     ArticleLink={articleInfo.link}
                     Likes={articleInfo.likes}
-                    isLiked = {articleInfo.isLiked}
-                    isBookmarked = {articleInfo.isBookmarked}
+                    isLiked={articleInfo.isLiked}
+                    isBookmarked={articleInfo.isBookmarked}
                     key={id}
                   ></ArticleCard>
                 ))}

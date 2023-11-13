@@ -13,7 +13,8 @@ import {
   CircularProgress,
   CircularProgressLabel,
   Icon,
-  useColorModeValue
+  useColorModeValue,
+  Center,
 } from "@chakra-ui/react";
 
 import {
@@ -63,20 +64,17 @@ const Article: React.FC<Props> = ({
 
     const updateCategoryTime = async ({ timeSpent }: { timeSpent: number }) => {
       try {
-        await fetch(
-          "https://nikhilranjan.pythonanywhere.com/updateCategoryScore",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email: currentUser?.email,
-              category_name: Category,
-              duration: timeSpent,
-            }),
-          }
-        );
+        await fetch("https://nikhilranjan.pythonanywhere.com/updateCategoryScore", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: currentUser?.email,
+            category_name: Category,
+            duration: timeSpent,
+          }),
+        });
       } catch (error) {
         console.error("Error updating category time:", error);
       }
@@ -160,16 +158,11 @@ const Article: React.FC<Props> = ({
 
   return (
     <VStack
-    // bg='#282b2e'
-      spacing={5}
       alignItems="flex-start"
-      width={["90vw", "90vw", "90vw", "55vw"]}
+      width={["90%", "90%", "90%", "62.75%"]}
       maxWidth="100vw"
       minHeight="90vh"
-      marginLeft="5vw"
-      marginRight="5vw"
-      marginTop={["5vh", "5vh", "5vh", "15vh"]}
-      // bg="whiteAlpha.500"
+      mr={["0", "0", "0", "2.25%"]}
       overflowX="hidden"
     >
       <ShowAlert
@@ -181,10 +174,10 @@ const Article: React.FC<Props> = ({
       />
       <CircularProgress
         position="fixed"
-        bottom="2vh"
-        left="2vh"
+        bottom="5vh"
+        left={["0", "0", "1vw", "2vw"]}
         value={Math.floor(articleProgress)}
-        color="green.400"
+        color="teal.600"
         display={["none", "none", "block", "block"]}
       >
         <CircularProgressLabel>
@@ -192,7 +185,11 @@ const Article: React.FC<Props> = ({
         </CircularProgressLabel>
       </CircularProgress>
 
-      <Heading color={useColorModeValue('gray.700','gray.100')} size={["md", "md", "md", "lg"]}>
+      <Heading
+        color={useColorModeValue("gray.700", "gray.100")}
+        size={["md", "md", "md", "lg"]}
+        mb="3vh"
+      >
         {Title}
       </Heading>
 
@@ -202,7 +199,7 @@ const Article: React.FC<Props> = ({
         ReadTime={ReadingTime}
       ></AuthorCard>
 
-      <Divider bg="gray.400" borderColor="gray.600" />
+      <Divider bg="gray.400" borderColor="gray.600" mt="2.5vh" mb="1vh" />
 
       <HStack spacing={5} paddingLeft={5} paddingRight={5} width="100%">
         <Icon
@@ -220,20 +217,18 @@ const Article: React.FC<Props> = ({
         />
       </HStack>
 
-      <Divider bg="gray.400" borderColor="gray.600" />
-
+      <Divider bg="gray.400" borderColor="gray.600" mt="1vh" mb="2.5vh" />
       <Text
         fontSize={["sm", "sm", "15px", "15px"]}
-        width="inherit"
         wordBreak="break-word"
-        lineHeight={2}
-        padding={2}
+        lineHeight="2"
         textAlign="start"
       >
         {Content}
       </Text>
 
-      <Divider bg="gray.400" borderColor="gray.600" />
+      <Divider bg="gray.400" borderColor="gray.600" mt="2.5vh" mb="1vh" />
+
       <HStack spacing={5} paddingLeft={5} paddingRight={5} width="100%">
         <Icon
           as={hasLiked ? solidThumbsUp : regularThumbsup}
@@ -249,7 +244,8 @@ const Article: React.FC<Props> = ({
           cursor="pointer"
         />
       </HStack>
-      <Divider bg="gray.400" borderColor="gray.600" marginBottom={10} />
+
+      <Divider bg="gray.400" borderColor="gray.600" mt="1vh" mb="2.5vh" />
     </VStack>
   );
 };

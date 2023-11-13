@@ -117,7 +117,7 @@ const ArticleCard: React.FC<Props> = ({
           >
             <HStack>
               <Heading
-                fontSize={["md", "md", "1.6rem", "1.6rem"]}
+                fontSize={["md", "md", "1.2rem", "1.2rem"]}
                 width={["100%", "100%", "80%", "80%"]}
               >
                 {Title ? Title : "Title"}
