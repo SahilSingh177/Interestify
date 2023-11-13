@@ -13,7 +13,7 @@ const Layout = ({ children }: React.PropsWithChildren<Props>) => {
       <Flex height="10vh"></Flex>
       <Divider
         orientation="horizontal"
-        borderColor={useColorModeValue('gray.500','gray.100')}
+        borderColor={useColorModeValue('black','gray.100')}
         position="fixed"
         zIndex="1"
       />

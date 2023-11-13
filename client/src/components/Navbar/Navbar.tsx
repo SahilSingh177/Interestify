@@ -33,7 +33,7 @@ const Navbar: React.FC = () => {
     <Flex
       bg={
         isHomePage && !currentUser && !isScrolledPastThreshold
-          ? "#ffdf00"
+          ? "#f59e0b"
           : useColorModeValue("white", "#15202B")
       }
       position="fixed"

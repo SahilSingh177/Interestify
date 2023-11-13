@@ -41,10 +41,9 @@ def get_recommendations(id):
     try:
         cache_key = f"recommendations_{id}"
         cached_data = redis_client.get(cache_key)
-        if False:
+        if cached_data:
             recommendations = pickle.loads(cached_data)
         else:
-            print("ok\n")
             data = get_all_blogs()
             df = pd.DataFrame(data)
             df = df[['id', 'title', 'summary', 'author', 'link']]

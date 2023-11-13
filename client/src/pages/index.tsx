@@ -128,17 +128,19 @@ const Index = () => {
             mr="2.25%"
             overflowX="hidden"
           >
-            <Tabs colorScheme="black" w="95%" m="auto" mb="3vh" index={1}>
-              <TabList>
-                <Tab color="gray.500">
-                  <Icon
-                    as={FaPlus}
-                    onClick={() => router.push("/search_category")}
-                  />
-                </Tab>
-                <Tab>For You</Tab>
-              </TabList>
-            </Tabs>
+            {currentUser && (
+              <Tabs colorScheme="black" w="95%" m="auto" mb="3vh" index={1}>
+                <TabList>
+                  <Tab color="gray.500">
+                    <Icon
+                      as={FaPlus}
+                      onClick={() => router.push("/search_category")}
+                    />
+                  </Tab>
+                  <Tab>For You</Tab>
+                </TabList>
+              </Tabs>
+            )}
             {isLoading && (
               <Flex
                 position="relative"
