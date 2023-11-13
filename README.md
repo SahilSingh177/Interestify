@@ -10,12 +10,11 @@ https://github.com/SahilSingh177/Interestify/assets/96344003/a19068c0-f3b3-44bc-
 
 </div>
 <div class="image-container">
-<img src="https://github.com/SahilSingh177/Interestify/assets/96344003/1299b8e5-c6b0-4fda-ab0b-5fd0591a717c" alt="Image 1">
-  
-![Screenshot from 2023-06-24 23-18-15](https://github.com/SahilSingh177/Interestify/assets/96344003/6f883096-5beb-4dd3-843d-cdb5e5a17620)
-  
-![Screenshot from 2023-06-24 23-19-06](https://github.com/SahilSingh177/Interestify/assets/96344003/3bf5444f-285f-4dfa-b7cf-8febcbc49f0e)
 
+<img src="https://github.com/SahilSingh177/Interestify/assets/96624909/e4cb89f7-3527-441a-b859-0fe764bc06b4" alt="Image 1">
+<img src="https://github.com/SahilSingh177/Interestify/assets/96624909/d033d1b9-5adf-4474-b20d-8bb4ee2e589c" alt="Image 1">
+<img src="https://github.com/SahilSingh177/Interestify/assets/96624909/326d4f2e-2005-445c-9f82-07ceac43ea98" alt="Image 1">
+<img src="https://github.com/SahilSingh177/Interestify/assets/96624909/c8161944-19cf-414b-af43-45663a986292" alt="Image 1">
 <img src="https://github.com/SahilSingh177/Interestify/assets/96344003/e3cf52b8-e305-4ddd-a116-36a56486c610" alt="Image 1">
 
 </div>
