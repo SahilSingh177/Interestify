@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { Box, Menu, MenuButton, MenuList, MenuItem, MenuDivider } from '@chakra-ui/react'
 import { FaBolt, FaChartLine, FaEnvelope, FaRegBookmark, FaRegClock, FaSignOutAlt } from "react-icons/fa";
+import { TbCategory2 } from "react-icons/tb";
 import DisplayPhoto from './DisplayPhoto'
 import SignOutModal from '../Modals/SignOutModal';
 import ResetMailModal from '../Modals/ResetMailModal';
@@ -60,6 +61,10 @@ const MenuDropDown = () => {
           <MenuItem icon={<FaRegClock />} as='a' cursor="pointer"
             onClick={() => router.push('/user/history')}>
             History
+          </MenuItem>
+          <MenuItem icon={<TbCategory2 />} as='a' cursor="pointer"
+            onClick={() => router.push("/search_category")}>
+            Categories
           </MenuItem>
           <MenuDivider mb={0} />
           <MenuItem as='a' icon={<FaBolt />} cursor="pointer"

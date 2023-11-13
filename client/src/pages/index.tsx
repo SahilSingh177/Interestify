@@ -40,6 +40,8 @@ const Index = () => {
   const router = useRouter();
   const currentUser = useContext(AuthContext);
 
+  const [selectedIndex, setSelectedIndex] = useState<number>(1);
+
   useEffect(() => {
     const checkCategories = async () => {
       try {
@@ -68,24 +70,44 @@ const Index = () => {
     checkCategories();
   }, []);
 
+  useEffect(() => {
+    fetchData({ reset: true });
+  }, [selectedIndex]);
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [data, setData] = useState<Article[]>([]);
   const [hasMoreData, setHasMoreData] = useState<boolean>(true);
   const [page, setPage] = useState(1);
+  const [category, setCategory] = useState<string|null>();
 
-  const fetchData = async () => {
+  let link: string | undefined;
+
+  const fetchData = async ({ reset }: { reset?: boolean } = {}) => {
     try {
-      const email = auth.currentUser?.email;
-      let response;
-      if (!email) {
-        response = await fetch(
-          `https://nikhilranjan.pythonanywhere.com/getTopArticles?page=${page}`
-        );
-      } else {
-        response = await fetch(
-          `https://nikhilranjan.pythonanywhere.com/getTopArticles?email=${email}&page=${page}`
-        );
+      if (reset) {
+        setData([]);
+        setIsLoading(true);
+        setHasMoreData(true);
+        setPage(1);
       }
+      const email = auth.currentUser?.email;
+      if (selectedIndex === 1) {
+        if (!email)
+          link = `https://nikhilranjan.pythonanywhere.com/getTopArticles?page=${page}`;
+        else
+          link = `https://nikhilranjan.pythonanywhere.com/getTopArticles?email=${email}&page=${page}`;
+      } else if (selectedIndex === 2) {
+        link = `https://nikhilranjan.pythonanywhere.com/getTopArticlesfor?email=${email}&category=Psychology&page=${page}`;
+      } else if (selectedIndex === 3) {
+        link = `https://nikhilranjan.pythonanywhere.com/getTopArticlesfor?email=${email}&category=Law&page=${page}`;
+      }
+
+      if (!link) {
+        console.error("Error: Link is undefined");
+        return;
+      }
+
+      const response = await fetch(link);
       const jsonData = await response.json();
       console.log(jsonData);
       if (jsonData.length === 0) {
@@ -129,15 +151,35 @@ const Index = () => {
             overflowX="hidden"
           >
             {currentUser && (
-              <Tabs colorScheme="black" w="95%" m="auto" mb="3vh" index={1}>
-                <TabList>
-                  <Tab color="gray.500">
+              <Tabs
+                colorScheme="teal"
+                w="95%"
+                m="auto"
+                mb="3vh"
+                index={selectedIndex}
+              >
+                <TabList display={['none','none','flex','flex']}>
+                  <Tab color="gray.500" _hover={{color:'black'}} borderRadius='50%'>
                     <Icon
                       as={FaPlus}
                       onClick={() => router.push("/search_category")}
                     />
                   </Tab>
-                  <Tab>For You</Tab>
+                  <Tab
+                    onClick={() => setSelectedIndex(1)}
+                  >
+                    For You
+                  </Tab>
+                  <Tab
+                    onClick={() => setSelectedIndex(2)}
+                  >
+                    Psychology
+                  </Tab>
+                  <Tab
+                    onClick={() => setSelectedIndex(3)}
+                  >
+                    Law
+                  </Tab>
                 </TabList>
               </Tabs>
             )}
@@ -180,7 +222,13 @@ const Index = () => {
                   <ArticleCard
                     articleId={articleInfo.id}
                     Author={articleInfo.author}
-                    Category={articleInfo.category}
+                    Category={
+                      selectedIndex == 1
+                        ? articleInfo.category
+                        : selectedIndex == 2
+                        ? "none"
+                        : "none"
+                    }
                     Title={articleInfo.title}
                     Summary={articleInfo.summary}
                     ReadingTime={articleInfo.time}

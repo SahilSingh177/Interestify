@@ -160,7 +160,7 @@ const Category = () => {
                 <ArticleCard
                   articleId={articleInfo.id}
                   Author={articleInfo.author}
-                  Category={category}
+                  Category="none"
                   Title={articleInfo.title}
                   Summary={articleInfo.summary}
                   ReadingTime={articleInfo.time}

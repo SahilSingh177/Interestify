@@ -1,7 +1,13 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/router";
 import { AuthContext } from "@/Providers/AuthProvider";
-import { Input, InputGroup, InputLeftElement, Icon, IconButton } from "@chakra-ui/react";
+import {
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Icon,
+  IconButton,
+} from "@chakra-ui/react";
 import { FaSearch } from "react-icons/fa";
 import SearchModal from "../Modals/SearchModal";
 import { useBreakpointValue } from "@chakra-ui/react";
@@ -41,7 +47,7 @@ const SearchBar = () => {
 
   return (
     <>
-    <SearchModal isOpen={isModalOpen} onClose={closeModal} />
+      <SearchModal isOpen={isModalOpen} onClose={closeModal} />
       {displayStyle === "searchInput" && (
         <InputGroup
           bg="gray.50"

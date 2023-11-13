@@ -66,7 +66,7 @@ const ArticleCard: React.FC<Props> = ({
   }, []);
 
   const handleBookmark = async () => {
-    if (!currentUser){
+    if (!currentUser) {
       setIsAlertVisible(true);
       return;
     }
@@ -79,7 +79,7 @@ const ArticleCard: React.FC<Props> = ({
   };
 
   const handleLike = async () => {
-    if (!currentUser){
+    if (!currentUser) {
       setIsAlertVisible(true);
       return;
     }
@@ -107,9 +107,9 @@ const ArticleCard: React.FC<Props> = ({
         size="md"
         marginBottom={5}
         cursor="pointer"
-        fontSize={['x-small','x-small','sm','sm']}
+        fontSize={["x-small", "x-small", "sm", "sm"]}
       >
-        <VStack width="full" bg={useColorModeValue('white','#192734')} >
+        <VStack width="full" bg={useColorModeValue("white", "#192734")}>
           <CardBody
             paddingBottom={0}
             width="full"
@@ -118,30 +118,41 @@ const ArticleCard: React.FC<Props> = ({
             <HStack>
               <Heading
                 fontSize={["md", "md", "1.2rem", "1.2rem"]}
-                width={["100%", "100%", "80%", "80%"]}
+                width={[
+                  "100%",
+                  "100%",
+                  Category != "none" ? "80%" : "100%",
+                  Category != "none" ? "80%" : "100%",
+                ]}
               >
                 {Title ? Title : "Title"}
               </Heading>
               <Spacer />
-              <Tag
-                size="sm"
-                display={["none", "none", "block", "block"]}
-                variant="solid"
-                colorScheme={getRandomColour}
-                height="fit-content"
-                paddingTop={1}
-                paddingBottom={1}
-                textAlign="center"
-              >
-                {Category ? Category : "Unknown"}
-              </Tag>
+              {Category != "none" && (
+                <Tag
+                  size="sm"
+                  display={["none", "none", "block", "block"]}
+                  variant="solid"
+                  colorScheme={getRandomColour}
+                  height="fit-content"
+                  paddingTop={1}
+                  paddingBottom={1}
+                  textAlign="center"
+                >
+                  {Category ? Category : "Unknown"}
+                </Tag>
+              )}
             </HStack>
-            
-            <Text py="4" fontSize={['sm','sm','sm','sm']}>
+
+            <Text py="4" fontSize={["sm", "sm", "sm", "sm"]}>
               {Summary ? Summary : "Summary"}
             </Text>
           </CardBody>
-          <CardFooter width="full" paddingTop={0} fontSize={['sm','sm','sm','sm']}>
+          <CardFooter
+            width="full"
+            paddingTop={0}
+            fontSize={["sm", "sm", "sm", "sm"]}
+          >
             <HStack spacing={4} width="full">
               <HStack spacing={1}>
                 <Icon
@@ -150,20 +161,14 @@ const ArticleCard: React.FC<Props> = ({
                     handleLike();
                   }}
                 />
-                <Text  color="gray.500">
-                  {likes}
-                </Text>
+                <Text color="gray.500">{likes}</Text>
               </HStack>
               <HStack spacing={1}>
                 <Icon as={FaRegEye} />
-                <Text  color="gray.500">
-                  {ReadingTime}
-                </Text>
+                <Text color="gray.500">{ReadingTime}</Text>
               </HStack>
               <Spacer />
-              <Text  color="gray.500">
-                By {Author ? Author : "Unknown"}
-              </Text>
+              <Text color="gray.500">By {Author ? Author : "Unknown"}</Text>
               <Icon
                 as={isBookMarked ? FaBookmark : FaRegBookmark}
                 onClick={handleBookmark}
