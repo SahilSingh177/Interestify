@@ -74,13 +74,15 @@ const Banner: React.FC = () => {
               Start Reading
             </Button>
           </Stack>
-          <Box
+          <Flex
             display={["none", "none", "block", "block"]}
             width={["90%", "90%", "50%", "50%"]}
             height='"full"'
             alignItems="center"
             justifyContent="center"
           >
+            <Center>
+
             <Image
               priority={true}
               width="500"
@@ -88,7 +90,8 @@ const Banner: React.FC = () => {
               alt="reading guy"
               src="/assets/reading_guy.png"
             ></Image>
-          </Box>
+            </Center>
+          </Flex>
         </Flex>
       )}
     </Flex>
