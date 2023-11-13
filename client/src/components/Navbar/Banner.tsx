@@ -22,22 +22,40 @@ const Banner: React.FC = () => {
       flexDirection="column"
       width={["100vw", "100vw", "100vw", `calc(100vw - 12px)`]}
       overflowX="hidden"
-      pl='7.5vw'
-      pr='7.5vw'
+      pl="7.5vw"
+      pr="7.5vw"
       bg="#f59e0b"
     >
       {!currentUser && (
         <Flex
-          flexDirection="row"
-          height="60vh"
+          flexDirection={["column", "column", "row", "row"]}
+          height={['auto','auto','60vh','60vh']}
+          pt='5vh'
+          pb='5vh'
           marginTop="0"
           alignItems="center"
         >
           <Stack
-            width="50%"
+            width={["90%", "90%", "50%", "50%"]}
             height="full"
-            justifyContent="center" 
+            justifyContent="center"
+            alignItems={['center','center','flex-start','flex-start']}
           >
+            <Box
+              display={["block", "block", "none", "none"]}
+              width={["90%", "90%", "50%", "50%"]}
+              height="auto"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Image
+                priority={true}
+                width="500"
+                height="500"
+                alt="reading guy"
+                src="/assets/reading_guy.png"
+              ></Image>
+            </Box>
             <Text fontSize={{ lg: "6xl", md: "4xl", sm: "4xl", base: "3xl" }}>
               Stay Curious
             </Text>
@@ -56,20 +74,21 @@ const Banner: React.FC = () => {
               Start Reading
             </Button>
           </Stack>
-            <Flex
-              width="50%"
-              height="full"
-              alignItems='center'
-              justifyContent='center'
-            >
-              <Image
-                priority={true}
-                width="500"
-                height="500"
-                alt="reading guy"
-                src="/assets/reading_guy.png"
-              ></Image>
-            </Flex>
+          <Box
+            display={["none", "none", "block", "block"]}
+            width={["90%", "90%", "50%", "50%"]}
+            height='"full"'
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Image
+              priority={true}
+              width="500"
+              height="500"
+              alt="reading guy"
+              src="/assets/reading_guy.png"
+            ></Image>
+          </Box>
         </Flex>
       )}
     </Flex>
