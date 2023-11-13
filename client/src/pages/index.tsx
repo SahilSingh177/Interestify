@@ -169,8 +169,7 @@ const Index = () => {
                       position="relative"
                       alignItems="center"
                       justifyContent="center"
-                      height={["70vh", "70vh", "70vh", "60vh"]}
-                      width={{ lg: "62.75%", base: `calc(90vw - 12px)` }}
+                      width={{ lg: "100%", base: `calc(70 - 12px)` }}
                     >
                       <Loading />
                     </Flex>
