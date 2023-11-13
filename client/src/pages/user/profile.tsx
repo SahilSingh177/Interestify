@@ -180,12 +180,15 @@ const Profile = () => {
           height="100vh"
           flexDirection="column"
           width={["100vw", "100vw", "100vw", `calc(100vw - 12px)`]}
+          pl='7.5vw'
+          pr='7.5vw'
           alignItems="center"
-          justifyContent="space-around"
-          padding="5vh 5vw"
           maxHeight="90vh"
         >
-          <Heading>YOUR ACTIVITY</Heading>
+          <Heading mt='5vh' >YOUR ACTIVITY</Heading>
+          <Flex w='85vw' h='80vh'  alignItems="center"
+          justifyContent="center">
+
           {isSmallScreen ? (
             <Doughnut
               options={options}
@@ -195,6 +198,7 @@ const Profile = () => {
           ) : (
             <Bar options={options} data={data} style={{ maxHeight: "80vh" }} />
           )}
+          </Flex>
         </Flex>
       )}
     </>
