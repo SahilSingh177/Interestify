@@ -1,14 +1,29 @@
-import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
-import { Box, Menu, MenuButton, MenuList, MenuItem, MenuDivider } from '@chakra-ui/react'
-import { FaBolt, FaChartLine, FaEnvelope, FaRegBookmark, FaRegClock, FaSignOutAlt } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import {
+  Box,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuDivider,
+  useBreakpointValue,
+} from "@chakra-ui/react";
+import {
+  FaBolt,
+  FaChartLine,
+  FaEnvelope,
+  FaRegBookmark,
+  FaRegClock,
+  FaSignOutAlt,
+} from "react-icons/fa";
 import { TbCategory2 } from "react-icons/tb";
-import DisplayPhoto from './DisplayPhoto'
-import SignOutModal from '../Modals/SignOutModal';
-import ResetMailModal from '../Modals/ResetMailModal';
+import DisplayPhoto from "./DisplayPhoto";
+import SignOutModal from "../Modals/SignOutModal";
+import ResetMailModal from "../Modals/ResetMailModal";
 type Props = {
-  handleSignOut: any
-}
+  handleSignOut: any;
+};
 const MenuDropDown = () => {
   const router = useRouter();
   useEffect(() => {
@@ -17,9 +32,9 @@ const MenuDropDown = () => {
         setIsModalOpen(false);
       }
     };
-    router.events.on('routeChangeComplete', handleRouteChange);
+    router.events.on("routeChangeComplete", handleRouteChange);
     return () => {
-      router.events.off('routeChangeComplete', handleRouteChange);
+      router.events.off("routeChangeComplete", handleRouteChange);
     };
   }, [router]);
 
@@ -41,48 +56,82 @@ const MenuDropDown = () => {
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isResetModalOpen, setIsResetModalOpen] = useState<boolean>(false);
+  const isSmallScreen = useBreakpointValue([true, true, false, false]);
   return (
-    <Box zIndex="500" height='full'>
-      <SignOutModal isOpen={isModalOpen} onClose={closeModal} ></SignOutModal>
-      <ResetMailModal isOpen={isResetModalOpen} onClose={closeResetModal} ></ResetMailModal>
+    <Box zIndex="500" height="full">
+      <SignOutModal isOpen={isModalOpen} onClose={closeModal}></SignOutModal>
+      <ResetMailModal
+        isOpen={isResetModalOpen}
+        onClose={closeResetModal}
+      ></ResetMailModal>
       <Menu isLazy={true} strategy="fixed">
-        <MenuButton
-          as={DisplayPhoto}
-          aria-label='Options'
-        />
+        <MenuButton as={DisplayPhoto} aria-label="Options" />
         <MenuList pl={2} pr={2}>
-          <MenuItem as='a' icon={<FaChartLine />} cursor="pointer" onClick={() => router.push('/user/profile')}>
+          <MenuItem
+            as="a"
+            icon={<FaChartLine />}
+            cursor="pointer"
+            onClick={() => router.push("/user/profile")}
+          >
             Activity
           </MenuItem>
-          <MenuItem as='a' icon={<FaRegBookmark />} cursor="pointer"
-            onClick={() => router.push('/user/bookmarks')}>
+          <MenuItem
+            as="a"
+            icon={<FaRegBookmark />}
+            cursor="pointer"
+            onClick={() => router.push("/user/bookmarks")}
+          >
             Bookmarks
-          </MenuItem >
-          <MenuItem icon={<FaRegClock />} as='a' cursor="pointer"
-            onClick={() => router.push('/user/history')}>
+          </MenuItem>
+          <MenuItem
+            icon={<FaRegClock />}
+            as="a"
+            cursor="pointer"
+            onClick={() => router.push("/user/history")}
+          >
             History
           </MenuItem>
-          <MenuItem icon={<TbCategory2 />} as='a' cursor="pointer"
-            onClick={() => router.push("/search_category")}>
-            Categories
-          </MenuItem>
+          {isSmallScreen && (
+            <MenuItem
+              icon={<TbCategory2 />}
+              as="a"
+              cursor="pointer"
+              onClick={() => router.push("/search_category")}
+            >
+              Categories
+            </MenuItem>
+          )}
           <MenuDivider mb={0} />
-          <MenuItem as='a' icon={<FaBolt />} cursor="pointer"
-            onClick={() => router.push('/welcome/categories')}>
+          <MenuItem
+            as="a"
+            icon={<FaBolt />}
+            cursor="pointer"
+            onClick={() => router.push("/welcome/categories")}
+          >
             Reset Categories
-          </MenuItem >
-          <MenuItem icon={<FaEnvelope />} as='a' cursor="pointer" onClick={openResetModal}>
+          </MenuItem>
+          <MenuItem
+            icon={<FaEnvelope />}
+            as="a"
+            cursor="pointer"
+            onClick={openResetModal}
+          >
             Weekly mail
           </MenuItem>
           <MenuDivider mb={0} />
-          <MenuItem icon={<FaSignOutAlt />} onClick={openModal}
-            pt={2} pb={2} mb={0}>
+          <MenuItem
+            icon={<FaSignOutAlt />}
+            onClick={openModal}
+            pt={2}
+            pb={2}
+            mb={0}
+          >
             Log Out
           </MenuItem>
         </MenuList>
       </Menu>
     </Box>
-  )
-}
+  );
+};
 
-export default MenuDropDown
+export default MenuDropDown;
