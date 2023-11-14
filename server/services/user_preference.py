@@ -41,6 +41,7 @@ def find_score(user_data, email):
             total_score = user_profiles['score'].sum()
             print("Total score:", total_score)
             for category, score in user_profiles.iterrows():
+                print(category,score)
                 database.set_category_score(email, category, (score['score']) / total_score)
         else:
             print("No session data available.")

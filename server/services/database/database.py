@@ -454,14 +454,16 @@ class App:
     def get_category_score(self, user_email):
         with self.driver.session(database="neo4j") as session:
             query = (
-                "MATCH (u:User{email:$email})-[r:BROWSES]->(c:Category) "
-                "RETURN r.score as score, c.name as category_name, u.email as user_email "
+                "MATCH (u:User {email: $email})-[r:BROWSES]->(c:Category) "
+                "WITH DISTINCT r.score as score, c.name as category_name, u.email as user_email "
+                "RETURN score, category_name, user_email"
             )
             result = session.run(query, email=user_email)
             return [
                 {"score": record["score"], "category_name": record["category_name"], "user_email": record["user_email"]}
                 for record in result
             ]
+
 
     def set_category_score(self, user_email, category_name, score):
         with self.driver.session(database="neo4j") as session:
@@ -554,7 +556,7 @@ class App:
         with self.driver.session(database="neo4j") as session:
             query = (
                 "MATCH (u:User{email:$email})-[r:BROWSES]->(c:Category) "
-                "RETURN c.name as category_name,r.session_date as session_date,r.session_time as session_time "
+                "RETURN DISTINCT c.name as category_name,r.session_date as session_date,r.session_time as session_time "
             )
             result = session.run(query, email=user_email)
             res = []
@@ -697,7 +699,10 @@ class App:
        
         res = []
         ans = self.get_category_score(user_email)
-        sorted_categories = sorted(ans, key=lambda x: x['score'], reverse=True)
+        sum_of_scores = sum(item['score'] for item in ans)
+        normalized_ans = [{'category_name': item['category_name'], 'score': item['score'] / sum_of_scores} for item in ans] if sum_of_scores > 0 else ans
+        sorted_categories = sorted(normalized_ans, key=lambda x: x['score'], reverse=True)
+
         added_ids = set()  # Set to store unique IDs
         current_total = 0
 
@@ -732,6 +737,7 @@ class App:
                     break
         random.shuffle(res)
         return res
+
     
     def get_most_liked_not_read_blogs_by_category_score_limit(self, user_email, category_name, skip, limit):
         with self.driver.session(database="neo4j") as session:
