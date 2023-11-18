@@ -118,7 +118,7 @@ const ArticlePage = () => {
       </Head>
       <Stack
         direction={["column", "column", "column", "row"]}
-        width={["100vw", "100vw", "90vw", `calc(85vw - 12px)`]}
+        width={["100vw", "100vw", "90vw", `calc(80vw - 12px)`]}
         maxWidth="100vw"
         overflowX="hidden"
         margin='auto'

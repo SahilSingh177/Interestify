@@ -22,8 +22,8 @@ const Banner: React.FC = () => {
       flexDirection="column"
       width={["100vw", "100vw", "100vw", `calc(100vw - 12px)`]}
       overflowX="hidden"
-      pl="7.5vw"
-      pr="7.5vw"
+      pl={['7.5vw','7.5vw','10vw','10vw']}
+      pr={['7.5vw','7.5vw','10vw','10vw']}
       bg="#f59e0b"
     >
       {!currentUser && (
@@ -78,19 +78,21 @@ const Banner: React.FC = () => {
             display={["none", "none", "block", "block"]}
             width={["90%", "90%", "50%", "50%"]}
             height='"full"'
-            alignItems="center"
-            justifyContent="center"
+            alignItems="flex-end"
+            justifyContent="flex-end"
+            // bg='red'
           >
-            <Center>
+            {/* <Center> */}
 
             <Image
+              style={{marginLeft:'auto'}}
               priority={true}
               width="500"
               height="500"
               alt="reading guy"
               src="/assets/reading_guy.png"
             ></Image>
-            </Center>
+            {/* </Center> */}
           </Flex>
         </Flex>
       )}

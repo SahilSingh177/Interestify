@@ -159,10 +159,10 @@ const Article: React.FC<Props> = ({
   return (
     <VStack
       alignItems="flex-start"
-      width={["90%", "90%", "90%", "62.75%"]}
+      width={["90%", "90%", "90%", "60%"]}
       maxWidth="100vw"
       minHeight="90vh"
-      mr={["0", "0", "0", "2.25%"]}
+      mr={["0", "0", "0", "5%"]}
       overflowX="hidden"
     >
       <ShowAlert

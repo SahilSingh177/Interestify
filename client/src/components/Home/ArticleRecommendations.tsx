@@ -44,10 +44,10 @@ const ArticleRecommendations = ({ ArticleId }: { ArticleId: string }) => {
 
   return (
     <VStack
-      w={['90vw','90vw','90vw','27.8375vw']}
+      w={['90vw','90vw','90vw','28vw']}
       height="70vh"
       position={["static", "static", "static", "fixed"]}
-      right="7.5vw"
+      right="10vw"
       top="20vh"
       overflowY="scroll"
       borderRadius={10}
@@ -65,7 +65,7 @@ const ArticleRecommendations = ({ ArticleId }: { ArticleId: string }) => {
               marginBottom={1}
               endColor="gray.200"
               startColor="gray.100"
-              width={`calc(26.2vw - 12px)`}
+              width={`calc(25.2vw - 12px)`}
               height="15vh"
             />
           ))}
