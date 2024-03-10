@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.metrics.pairwise import sigmoid_kernel
 from sklearn.feature_extraction.text import TfidfVectorizer
-from .database.database import App
+from database.database import App
 import os
 import dotenv
 import redis
