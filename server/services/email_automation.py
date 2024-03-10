@@ -1,18 +1,20 @@
-from datetime import datetime
+import os
 import smtplib
-import schedule
 import time
+from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from .database.database import App
+import schedule
+
 import dotenv
-import os
+from .database.database import App
 
 dotenv.load_dotenv()
 
 uri = os.getenv("DATABASE_URL")
 user = os.getenv("DATABASE_USER")
 password = os.getenv("DATABASE_PASSWORD")
+
 
 def send_email(recipient_email, subject, html_template):
     try:
@@ -128,7 +130,7 @@ def automate_mail():
                 # # Send the email
                 if i != len(books) - 1:  # Exclude the last book
                     content += "<hr class='break' />"
-                content= content.format(
+                content = content.format(
                     title=book['title'],
                     author=book['author'],
                     category=book['category'],
@@ -139,6 +141,7 @@ def automate_mail():
             send_email(email, subject, html_template)
     except Exception as e:
         print("An error occurred in automate_mail:", e)
+
 
 def schedule_task():
     try:

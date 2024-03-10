@@ -42,6 +42,6 @@ export const categoriesData = [
     "Business & Management",
     "Education & Language",
     "Earth Sciences and Geography"
-];
+]
 
 export const imageLinks = categoriesData.map((category, index) => `/assets/categories/${index + 1}.jpg`);

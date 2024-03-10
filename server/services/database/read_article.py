@@ -1,13 +1,14 @@
+import os
 import requests
 import PyPDF2
-import os
+import dotenv
 import cohere
 import readtime
-import dotenv
 
 dotenv.load_dotenv()
 
 co = cohere.Client(os.getenv("COHERE_API_KEY"))
+
 
 def read_article(link):
     try:
@@ -25,12 +26,13 @@ def read_article(link):
         for page_num in range(len(pdf_reader.pages)):
             page = pdf_reader.pages[page_num]
             page = page.extract_text()
-            page = page.replace('\n','').strip()
+            page = page.replace('\n', '').strip()
             pageData += page
             pageData += '\n'
 
         article = pageData
-        summary = co.summarize(text=article,length='short',format='paragraph',extractiveness ='low') 
+        summary = co.summarize(text=article, length='short',
+                               format='paragraph', extractiveness='low')
         read_time = readtime.of_text(article)
         data = [pageData, summary, read_time]
         pdf_file.close()

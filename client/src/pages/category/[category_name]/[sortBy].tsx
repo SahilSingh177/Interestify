@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import {
   Flex,
   Heading,
@@ -8,12 +8,14 @@ import {
   TabList,
   Tab,
   Spinner,
-} from '@chakra-ui/react';
-import ArticleCard from '@/components/Articles/ArticleCard';
-import Sidebar from '@/components/Articles/SideBar';
-import Loading from '@/components/loading/Loading'
-import InfiniteScroll from 'react-infinite-scroll-component';
-import Head from 'next/head';
+  useColorModeValue,
+} from "@chakra-ui/react";
+import ArticleCard from "@/components/Home/ArticleCard";
+import Sidebar from "@/components/Home/SideBar";
+import Loading from "@/components/loading/Loading";
+import InfiniteScroll from "react-infinite-scroll-component";
+import Head from "next/head";
+import { auth } from "@/firebase/clientApp";
 
 interface Article {
   id: string;
@@ -25,6 +27,7 @@ interface Article {
   time: string;
   likes: number;
   isLiked: boolean;
+  isBookmarked: boolean;
 }
 
 const Category = () => {
@@ -37,15 +40,16 @@ const Category = () => {
   const [hasMoreData, setHasMoreData] = useState(true);
   const [page, setPage] = useState(1);
 
-  const fetchData = async () => {
+  const fetchData = async (pageNumber: number) => {
     try {
-      let endpoint = '';
-      if (sortBy === 'best')
-        endpoint = `http://127.0.0.1:5000/getTopArticlesfor?category=${category}&page=${page}`;
-      else if (sortBy === 'recent')
-        endpoint = `http://127.0.0.1:5000/getRecentArticlesfor?category=${category}&page=${page}`;
+      const email = auth.currentUser?.email;
+      let endpoint = "";
+      if (sortBy === "best")
+        endpoint = `https://nikhilranjan.pythonanywhere.com/getTopArticlesfor?email=${email}&category=${category}&page=${pageNumber}`;
+      else if (sortBy === "recent")
+        endpoint = `https://nikhilranjan.pythonanywhere.com/getRecentArticlesfor?email=${email}&category=${category}&page=${pageNumber}`;
       else
-        endpoint = `http://127.0.0.1:5000/getHotArticlesfor?category=${category}&page=${page}`;
+        endpoint = `https://nikhilranjan.pythonanywhere.com/getHotArticlesfor?email=${email}&category=${category}&page=${pageNumber}`;
 
       const response = await fetch(endpoint);
       const jsonData = await response.json();
@@ -55,25 +59,27 @@ const Category = () => {
         return;
       }
       setData((prevData) => [...prevData, ...jsonData]);
-      console.log('setting data');
-      console.log(data)
       setPage((prevPage) => prevPage + 1);
       setIsLoading(false);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     }
   };
 
-  useEffect(() => {
-    const tab = router.asPath.split('/')[3];
-    if (tab == 'best') setTabIndex(0);
-    else if (tab == 'recent') setTabIndex(1);
-    else setTabIndex(2);
+  const resetData = async () => {
     setData([]);
     setPage(1);
     setHasMoreData(true);
     setIsLoading(true);
-    fetchData();
+    await fetchData(1);
+  };
+
+  useEffect(() => {
+    const tab = router.asPath.split("/")[3];
+    if (tab == "best") setTabIndex(0);
+    else if (tab == "recent") setTabIndex(1);
+    else setTabIndex(2);
+    resetData();
   }, [router]);
 
   return (
@@ -83,17 +89,20 @@ const Category = () => {
       </Head>
       <Flex
         flexDirection={{ lg: "row", base: "column" }}
-        marginTop={['5vh', '5vh', '5vh', '10vh']}
-        width={['100vw', '100vw', '100vw', `calc(100vw - 12px)`]}
+        paddingTop={["5vh", "5vh", "5vh", "10vh"]}
+        width={["100vw", "100vw", "100vw", `calc(85vw - 12px)`]}
         justifyContent={{ lg: "space-evenly", base: "column" }}
         alignItems={{ lg: "flex-start", base: "center" }}
         minHeight={`calc(100vh-80px)`}
+        bg={useColorModeValue("white", "#1f282f")}
+        m="auto"
       >
         <Flex
           flexDirection="column"
-          justifyContent={['center', 'center', 'center', 'flex-start']}
-          width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
+          justifyContent={["center", "center", "center", "flex-start"]}
+          width={{ lg: "62.75%", base: `calc(90vw - 12px)` }}
           overflowX="hidden"
+          mr="2.25%"
         >
           <Heading size="2xl" paddingLeft={2} marginBottom={10}>
             {category}
@@ -113,11 +122,11 @@ const Category = () => {
           </Tabs>
           {isLoading && (
             <Flex
-              position='relative'
+              position="relative"
               alignItems="center"
-              justifyContent='center'
-              height={['70vh', '70vh', '70vh', '60vh']}
-              width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
+              justifyContent="center"
+              height={["70vh", "70vh", "70vh", "70vh"]}
+              width={{ lg: "62.75%", base: `calc(90vw - 12px)` }}
             >
               <Loading />
             </Flex>
@@ -125,7 +134,7 @@ const Category = () => {
           {data.length > 0 && (
             <InfiniteScroll
               dataLength={data.length}
-              next={fetchData}
+              next={() => fetchData(page)}
               hasMore={hasMoreData}
               loader={
                 <Flex
@@ -136,11 +145,11 @@ const Category = () => {
                   width="full"
                 >
                   <Flex
-                    position='relative'
+                    position="relative"
                     alignItems="center"
-                    justifyContent='center'
-                    height={['70vh', '70vh', '70vh', '60vh']}
-                    width={{ lg: "55vw", base: `calc(90vw - 12px)` }}
+                    justifyContent="center"
+                    height={["70vh", "70vh", "70vh", "60vh"]}
+                    width={{ lg: "62.75%", base: `calc(90vw - 12px)` }}
                   >
                     <Loading />
                   </Flex>
@@ -151,12 +160,14 @@ const Category = () => {
                 <ArticleCard
                   articleId={articleInfo.id}
                   Author={articleInfo.author}
-                  Category={category}
+                  Category="none"
                   Title={articleInfo.title}
                   Summary={articleInfo.summary}
                   ReadingTime={articleInfo.time}
                   ArticleLink={articleInfo.link}
                   Likes={articleInfo.likes}
+                  isLiked={articleInfo.isLiked}
+                  isBookmarked={articleInfo.isBookmarked}
                   key={id}
                 ></ArticleCard>
               ))}

@@ -1,8 +1,9 @@
+import os
 import pandas as pd
 from datetime import datetime
-from .database.database import App
+
 import dotenv
-import os
+from .database.database import App
 
 dotenv.load_dotenv()
 
@@ -40,6 +41,7 @@ def find_score(user_data, email):
             total_score = user_profiles['score'].sum()
             print("Total score:", total_score)
             for category, score in user_profiles.iterrows():
+                print(category,score)
                 database.set_category_score(email, category, (score['score']) / total_score)
         else:
             print("No session data available.")

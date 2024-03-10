@@ -1,12 +1,14 @@
+import os
+import time
+import atexit
+import threading
+
 import requests
 from bs4 import BeautifulSoup
-import time
 import concurrent.futures
-import threading
-import atexit
-from .database.database import App
+
 import dotenv
-import os
+from .database.database import App
 
 dotenv.load_dotenv()
 
@@ -109,11 +111,13 @@ backend_category = [
     "Earth Sciences and Geography"
 ]
 
+
 def fetch_articles(page, current_category):
     """
     Fetches articles from a specific page and extracts the download links for PDFs.
     """
-    url = base_url + str(page) + "?facet-content-type=Article&facet-discipline=" + current_category
+    url = base_url + \
+        str(page) + "?facet-content-type=Article&facet-discipline=" + current_category
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
     articles_list = soup.find("ol", class_="content-item-list")
@@ -125,13 +129,15 @@ def fetch_articles(page, current_category):
         if article.get("class") and "no-access" in article.get("class"):
             continue
         if article.find("span", class_="authors"):
-            article_authors = article.find("span", class_="authors").find_all("a")
+            article_authors = article.find(
+                "span", class_="authors").find_all("a")
             authors = [author.get_text() for author in article_authors]
         if article.find("a", class_="title"):
             article_title = article.find("a", class_="title").get_text()
         if article.find("h2"):
             article_link = article.find("h2").find("a")
-        article_url = root_url + article_link.get("href") if article_link else None
+        article_url = root_url + \
+            article_link.get("href") if article_link else None
         index = category.index(current_category)
         back_category = backend_category[index]
         pdf_link = None
@@ -149,6 +155,7 @@ def fetch_articles(page, current_category):
 
     return articles_data
 
+
 def download_pdf(article_url):
     """
     Downloads the PDF for a given article link.
@@ -160,6 +167,7 @@ def download_pdf(article_url):
         return root_url + pdf_link.get("href")
     return None
 
+
 def shutdown(self):
     """
     Shutdowns the executor.
@@ -169,12 +177,16 @@ def shutdown(self):
     for worker in self._workers:
         worker.join()
 
+
 executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
 shutdown_event = threading.Event()
 
+
 def start_scraping_thread():
-    fetch_articles_thread = threading.Thread(target=fetch_new_articles, args=(executor, shutdown_event))
+    fetch_articles_thread = threading.Thread(
+        target=fetch_new_articles, args=(executor, shutdown_event))
     fetch_articles_thread.start()
+
 
 atexit.register(executor.shutdown)
 
@@ -188,7 +200,8 @@ def fetch_new_articles(executor, shutdown_event):
 
         for page in range(1, 3):
             for current_category in category:
-                future = executor.submit(fetch_articles, page, current_category)
+                future = executor.submit(
+                    fetch_articles, page, current_category)
                 article_futures.append(future)
 
             for future in concurrent.futures.as_completed(article_futures):
@@ -200,7 +213,8 @@ def fetch_new_articles(executor, shutdown_event):
                     pdf_link = article_data["pdf_link"]
                     backend_category = article_data["backend_category"]
                     app = App(uri, user, password)
-                    app.create_blog(title, link, authors, pdf_link, backend_category)
+                    app.create_blog(title, link, authors,
+                                    pdf_link, backend_category)
                     print("New article found:", title)
         time.sleep(3600)
 

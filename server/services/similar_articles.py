@@ -1,11 +1,13 @@
-import pandas as pd
-from sklearn.metrics.pairwise import sigmoid_kernel
-from sklearn.feature_extraction.text import TfidfVectorizer
-from database.database import App
 import os
-import dotenv
-import redis
 import pickle
+
+import pandas as pd
+import redis
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import sigmoid_kernel
+
+import dotenv
+from .database.database import App
 
 dotenv.load_dotenv()
 
@@ -14,11 +16,6 @@ redis_host = os.getenv("REDIS_HOST")
 redis_port = os.getenv("REDIS_PORT")
 redis_password = os.getenv("REDIS_PASSWORD")
 redis_client = redis.Redis(host=redis_host, port=redis_port, password=redis_password)
-
-print(redis_host)
-print(redis_port)
-print(redis_password)
-print('mc')
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 USER = os.getenv("DATABASE_USER")
@@ -34,7 +31,6 @@ def get_all_blogs():
     cached_data = redis_client.get(cache_key)
     if cached_data:
         data = pickle.loads(cached_data)
-        print('cached')
     else:
         data = app.get_all_blogs()
         redis_client.set(cache_key, pickle.dumps(data))
@@ -64,7 +60,8 @@ def get_recommendations(id):
             df_indices = [i[0] for i in sig_scores]
             res = []
             for i in df_indices:
-                res.append({'id': int(df['id'][i]), 'title': df['title'][i], 'link': df['link'][i]})
+                res.append({'id': int(df['id'][i]), 'title': df['title'][i], 'link': df['link'][i],'author':df['author'][i]})
+            print(res)
             recommendations = res
             redis_client.set(cache_key, pickle.dumps(recommendations))
             redis_client.expire(cache_key, 12 * 60 * 60)

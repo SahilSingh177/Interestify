@@ -1,40 +1,43 @@
 import React from "react";
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "@/Providers/AuthProvider";
 import { useRouter } from "next/router";
-import { Flex, Box } from "@chakra-ui/react";
+import { Flex, useColorModeValue, Box, Spacer } from "@chakra-ui/react";
 import AuthButtons from "./AuthButtons";
-import Link from 'next/link';
+import Link from "next/link";
 import Image from "next/image";
 import SearchBar from "./SearchBar";
 
 const Navbar: React.FC = () => {
-  // const transformScale = useBreakpointValue({ base: 'scale(1.3)', md: 'scale(0.9)', sm: 'scale(0.7)',lg:'2.5' });
   const currentUser = useContext(AuthContext);
   const router = useRouter();
   const [scrollPosition, setScrollPosition] = useState(0);
   const [isScrolledPastThreshold, setIsScrolledPastThreshold] = useState(false);
-  const isHomePage = router.pathname === '/';
+  const isHomePage = router.pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => {
       const currentPosition = window.pageYOffset;
       setScrollPosition(currentPosition);
-      setIsScrolledPastThreshold(currentPosition >  window.innerHeight * 0.6);
+      setIsScrolledPastThreshold(currentPosition > window.innerHeight * 0.6);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
   return (
     <Flex
-      bg={isHomePage && !currentUser && !isScrolledPastThreshold ? "#ffdf00" : "white"}
+      bg={
+        isHomePage && !currentUser && !isScrolledPastThreshold
+          ? "#f59e0b"
+          : useColorModeValue("white", "#15202B")
+      }
       position="fixed"
-      width={['100vw','100vw','100vw',`calc(100vw - 12px)`]} 
+      width={["100vw", "100vw", "100vw", `calc(100vw - 12px)`]}
       maxWidth="100vw"
       height="10vh"
       padding="10px 5vw"
@@ -44,19 +47,27 @@ const Navbar: React.FC = () => {
       overflowX="hidden"
       overflowY="hidden"
     >
-      <Flex height='10vh' width='16vh' padding='1vh' alignItems='center' justifyContent='center'>
-
-      <Link href="/">
-        <Image priority={true} src="/assets/logo-no-background.svg" alt='logo'height='333' width='584'></Image>
-      </Link>
+      <Flex height="8.5vh" width="20vh" position="relative">
+        <Link href="/">
+          <Image
+            priority={true}
+            src={useColorModeValue(
+              "/assets/logo-no-background.svg",
+              "/assets/logo-white.png"
+            )}
+            alt="logo"
+            layout="fill"
+            objectFit="contain"
+          ></Image>
+        </Link>
       </Flex>
-        <SearchBar></SearchBar>
-      <Flex>
+      <Spacer />
+      <SearchBar></SearchBar>
+      <Flex justifyContent="center">
         <AuthButtons />
       </Flex>
     </Flex>
   );
 };
-
 
 export default Navbar;
