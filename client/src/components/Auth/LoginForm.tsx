@@ -96,6 +96,7 @@ const LoginForm = () => {
         </VStack>
         <Flex width="full" alignItems="center" justifyContent="center">
           <Button
+            size="md"
             variant="success"
             width={["30vw", "50vw", "50vw", "25vw"]}
             height={["50px", "70px", "50px", "50px"]}
