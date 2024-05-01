@@ -3,12 +3,16 @@ import { Player } from '@lottiefiles/react-lottie-player';
 import { Button, Flex, Heading, Modal, ModalBody, ModalContent, ModalFooter, ModalOverlay } from '@chakra-ui/react';
 import { useSignOut } from 'react-firebase-hooks/auth';
 import { auth } from '@/firebase/clientApp';
+import { useRouter } from 'next/router';
+
 
 const SignOutModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+  const Router = useRouter();
   const [signOut] = useSignOut(auth);
 
   const handleSignOut = async () => {
     await signOut();
+    Router.push("/")
   };
 
   return (

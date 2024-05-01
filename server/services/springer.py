@@ -198,7 +198,7 @@ def fetch_new_articles(executor, shutdown_event):
     try:
         article_futures = []
 
-        for page in range(1, 3):
+        for page in range(1, 100):
             for current_category in category:
                 future = executor.submit(
                     fetch_articles, page, current_category)
@@ -216,7 +216,9 @@ def fetch_new_articles(executor, shutdown_event):
                     app.create_blog(title, link, authors,
                                     pdf_link, backend_category)
                     print("New article found:", title)
-        time.sleep(3600)
+        # time.sleep(3600)
 
     finally:
         shutdown_event.set()
+        
+start_scraping_thread()
