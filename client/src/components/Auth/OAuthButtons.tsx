@@ -63,8 +63,8 @@ const OauthButtons = ({ imageSrc, providerName }: Props) => {
       margin="auto"
       variant="oauth"
       mb={2}
-      height={['8vh','8vh','8vh','8vh']}
-      width={['75vw','75vw','75vw','20vw']}
+      height={['8vh','8vh','8vh','10vh']}
+      width={['75vw','75vw','75vw','23vw']}
       fontSize={['sm','md','2xl','md']}
       onClick={onSubmit}
     >

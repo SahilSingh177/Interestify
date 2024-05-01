@@ -88,7 +88,7 @@ export const Button: ComponentStyleConfig = {
       color: "black",
       fontWeight: "bold",
       bg: "white",
-      borderRadius: "10px",
+      borderRadius: "6px",
       _hover: {
         bg: "gray.100",
         textDecoration: "none"
