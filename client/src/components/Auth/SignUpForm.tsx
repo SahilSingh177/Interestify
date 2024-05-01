@@ -158,6 +158,7 @@ const SignupForm = () => {
         <Flex width="full" alignItems="center" justifyContent="center">
           <Button
             variant="success"
+            fontSize="md"
             width="25vw"
             height="50px"
             mt={5}
